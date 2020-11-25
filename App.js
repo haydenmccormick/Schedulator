@@ -34,56 +34,54 @@ export default function App() {
 }
 
 class StaticTasks extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isGoing: null,
-      numberOfGuests: null
-    };
+    constructor(props) {
+	super(props);
+	this.state = {
+	    taskname: null
+	};
 
-    this.handleInputChange = this.handleInputChange.bind(this);
-  }
+	this.handleInputChange = this.handleInputChange.bind(this);
+    }
 
-  handleInputChange(event) {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-    this.setState({
-      [name]: value    });
-  }
+    handleInputChange(event) {
+	const target = event.target;
+	const type = target.type;
+	const value = target.name;
+	alert(target.value);
+    }
 
-  render() {
-    return (
-	    <form>
-	    <label>
-	    Task Name:
-	    <input
-	name="numberOfGuests"            type="text"
-	value={this.state.numberOfGuests}
-	onChange={this.handleInputChange} />
-	    </label>
-	    <br />
-	    Date:
-	    <label>
-	    <input type="date" />
-	    </label>
-	    <br />
-	    <label>
-	    Start Time:
-	    <input type="time" />
-	    </label>
-	    <br />
-	    <label>
-	    End Time:
-	    <input type="time" />
-	    </label>
-	    <br />
-	    <label>
-	    <input type="submit" value="Add static task" />
-	    </label>
-	    </form>
-    );
-  }
+    render() {
+	return (
+		<form>
+		<label>
+		Task Name:
+		<input
+		type="text"
+		value={this.state.taskname}
+		onChange={this.handleInputChange} />
+		</label>
+		<br />
+		Date:
+		<label>
+		<input type="date" />
+		</label>
+		<br />
+		<label>
+		Start Time:
+		<input type="time" />
+		</label>
+		<br />
+		<label>
+		End Time:
+		<input type="time" />
+		</label>
+		<br />
+		<label>
+		<input type="submit" value="Add static task" />
+		</label>
+		</form>
+	);
+    }
 }
 
 const styles = StyleSheet.create({
