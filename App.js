@@ -24,36 +24,57 @@ export default function App() {
 	    <View style={styles.container}>
 	    <h1>Basic Calendar</h1>
 	    <Calendar onChange={onChange} value={value} />
+	    <h2>Create an Event</h2>
+	    <> <Form /> </>
 	    <h2>Events</h2>
-	    <> <NameForm /> </>
 	    <Text>Open up App.js to start working on your app!</Text>
 	    <StatusBar style="auto" />
 	    </View>
     );
 }
 
-class NameForm extends React.Component {
+class Form extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: ''};
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = {
+      isGoing: true,
+      numberOfGuests: 2
+    };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  handleChange(event) {    this.setState({value: event.target.value});  }
-  handleSubmit(event) {
-    alert('A name was submitted: ' + this.state.value);
-    event.preventDefault();
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value    });
   }
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-	<label>
-	  Name:
-	  <input type="text" value={this.state.value} onChange={this.handleChange} />        </label>
-	<input type="submit" value="Submit" />
-      </form>
+	    <form>
+	    <label>
+	    Name of Event:
+	    <input
+	name="numberOfGuests"            type="text"
+	value={this.state.numberOfGuests}
+	onChange={this.handleInputChange} />
+	    </label>
+	    <br />
+	    <label>
+	    Is going:
+	    <input
+	name="isGoing"            type="checkbox"
+	checked={this.state.isGoing}
+	onChange={this.handleInputChange} />
+	    <br />
+	    </label>
+	    <label>
+	    <input type="submit" value="Add event" />
+	    </label>
+	    </form>
     );
   }
 }
