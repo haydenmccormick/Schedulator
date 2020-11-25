@@ -37,7 +37,10 @@ class StaticTasks extends React.Component {
     constructor(props) {
 	super(props);
 	this.state = {
-	    taskname: null
+	    taskname: null,
+	    date: null,
+	    startTime: null,
+	    endTime: null
 	};
 
 	this.handleInputChange = this.handleInputChange.bind(this);
@@ -56,28 +59,50 @@ class StaticTasks extends React.Component {
 		<label>
 		Task Name:
 		<input
+	    name="taskname"
 		type="text"
 		value={this.state.taskname}
-		onChange={this.handleInputChange} />
+	    onChange={this.handleInputChange}
+		/>
 		</label>
 		<br />
 		Date:
 		<label>
-		<input type="date" />
+		<input
+	    name="date"
+	    type="date"
+	    value={this.state.date}
+	    onChange={this.handleInputChange}
+		/>
 		</label>
 		<br />
 		<label>
 		Start Time:
-		<input type="time" />
+		<input
+	    name="startTime"
+	    type="time"
+	    value={this.state.startTime}
+	    onChange={this.handleInputChange}
+	    />
 		</label>
 		<br />
 		<label>
 		End Time:
-		<input type="time" />
+		<input
+	    name="endTime"
+	    type="time"
+	    value={this.state.endTime}
+	    onChange={this.handleInputChange}
+	    />
 		</label>
 		<br />
 		<label>
-		<input type="submit" value="Add static task" />
+		<input
+	    name="submit"
+	    type="button"
+	    value="Add static task"
+	    onClick={this.handleInputChange}
+	    />
 		</label>
 		</form>
 	);
