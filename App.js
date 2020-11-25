@@ -17,7 +17,7 @@ export default function App() {
     const [value, setValue] = useState(new Date());
     function onChange(nextValue) {
 	setValue(nextValue);
-	//alert(nextValue);
+	alert(nextValue);
 	//const enteredName = prompt('Please enter your name');
     }
     return (
@@ -40,7 +40,7 @@ class StaticTasks extends React.Component {
 	    taskname: null,
 	    date: null,
 	    startTime: null,
-	    endTime: null
+	    endTime: null,
 	};
 
 	this.handleInputChange = this.handleInputChange.bind(this);
@@ -64,20 +64,34 @@ class StaticTasks extends React.Component {
 	    this.endTime = value;
 	    break;
 	case "submit":
-	    alert("Should add the stuff to database");
-	    //target.value = 1;
-	    //Should also clear the form and give an error if any of the values are null
+	    if (this.taskname != undefined && this.taskname != "" && this.taskname != null &&
+		this.date != undefined && this.date != "" && this.date != null &&
+		this.startTime != undefined && this.startTime != "" && this.startTime != null &&
+		this.endTime != undefined && this.endTime != "" && this.endTime != null
+	       ) {
+		alert("Task has been created");
+		this.taskname = null;
+		this.date = null;
+		this.startTime = null;
+		this.endTime = null;
+		//Add stuff to database here
+		target.type = "reset";
+	    }
+	    else {
+		target.type = "button";
+	    }
 	}
     }
 
     render() {
 	return (
-		<form>
+		<form onsubmit="return false">
 		<label>
 		Task Name:
 		<input
 	    name="taskname"
-		type="text"
+	    type="text"
+	    value={this.tasknameValue}
 	    onChange={this.handleInputChange}
 		/>
 		</label>
@@ -107,6 +121,15 @@ class StaticTasks extends React.Component {
 	    type="time"
 	    onChange={this.handleInputChange}
 	    />
+		</label>
+		<br />
+		<label>
+		<input
+	    name="reset"
+	    type="reset"
+	    value="Reset form"
+	    onClick={this.handleInputChange}
+		/>
 		</label>
 		<br />
 		<label>
