@@ -78,6 +78,7 @@ class StaticTasks extends React.Component {
 		target.type = "reset";
 	    }
 	    else {
+		alert("You must fill all the forms before creating a task");
 		target.type = "button";
 	    }
 	}
