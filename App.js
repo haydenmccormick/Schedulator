@@ -24,8 +24,8 @@ export default function App() {
 	    <View style={styles.container}>
 	    <h1>Basic Calendar</h1>
 	    <Calendar onChange={onChange} value={value} />
-	    <h2>Create an Event</h2>
-	    <> <Form /> </>
+	    <h2>Add a Task</h2>
+	    <> <StaticTasks /> </>
 	    <h2>Events</h2>
 	    <Text>Open up App.js to start working on your app!</Text>
 	    <StatusBar style="auto" />
@@ -33,12 +33,12 @@ export default function App() {
     );
 }
 
-class Form extends React.Component {
+class StaticTasks extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isGoing: true,
-      numberOfGuests: 2
+      isGoing: null,
+      numberOfGuests: null
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -56,11 +56,21 @@ class Form extends React.Component {
     return (
 	    <form>
 	    <label>
-	    Name of Event:
+	    Task Name:
 	    <input
 	name="numberOfGuests"            type="text"
 	value={this.state.numberOfGuests}
 	onChange={this.handleInputChange} />
+	    </label>
+	    <br />
+	    Due date:
+	    <label>
+	    <input type="date" />
+	    </label>
+	    <br />
+	    <label>
+	    Time:
+	    <input type="time" />
 	    </label>
 	    <br />
 	    <label>
@@ -72,7 +82,7 @@ class Form extends React.Component {
 	    <br />
 	    </label>
 	    <label>
-	    <input type="submit" value="Add event" />
+	    <input type="submit" value="Add static task" />
 	    </label>
 	    </form>
     );
