@@ -65,6 +65,7 @@ class StaticTasks extends React.Component {
 	    break;
 	case "submit":
 	    alert("Should add the stuff to database");
+	    //target.value = 1;
 	    //Should also clear the form and give an error if any of the values are null
 	}
     }
