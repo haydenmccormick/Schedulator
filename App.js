@@ -63,24 +63,21 @@ class StaticTasks extends React.Component {
 	onChange={this.handleInputChange} />
 	    </label>
 	    <br />
-	    Due date:
+	    Date:
 	    <label>
 	    <input type="date" />
 	    </label>
 	    <br />
 	    <label>
-	    Time:
+	    Start Time:
 	    <input type="time" />
 	    </label>
 	    <br />
 	    <label>
-	    Is going:
-	    <input
-	name="isGoing"            type="checkbox"
-	checked={this.state.isGoing}
-	onChange={this.handleInputChange} />
-	    <br />
+	    End Time:
+	    <input type="time" />
 	    </label>
+	    <br />
 	    <label>
 	    <input type="submit" value="Add static task" />
 	    </label>
