@@ -48,9 +48,25 @@ class StaticTasks extends React.Component {
 
     handleInputChange(event) {
 	const target = event.target;
-	const type = target.type;
-	const value = target.name;
-	alert(target.value);
+	const name = target.name;
+	const value = target.value;
+	switch (name) {
+	case "taskname":
+	    this.taskname = value;
+	    break;
+	case "date":
+	    this.date = value;
+	    break;
+	case "startTime":
+	    this.startTime = value;
+	    break;
+	case "endTime":
+	    this.endTime = value;
+	    break;
+	case "submit":
+	    alert("Should add the stuff to database");
+	    //Should also clear the form and give an error if any of the values are null
+	}
     }
 
     render() {
@@ -61,7 +77,6 @@ class StaticTasks extends React.Component {
 		<input
 	    name="taskname"
 		type="text"
-		value={this.state.taskname}
 	    onChange={this.handleInputChange}
 		/>
 		</label>
@@ -71,7 +86,6 @@ class StaticTasks extends React.Component {
 		<input
 	    name="date"
 	    type="date"
-	    value={this.state.date}
 	    onChange={this.handleInputChange}
 		/>
 		</label>
@@ -81,7 +95,6 @@ class StaticTasks extends React.Component {
 		<input
 	    name="startTime"
 	    type="time"
-	    value={this.state.startTime}
 	    onChange={this.handleInputChange}
 	    />
 		</label>
@@ -91,7 +104,6 @@ class StaticTasks extends React.Component {
 		<input
 	    name="endTime"
 	    type="time"
-	    value={this.state.endTime}
 	    onChange={this.handleInputChange}
 	    />
 		</label>
