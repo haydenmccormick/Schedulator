@@ -5,24 +5,37 @@ import { Calendar } from 'react-native-calendars'
 
 // Main render method
 export default function App() {
-
-  const [value, setValue] = useState(new Date());
-  function onChange(nextValue) {
-    setValue(nextValue);
-  }
-  return (
-    <View style={styles.container}>
-      <View style={styles.calendararea}>
-        <Text style={styles.title}>Basic Calendar</Text>
-        <Calendar onChange={onChange} value={value} />
-      </View>
-      <View style={styles.inputarea}>
-        <Text style={styles.subtitle}>Create an Event</Text>
-        <Form />
-      </View>
-      <StatusBar style="auto" />
-    </View>
-  );
+    const d = new Date();
+    const month = d.getMonth() + 1;
+    const string =  d.getFullYear() + '-' + month + '-' + d.getDate();
+    const [selected, setSelected] = useState(string);
+    const onDayPress = (day) => {
+	setSelected(day.dateString);
+	alert(day.dateString);
+    };
+    return (
+	    <View style={styles.container}>
+	    <View style={styles.calendararea}>
+	    <Text style={styles.title}>Basic Calendar</Text>
+	    <Calendar
+	onDayPress={onDayPress}
+	markedDates={{
+	    [selected]: {
+		selected: true,
+		disableTouchEvent: true,
+		selectedColor: 'lightblue',
+		selectedTextColor: 'black',
+	    },
+	}}
+	/>
+	    </View>
+	    <View style={styles.inputarea}>
+	    <Text style={styles.subtitle}>Create an Event</Text>
+	    <Form />
+	    </View>
+	    <StatusBar style="auto" />
+	    </View>
+    );
 }
 
 /*
@@ -47,21 +60,21 @@ function Form(props) {
   return (
     <View>
       <TextInput
-        style={styles.input}
-        type="outlined"
-        placeholder="Number of Guests"
-        name="numberOfGuests" type="text"
-        onChangeText={numberOfGuests => setNumberOfGuests(numberOfGuests)}
+	style={styles.input}
+	type="outlined"
+	placeholder="Number of Guests"
+	name="numberOfGuests" type="text"
+	onChangeText={numberOfGuests => setNumberOfGuests(numberOfGuests)}
       />
       <View style={styles.going} >
-        <Text>Going?</Text>
-        <Switch
-          value={isGoing}
-          onValueChange={isGoing => setIsGoing(isGoing => !isGoing)}
-        />
+	<Text>Going?</Text>
+	<Switch
+	  value={isGoing}
+	  onValueChange={isGoing => setIsGoing(isGoing => !isGoing)}
+	/>
       </View>
       <Button
-        title="Add Event"
+	title="Add Event"
       />
     </View>
   );
