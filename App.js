@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Switch, Button } from 'react-native';
 import { Calendar } from 'react-native-calendars'
+import { DateInput } from 'react-native-date-input';
 
 // Main render method
 export default function App() {
@@ -30,7 +31,7 @@ export default function App() {
 	/>
 	    </View>
 	    <View style={styles.inputarea}>
-	    <Text style={styles.subtitle}>Create an Event</Text>
+	    <Text style={styles.subtitle}>Add a task</Text>
 	    <Form />
 	    </View>
 	    <StatusBar style="auto" />
@@ -51,33 +52,36 @@ function Event(props) {
 
 // Form for adding events
 function Form(props) {
-  const [isGoing, setIsGoing] = useState(false);
-  const [numberOfGuests, setNumberOfGuests] = useState(2);
-  //const [Events, addEvent] = useState([]);
-
-  // TODO: add event class/function and a handler to store event information
-
-  return (
-    <View>
-      <TextInput
-	style={styles.input}
-	type="outlined"
-	placeholder="Number of Guests"
-	name="numberOfGuests" type="text"
-	onChangeText={numberOfGuests => setNumberOfGuests(numberOfGuests)}
-      />
-      <View style={styles.going} >
-	<Text>Going?</Text>
-	<Switch
-	  value={isGoing}
-	  onValueChange={isGoing => setIsGoing(isGoing => !isGoing)}
-	/>
-      </View>
-      <Button
-	title="Add Event"
-      />
-    </View>
-  );
+    let state = {taskname: null, date: null, startTime: null, endTime: null};
+    function handleInputChange(event) {
+	const target = event.target;
+	const name = target.name;
+	const value = target.value;
+	switch (name) {
+	case "taskname":
+	    state.taskname = value;
+	    break;
+	case "date":
+	    state.date = value;
+	    break;
+	case "startTime":
+	    state.startTime = value;
+	    break;
+	case "endTime":
+	    state.endTime = value;
+	    break;
+	}
+	alert(value);
+    }
+    return (
+	    <View>
+	    <input placeholder="Name of task" name="taskname" type="text" onChange={handleInputChange}/>
+	    <input name="date" type="date" onChange={handleInputChange}/>
+	    <input name="startTime" type="time" onChange={handleInputChange}/>
+	    <input name="endTime" type="time" onChange={handleInputChange}/>
+	    <input type="button" name="submit" value="Add task" onClick={handleInputChange}/>
+	    </View>
+    );
 }
 
 const styles = StyleSheet.create({
