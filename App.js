@@ -3,6 +3,10 @@ import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Switch, Button } from 'react-native';
 import { Calendar } from 'react-native-calendars'
 import { DateInput } from 'react-native-date-input';
+import DateTimePicker from '@react-native-community/datetimepicker';
+//import * as SQLite from 'expo-sqlite';
+
+//const db = SQLite.openDatabase("db.db");
 
 // Main render method
 export default function App() {
@@ -52,54 +56,47 @@ function Event(props) {
 
 // Form for adding events
 function Form(props) {
-    let state = {taskname: null, date: null, startTime: null, endTime: null};
-    function handleInputChange(event) {
-	const target = event.target;
-	const name = target.name;
-	const value = target.value;
-	switch (name) {
-	case "taskname":
-	    state.taskname = value;
-	    break;
-	case "date":
-	    state.date = value;
-	    break;
-	case "startTime":
-	    state.startTime = value;
-	    break;
-	case "endTime":
-	    state.endTime = value;
-	    break;
-	case "submit":
-	    if (state.taskname != undefined && state.taskname != "" && state.taskname != null &&
-		state.date != undefined && state.date != "" && state.date != null &&
-		state.startTime != undefined && state.startTime != "" && state.startTime != null &&
-		state.endTime != undefined && state.endTime != "" && state.endTime != null
-	       ) {
-		alert("Task has been created");
-		state.taskname = null;
-		state.date = null;
-		state.startTime = null;
-		state.endTime = null;
-		//Add stuff to database here
-		target.type = "reset";
-	    }
-	    else {
-		alert("You must fill all the forms before creating a task");
-		target.type = "button";
-	    }
-	}
-
+    const [setTaskname,date,startTime,endTime] = useState('');
+    function handleInputChange(name) {
+	alert(name);
     }
-    return (
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+    const onChange = (event, selectedDate) => {
+	const currentDate = selectedDate || date;
+	setShow(Platform.OS === 'ios');
+	setDate(currentDate);
+    };
+
+    const showMode = (currentMode) => {
+	setShow(true);
+	setMode(currentMode);
+    };
+
+    const showDatepicker = () => {
+	showMode('date');
+    };
+
+    const showTimepicker = () => {
+	showMode('time');
+    };
+    return(
 	    <View>
-	    <input placeholder="Name of task" name="taskname" type="text" onChange={handleInputChange}/>
-	    <input name="date" type="date" onChange={handleInputChange}/>
-	    <input name="startTime" type="time" onChange={handleInputChange}/>
-	    <input name="endTime" type="time" onChange={handleInputChange}/>
-	    <input type="button" name="submit" value="Add task" onClick={handleInputChange}/>
-	    </View>
-    );
+	    <TextInput style={styles.input} name="taskname" type="text" onChangeText={text => handleInputChange(text)} />
+	    <Button onPress={showDatepicker} title="Pick a date" />
+	    <Button onPress={showTimepicker} title="Pick the start time" />
+	    <Button onPress={showTimepicker} title="Pick the end time" />
+	    {show && (
+		    <DateTimePicker
+		testID="dateTimePicker"
+		value={date}
+		mode={mode}
+		is24Hour={true}
+		display="default"
+		onChange={onChange}
+		/>
+	    )}
+	</View>);
 }
 
 const styles = StyleSheet.create({
