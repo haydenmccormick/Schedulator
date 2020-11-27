@@ -70,8 +70,26 @@ function Form(props) {
 	case "endTime":
 	    state.endTime = value;
 	    break;
+	case "submit":
+	    if (state.taskname != undefined && state.taskname != "" && state.taskname != null &&
+		state.date != undefined && state.date != "" && state.date != null &&
+		state.startTime != undefined && state.startTime != "" && state.startTime != null &&
+		state.endTime != undefined && state.endTime != "" && state.endTime != null
+	       ) {
+		alert("Task has been created");
+		state.taskname = null;
+		state.date = null;
+		state.startTime = null;
+		state.endTime = null;
+		//Add stuff to database here
+		target.type = "reset";
+	    }
+	    else {
+		alert("You must fill all the forms before creating a task");
+		target.type = "button";
+	    }
 	}
-	alert(value);
+
     }
     return (
 	    <View>
