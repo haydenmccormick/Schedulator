@@ -56,21 +56,16 @@ function Event(props) {
 
 // Form for adding events
 function Form(props) {
-    //const [setTaskname] = useState('');
+    const [count,setCount,input,setInput] = useState(0);
     //Remember to clear form
-    state = {text: null, time: null, date: "00-00-0000"};
+    state = {text: null, time: null, date: "00-00-0000", stuff: "abcd"};
     function handleInputChange(name) {
 	//dictionary.text = name;
 	//alert(dictionary.text);
 	state.text = name;
     }
     function submit() {
-	alert(state.date);
-    }
-    onPress = () => {
-	setState({
-	    date: 'THE NEW TEXT GOES HERE'
-	})
+	alert(state.text + ' ' + count);
     }
     return(
 	    <View>
@@ -79,9 +74,9 @@ function Form(props) {
 	    </View>
 	    <View>
 	    <DatePicker  placeholder="select date"
-	onDateChange={(date) => {state.date = date}}
+	onDateChange={(date) => setCount(date)}
 	    />
-	    <Text>{state.date}</Text>
+	    <Text>{count}</Text>
 	    </View>
 	    <Button onPress={submit} title="Submit" />
 	    </View>
