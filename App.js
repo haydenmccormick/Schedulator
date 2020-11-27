@@ -3,7 +3,7 @@ import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Switch, Button } from 'react-native';
 import { Calendar } from 'react-native-calendars'
 import { DateInput } from 'react-native-date-input';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker from 'react-native-datepicker';
 //import * as SQLite from 'expo-sqlite';
 
 //const db = SQLite.openDatabase("db.db");
@@ -56,47 +56,36 @@ function Event(props) {
 
 // Form for adding events
 function Form(props) {
-    const [setTaskname,date,startTime,endTime] = useState('');
+    //const [setTaskname] = useState('');
+    //Remember to clear form
+    state = {text: null, time: null, date: "00-00-0000"};
     function handleInputChange(name) {
-	alert(name);
+	//dictionary.text = name;
+	//alert(dictionary.text);
+	state.text = name;
     }
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
-    const onChange = (event, selectedDate) => {
-	const currentDate = selectedDate || date;
-	setShow(Platform.OS === 'ios');
-	setDate(currentDate);
-    };
-
-    const showMode = (currentMode) => {
-	setShow(true);
-	setMode(currentMode);
-    };
-
-    const showDatepicker = () => {
-	showMode('date');
-    };
-
-    const showTimepicker = () => {
-	showMode('time');
-    };
+    function submit() {
+	alert(state.date);
+    }
+    onPress = () => {
+	setState({
+	    date: 'THE NEW TEXT GOES HERE'
+	})
+    }
     return(
 	    <View>
+	    <View>
 	    <TextInput style={styles.input} name="taskname" type="text" onChangeText={text => handleInputChange(text)} />
-	    <Button onPress={showDatepicker} title="Pick a date" />
-	    <Button onPress={showTimepicker} title="Pick the start time" />
-	    <Button onPress={showTimepicker} title="Pick the end time" />
-	    {show && (
-		    <DateTimePicker
-		testID="dateTimePicker"
-		value={date}
-		mode={mode}
-		is24Hour={true}
-		display="default"
-		onChange={onChange}
-		/>
-	    )}
-	</View>);
+	    </View>
+	    <View>
+	    <DatePicker  placeholder="select date"
+	onDateChange={(date) => {state.date = date}}
+	    />
+	    <Text>{state.date}</Text>
+	    </View>
+	    <Button onPress={submit} title="Submit" />
+	    </View>
+    );
 }
 
 const styles = StyleSheet.create({
