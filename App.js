@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Image } from 'react-native';
 import { Calendar } from 'react-native-calendars'
-import Form from './EventForm.js'
+
+import { Form, Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 
-//const db = SQLite.openDatabase("db.db");
 
 // Main render method
 export default function App() {
@@ -13,16 +13,20 @@ export default function App() {
   const month = d.getMonth() + 1;
   const string = d.getFullYear() + '-' + month + '-' + d.getDate();
   const [selected, setSelected] = useState(string);
-  const [addingEvent, setAddingEvent] = useState(false);
   const onDayPress = (day) => {
     setSelected(day.dateString);
     alert(day.dateString);
   };
+
+  /***** Executed on "Add" button press, renders an EventForm *****/
+  const [addingEvent, setAddingEvent] = useState(false);
   const addEventPressHandler = () => {
     setAddingEvent(!addingEvent);
   };
+  // Only render a form if the user is adding an event
   const render_form = (addingEvent ?
     <View style={styles.formwrapper}>
+      {/* So the user can click outside of form box to cancel*/}
       <TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
       <View style={styles.formcontainer}>
         <Form />
@@ -58,5 +62,3 @@ export default function App() {
     </View>
   );
 }
-
-
