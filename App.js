@@ -68,8 +68,7 @@ function Form(props) {
 	    <TextInput style={styles.input} name="taskname" type="text" onChangeText={(text) => setInput(text)} />
 	    </View>
 	    <View>
-	    <DatePicker  placeholder="select date" onDateChange={(date) => setCount(date)} />
-	    <Text>{count}</Text>
+	    <DatePicker placeholder={count} onDateChange={(date) => setCount(date)} />
 	    </View>
 	    <Button onPress={submit} title="Submit" />
 	    </View>
