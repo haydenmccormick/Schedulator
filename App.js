@@ -1,111 +1,62 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { Component, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Switch, Button } from 'react-native';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars'
+import Form from './EventForm.js'
+import styles from './assets/Styles.js'
+
+//const db = SQLite.openDatabase("db.db");
 
 // Main render method
 export default function App() {
+  const d = new Date();
+  const month = d.getMonth() + 1;
+  const string = d.getFullYear() + '-' + month + '-' + d.getDate();
+  const [selected, setSelected] = useState(string);
+  const [addingEvent, setAddingEvent] = useState(false);
+  const onDayPress = (day) => {
+    setSelected(day.dateString);
+    alert(day.dateString);
+  };
+  const addEventPressHandler = () => {
+    setAddingEvent(!addingEvent);
+  };
+  const render_form = (addingEvent ?
+    <View style={styles.formwrapper}>
+      <TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
+      <View style={styles.formcontainer}>
+        <Form />
+      </View>
+    </View>
+    : null)
 
-  const [value, setValue] = useState(new Date());
-  function onChange(nextValue) {
-    setValue(nextValue);
-  }
   return (
     <View style={styles.container}>
       <View style={styles.calendararea}>
-        <Text style={styles.title}>Basic Calendar</Text>
-        <Calendar onChange={onChange} value={value} />
-      </View>
-      <View style={styles.inputarea}>
-        <Text style={styles.subtitle}>Create an Event</Text>
-        <Form />
-      </View>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-/*
-function Event(props) {
-  return (
-    <View>
-      <Text>{props.nunberOfGuests}</Text>
-      <Text>{props.isGoing}</Text>
-    </View>
-  );
-}
-*/
-
-// Form for adding events
-function Form(props) {
-  const [isGoing, setIsGoing] = useState(false);
-  const [numberOfGuests, setNumberOfGuests] = useState(2);
-  //const [Events, addEvent] = useState([]);
-
-  // TODO: add event class/function and a handler to store event information
-
-  return (
-    <View>
-      <TextInput
-        style={styles.input}
-        type="outlined"
-        placeholder="Number of Guests"
-        name="numberOfGuests" type="text"
-        onChangeText={numberOfGuests => setNumberOfGuests(numberOfGuests)}
-      />
-      <View style={styles.going} >
-        <Text>Going?</Text>
-        <Switch
-          value={isGoing}
-          onValueChange={isGoing => setIsGoing(isGoing => !isGoing)}
+        <Calendar
+          onDayPress={onDayPress}
+          markedDates={{
+            [selected]: {
+              selected: true,
+              disableTouchEvent: true,
+              selectedColor: 'lightblue',
+              selectedTextColor: 'black',
+            },
+          }}
         />
       </View>
-      <Button
-        title="Add Event"
-      />
+      <View style={styles.buttonwrapper}>
+        <TouchableOpacity onPress={addEventPressHandler}>
+          <Image
+            source={require('./assets/event-button.png')}
+            style={styles.button}
+          />
+        </TouchableOpacity>
+      </View>
+      <StatusBar style="auto" />
+      {render_form}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
-  },
-  calendararea: {
-    flex: 1.5,
-    justifyContent: 'flex-end',
-    marginBottom: 15,
-    width: "80%",
-  },
-  inputarea: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  going: {
-    alignItems: 'center',
-    marginVertical: 15,
-  },
-  input: {
-    textAlign: 'center',
-    padding: 5,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    borderColor: 'skyblue',
-    borderWidth: 2,
-  },
-  title: {
-    alignSelf: 'center',
-    fontSize: 25,
-    paddingBottom: 15,
-  },
-  subtitle: {
-    alignSelf: 'center',
-    fontSize: 20,
-    marginBottom: 15,
-    borderBottomWidth: 1.5,
-  },
-});
+
