@@ -173,17 +173,18 @@ function Dynamic(props) {
 	alert("Fill in all the fields to add the task");
     }
     function submit() {
-	let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' + Minutes2 + "')";
+	let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' +
+	    Minutes2 + "','" + toggleCheckBox  + "')";
 	//Add stuff to database
 	//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
-	/*db.transaction(tx => {
-	    tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values,[]);
+	db.transaction(tx => {
+	    //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values,[]);
 	    tx.executeSql(
-			  "select * from tasks",
+			  "select * from dynamicTasks",
 			  [],
 			  (_, { rows: { _array } }) => alert(JSON.stringify(_array))
 			  );
-	});*/
+	});
 	alert(values);
     }
     let button;
