@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, Switch, Button } from 'react-native'
 import { Calendar } from 'react-native-calendars'
 import { DateInput } from 'react-native-date-input';
 import DatePicker from 'react-native-datepicker';
-//import * as SQLite from 'expo-sqlite';
+import * as SQLite from 'expo-sqlite';
 
 //const db = SQLite.openDatabase("db.db");
 
@@ -56,21 +56,24 @@ function Event(props) {
 
 // Form for adding events
 function Form(props) {
-    const [count,setCount,input,setInput] = useState(0);
+    const [count,setCount] = useState(0);
+    const [input,setInput] = useState(1);
     //Remember to clear form
     state = {text: null, time: null, date: "00-00-0000", stuff: "abcd"};
     function handleInputChange(name) {
 	//dictionary.text = name;
 	//alert(dictionary.text);
-	state.text = name;
+	//state.text = name;
+	alert(input);
     }
     function submit() {
-	alert(state.text + ' ' + count);
+	alert(input + ' ' + count);
     }
+    //<TextInput style={styles.input} name="taskname" type="text" onChangeText={text => handleInputChange(text)} />
     return(
 	    <View>
 	    <View>
-	    <TextInput style={styles.input} name="taskname" type="text" onChangeText={text => handleInputChange(text)} />
+	    <TextInput style={styles.input} name="taskname" type="text" onChangeText={(text) => setInput(text)} />
 	    </View>
 	    <View>
 	    <DatePicker  placeholder="select date"
