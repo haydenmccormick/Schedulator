@@ -1,9 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Switch, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Switch, Button, SafeAreaView, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars'
 import { DateInput } from 'react-native-date-input';
 import DatePicker from 'react-native-datepicker';
+import NumberPlease from "react-native-number-please";
+import Picker from 'rc-picker';
+import TimePicker from 'react-native-simple-time-picker';
+import TimeInterval from 'react-native-clock-interval';
 import * as SQLite from 'expo-sqlite';
 
 //const db = SQLite.openDatabase("db.db");
@@ -19,6 +23,7 @@ export default function App() {
 	alert(day.dateString);
     };
     return (
+	<ScrollView>
 	    <View style={styles.container}>
 	    <View style={styles.calendararea}>
 	    <Text style={styles.title}>Basic Calendar</Text>
@@ -40,6 +45,7 @@ export default function App() {
 	    </View>
 	    <StatusBar style="auto" />
 	    </View>
+	     </ScrollView>
     );
 }
 
@@ -57,20 +63,59 @@ function Event(props) {
 // Form for adding events
 function Form(props) {
     //Remember to clear form
-    const [count,setCount] = useState(0);
-    const [input,setInput] = useState(1);
+    const [input,setInput] = useState("");
+    const [count,setCount] = useState("");
+    const [Hours,setHours] = useState("");
+    const [Minutes,setMinutes] = useState("");
+    const [Hours2,setHours2] = useState("");
+    const [Minutes2,setMinutes2] = useState("");
+    function check() {
+	if (input == "" || count == "" || Hours == "" || Minutes == "" || Hours2 == "" || Minutes2 == "") {
+	    return 0;
+	}
+	return 1;
+    }
+    function notFilled() {
+	alert("Fill in all the fields to add the task");
+    }
     function submit() {
-	alert(input + ' ' + count);
+	//Add stuff to database
+	alert("Adding task");
+    }
+    let button;
+    if (check()) {
+	button = <Button onPress={() => {submit();
+					 setInput("");setCount("");
+					 setHours("");setMinutes("");
+					 setHours2("");setMinutes2("");
+					}} title="Submit" />;
+    }
+    else {
+	button = <Button onPress={() => {notFilled()}} title="Submit" />;
     }
     return(
 	    <View>
+	    <Text>Enter task name</Text>
 	    <View>
-	    <TextInput style={styles.input} name="taskname" type="text" onChangeText={(text) => setInput(text)} />
+	    <TextInput style={styles.input} name="taskname" type="text" value={input} onChangeText={(text) => setInput(text)} />
 	    </View>
+	    <Text>Enter date</Text>
 	    <View>
 	    <DatePicker placeholder={count} onDateChange={(date) => setCount(date)} />
 	    </View>
-	    <Button onPress={submit} title="Submit" />
+	    <Text>Enter start time</Text>
+	    <Text>{Hours}:{Minutes}</Text>
+	    <View>
+	    <TimePicker selectedHours={Hours} selectedMinutes={Minutes}
+	onChange={(hours, minutes) => {setHours(hours);setMinutes(minutes)}} />
+	    </View>
+	    <Text>Enter end time</Text>
+	    <Text>{Hours2}:{Minutes2}</Text>
+	    <View>
+	    <TimePicker selectedHours={Hours2} selectedMinutes={Minutes2}
+	onChange={(hours, minutes) => {setHours2(hours);setMinutes2(minutes)}} />
+	    </View>
+	    {button}
 	    </View>
     );
 }
