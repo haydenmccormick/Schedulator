@@ -76,6 +76,12 @@ function Form(props) {
     const [Minutes,setMinutes] = useState("");
     const [Hours2,setHours2] = useState("");
     const [Minutes2,setMinutes2] = useState("");
+    function fixMinutes(minutes) {
+	if (String(minutes).length == 1) {
+	    return '0' + minutes;
+	}
+	else return minutes;
+    }
     function check() {
 	if (input == "" || count == "" || Hours == "" || Minutes == "" || Hours2 == "" || Minutes2 == "") {
 	    return 0;
@@ -125,13 +131,13 @@ function Form(props) {
 	    <Text>{Hours}:{Minutes}</Text>
 	    <View>
 	    <TimePicker selectedHours={Hours} selectedMinutes={Minutes}
-	onChange={(hours, minutes) => {setHours(hours);setMinutes(minutes)}} />
+	onChange={(hours, minutes) => {setHours(hours);setMinutes(fixMinutes(minutes))}} />
 	    </View>
 	    <Text>Enter end time</Text>
 	    <Text>{Hours2}:{Minutes2}</Text>
 	    <View>
 	    <TimePicker selectedHours={Hours2} selectedMinutes={Minutes2}
-	onChange={(hours, minutes) => {setHours2(hours);setMinutes2(minutes)}} />
+	onChange={(hours, minutes) => {setHours2(hours);setMinutes2(fixMinutes(minutes))}} />
 	    </View>
 	    {button}
 	    </View>
