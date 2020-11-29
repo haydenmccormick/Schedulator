@@ -86,9 +86,11 @@ function Form(props) {
 	alert("Fill in all the fields to add the task");
     }
     function submit() {
+	let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' + Minutes2 + "')";
 	//Add stuff to database
-    db.transaction(tx => {
-	    tx.executeSql("insert into t(c1,c2) values ('i','j')",[]);
+	//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
+	db.transaction(tx => {
+	    tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values,[]);
 	    tx.executeSql(
 			  "select * from tasks",
 			  [],
