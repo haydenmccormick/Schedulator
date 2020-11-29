@@ -9,8 +9,15 @@ import Picker from 'rc-picker';
 import TimePicker from 'react-native-simple-time-picker';
 import TimeInterval from 'react-native-clock-interval';
 import * as SQLite from 'expo-sqlite';
+import * as FileSystem from 'expo-file-system';
+//import {openDatabase} from 'react-native-sqlite-storage';
 
-//const db = SQLite.openDatabase("db.db");
+FileSystem.downloadAsync(
+			      Expo.Asset.fromModule(require('./db.db')).uri,
+			      `${FileSystem.documentDirectory}SQLite/db.db`
+			      );
+const db = SQLite.openDatabase("db.db");
+
 
 // Main render method
 export default function App() {
@@ -80,6 +87,14 @@ function Form(props) {
     }
     function submit() {
 	//Add stuff to database
+	    db.transaction(tx => {
+	    tx.executeSql("insert into t(c1,c2) values ('i','j')",[]);
+	    tx.executeSql(
+			  "select * from t",
+			  [],
+			  (_, { rows: { _array } }) => alert(JSON.stringify(_array))
+			  );
+	});
 	alert("Adding task");
     }
     let button;
