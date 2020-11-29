@@ -87,15 +87,16 @@ function Form(props) {
     }
     function submit() {
 	//Add stuff to database
-	    db.transaction(tx => {
+    db.transaction(tx => {
 	    tx.executeSql("insert into t(c1,c2) values ('i','j')",[]);
 	    tx.executeSql(
-			  "select * from t",
+			  "select * from tasks",
 			  [],
 			  (_, { rows: { _array } }) => alert(JSON.stringify(_array))
 			  );
 	});
-	alert("Adding task");
+
+	//alert("Adding task");
     }
     let button;
     if (check()) {
