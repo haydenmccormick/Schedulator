@@ -178,7 +178,7 @@ function Dynamic(props) {
 	//Add stuff to database
 	//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
 	db.transaction(tx => {
-	    //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values,[]);
+	    tx.executeSql("insert into dynamicTasks(taskname,date,endTime,period,split) values" + values,[]);
 	    tx.executeSql(
 			  "select * from dynamicTasks",
 			  [],
