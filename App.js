@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { Text, Button, View, TouchableOpacity, Image } from 'react-native';
+import { Table, Text, Button, View, TouchableOpacity, Image } from 'react-native';
 import { Calendar } from 'react-native-calendars'
 import * as SQLite from 'expo-sqlite';
 
@@ -15,6 +15,7 @@ export default function App() {
   const string = d.getFullYear() + '-' + month + '-' + d.getDate();
     const [selected, setSelected] = useState(string);
     const [tasks, setTasks] = useState("");
+    const [tasks2, setTasks2] = useState("");
   const onDayPress = (day) => {
     setSelected(day.dateString);
     alert(day.dateString);
@@ -45,6 +46,8 @@ export default function App() {
 		(_, { rows: { _array } }) => setTasks(JSON.stringify(_array))
 	    );
 	});
+	let output = Math.random() + 100;
+	setTasks2(tasks);
 	//return 1;
     }
   return (
@@ -62,7 +65,8 @@ export default function App() {
 	  }}
 	  />
 	  <Button title="Click to show tasks" onPress={() => showTasks()} />
-	  <Text>{tasks}</Text>
+	  <Text>{tasks2}</Text>
+
       </View>
       <View style={styles.buttonwrapper}>
 	<TouchableOpacity onPress={addEventPressHandler}>
