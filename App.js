@@ -1,159 +1,64 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
+import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Image } from 'react-native';
+import { Calendar } from 'react-native-calendars'
 
-const disabledDates = ["tomorrow"];
+import { Form, Dynamic } from './EventForm.js'
+import styles from './assets/Styles.js'
 
-function tileDisabled({ date, view }) {
-  // Disable tiles in month view only
-  if (view === "month") {
-    // Check if a date React-Calendar wants to check is on the list of disabled dates
-    return disabledDates.find((dDate) => isSameDay(dDate, date));
-  }
-}
+
+// Main render method
 export default function App() {
-  const [value, setValue] = useState(new Date());
-  function onChange(nextValue) {
-    setValue(nextValue);
-    alert(nextValue);
-    //const enteredName = prompt('Please enter your name');
-  }
+  const d = new Date();
+  const month = d.getMonth() + 1;
+  const string = d.getFullYear() + '-' + month + '-' + d.getDate();
+  const [selected, setSelected] = useState(string);
+  const onDayPress = (day) => {
+    setSelected(day.dateString);
+    alert(day.dateString);
+  };
+
+  /***** Executed on "Add" button press, renders an EventForm *****/
+  const [addingEvent, setAddingEvent] = useState(false);
+  const addEventPressHandler = () => {
+    setAddingEvent(!addingEvent);
+  };
+  // Only render a form if the user is adding an event
+  const render_form = (addingEvent ?
+    <View style={styles.formwrapper}>
+      {/* So the user can click outside of form box to cancel*/}
+      <TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
+      <View style={styles.formcontainer}>
+        <Form />
+      </View>
+    </View>
+    : null)
+
   return (
     <View style={styles.container}>
-      <h1>Basic Calendar</h1>
-      <Calendar onChange={onChange} value={value} />
-      <h2>Add a Task</h2>
-      <>
-        {" "}
-        <StaticTasks />{" "}
-      </>
-      <h2>Events</h2>
-      <Text>Open up App.js to start working on your app!</Text>
+      <View style={styles.calendararea}>
+        <Calendar
+          onDayPress={onDayPress}
+          markedDates={{
+            [selected]: {
+              selected: true,
+              disableTouchEvent: true,
+              selectedColor: 'lightblue',
+              selectedTextColor: 'black',
+            },
+          }}
+        />
+      </View>
+      <View style={styles.buttonwrapper}>
+        <TouchableOpacity onPress={addEventPressHandler}>
+          <Image
+            source={require('./assets/event-button.png')}
+            style={styles.button}
+          />
+        </TouchableOpacity>
+      </View>
       <StatusBar style="auto" />
+      {render_form}
     </View>
   );
 }
-
-class StaticTasks extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      taskname: null,
-      date: null,
-      startTime: null,
-      endTime: null,
-    };
-
-    this.handleInputChange = this.handleInputChange.bind(this);
-  }
-
-  handleInputChange(event) {
-    const target = event.target;
-    const name = target.name;
-    const value = target.value;
-    switch (name) {
-      case "taskname":
-        this.taskname = value;
-        break;
-      case "date":
-        this.date = value;
-        break;
-      case "startTime":
-        this.startTime = value;
-        break;
-      case "endTime":
-        this.endTime = value;
-        break;
-      case "submit":
-        if (
-          this.taskname != undefined &&
-          this.taskname != "" &&
-          this.taskname != null &&
-          this.date != undefined &&
-          this.date != "" &&
-          this.date != null &&
-          this.startTime != undefined &&
-          this.startTime != "" &&
-          this.startTime != null &&
-          this.endTime != undefined &&
-          this.endTime != "" &&
-          this.endTime != null
-        ) {
-          alert("Task has been created");
-          this.taskname = null;
-          this.date = null;
-          this.startTime = null;
-          this.endTime = null;
-          //Add stuff to database here
-          target.type = "reset";
-        } else {
-          alert("You must fill all the forms before creating a task");
-          target.type = "button";
-        }
-    }
-  }
-
-  render() {
-    return (
-      <form onsubmit="return false">
-        <label>
-          Task Name:
-          <input
-            name="taskname"
-            type="text"
-            value={this.tasknameValue}
-            onChange={this.handleInputChange}
-          />
-        </label>
-        <br />
-        Date:
-        <label>
-          <input name="date" type="date" onChange={this.handleInputChange} />
-        </label>
-        <br />
-        <label>
-          Start Time:
-          <input
-            name="startTime"
-            type="time"
-            onChange={this.handleInputChange}
-          />
-        </label>
-        <br />
-        <label>
-          End Time:
-          <input name="endTime" type="time" onChange={this.handleInputChange} />
-        </label>
-        <br />
-        <label>
-          <input
-            name="reset"
-            type="reset"
-            value="Reset form"
-            onClick={this.handleInputChange}
-          />
-        </label>
-        <br />
-        <label>
-          <input
-            name="submit"
-            type="button"
-            value="Add static task"
-            onClick={this.handleInputChange}
-          />
-        </label>
-      </form>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
