@@ -1,5 +1,18 @@
 # Untitled-Scheduling-Project
 
+## Installation:
+
+After cloning, simply run the command
+```bash
+npm install
+```
+to install the required modules.
+
+To run the program, use
+```bash
+npm start
+```
+
 ## Description of the project:
 
 At its core, this project aims to create an interactive task management system. It aims to tackle several issues starting with the fact that adding items to digital calendars is not usually available, rarely convenient, and entirely unpopular. Additionally, it may prove to be impractical for many who are unable to follow their schedules.
