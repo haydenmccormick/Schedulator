@@ -1,18 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
+import { Text, Button, View, TouchableOpacity, Image } from 'react-native';
 import { Calendar } from 'react-native-calendars'
+import * as SQLite from 'expo-sqlite';
 
 import { Form, Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
-
+  const db = SQLite.openDatabase("db.db");
 
 // Main render method
 export default function App() {
   const d = new Date();
   const month = d.getMonth() + 1;
   const string = d.getFullYear() + '-' + month + '-' + d.getDate();
-  const [selected, setSelected] = useState(string);
+    const [selected, setSelected] = useState(string);
+    const [tasks, setTasks] = useState("");
   const onDayPress = (day) => {
     setSelected(day.dateString);
     alert(day.dateString);
@@ -29,33 +31,46 @@ export default function App() {
       {/* So the user can click outside of form box to cancel*/}
       <TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
       <View style={styles.formcontainer}>
-        <Form />
+	<Form />
       </View>
     </View>
     : null)
-
+    function showTasks() {
+	//alert(1);
+	db.transaction(tx => {
+	    //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
+	    tx.executeSql(
+		"select * from tasks",
+		[],
+		(_, { rows: { _array } }) => setTasks(JSON.stringify(_array))
+	    );
+	});
+	//return 1;
+    }
   return (
     <View style={styles.container}>
       <View style={styles.calendararea}>
-        <Calendar
-          onDayPress={onDayPress}
-          markedDates={{
-            [selected]: {
-              selected: true,
-              disableTouchEvent: true,
-              selectedColor: 'lightblue',
-              selectedTextColor: 'black',
-            },
-          }}
-        />
+	<Calendar
+	  onDayPress={onDayPress}
+	  markedDates={{
+	    [selected]: {
+	      selected: true,
+	      disableTouchEvent: true,
+	      selectedColor: 'lightblue',
+	      selectedTextColor: 'black',
+	    },
+	  }}
+	  />
+	  <Button title="Click to show tasks" onPress={() => showTasks()} />
+	  <Text>{tasks}</Text>
       </View>
       <View style={styles.buttonwrapper}>
-        <TouchableOpacity onPress={addEventPressHandler}>
-          <Image
-            source={require('./assets/event-button.png')}
-            style={styles.button}
-          />
-        </TouchableOpacity>
+	<TouchableOpacity onPress={addEventPressHandler}>
+	  <Image
+	    source={require('./assets/event-button.png')}
+	    style={styles.button}
+	  />
+	</TouchableOpacity>
       </View>
       <StatusBar style="auto" />
       {render_form}
