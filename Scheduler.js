@@ -9,6 +9,18 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase("db.db");
 
+function showTasks() {
+    db.transaction(tx => {
+	//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
+	tx.executeSql(
+	    "select * from tasks",
+	    [],
+	    (_, { rows: { _array } }) => setTasks(_array)
+	);
+    });
+    setTasks2(JSON.stringify(tasks));
+}
+
 class Event {
   constructor(title, start, end, period, deadline, splitable) {
     this.title = title;
