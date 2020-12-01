@@ -56,6 +56,30 @@ export default function App() {
 	setTasks2(JSON.stringify(tasks));
 	//return 1;
     }
+    let tableview;
+    if(tasks != "") {
+	tableview =	  <TableView
+      headers={[
+	{
+	    name:"Taskname",
+	    reference_key:"taskname",
+	},
+	{
+	    name:"Date",
+	    reference_key:"date",
+	},
+	{
+	    name:"Start Time",
+	    reference_key:"startTime",
+	},
+	  {
+	      name:"End Time",
+	      reference_key:"endTime",
+	  },
+      ]}
+      rows={tasks}
+	    />;
+    }
   return (
     <View style={styles.container}>
       <View style={styles.calendararea}>
@@ -72,27 +96,7 @@ export default function App() {
 	  />
 	  <Button title="Click to show tasks" onPress={() => showTasks()} />
 	  <Text>{tasks2}</Text>
-	  <TableView
-      headers={[
-	{
-	    name:"S.no.",
-	    reference_key:"taskname",
-	},
-	{
-	    name:"Name",
-	    reference_key:"date",
-	},
-	{
-	    name:"Age",
-	    reference_key:"startTime",
-	},
-	  {
-	      name:"endTime",
-	      reference_key:"endTime",
-	  },
-      ]}
-      rows={tasks}
-      />
+	  {tableview}
       </View>
       <View style={styles.buttonwrapper}>
 	<TouchableOpacity onPress={addEventPressHandler}>
