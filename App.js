@@ -55,7 +55,7 @@ export default function App() {
     }
     let tableview;
     if(tasks != "") {
-	tableview =	  <TableView
+	tableview =	  <TableView horizontalScroll={true} columnWidth={70}
       headers={[
 	{
 	    name:"Taskname",
@@ -79,7 +79,7 @@ export default function App() {
     }
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.calendararea} horizontal= {false}>
+      <ScrollView style={styles.calendararea}>
 	<Calendar
 	  onDayPress={onDayPress}
 	  markedDates={{
