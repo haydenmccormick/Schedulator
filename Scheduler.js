@@ -1,9 +1,29 @@
 /*
+
 *Note you did not add an earliest start date for dynamics
 staticCalendar is a list of all static events in order
 events is a list of all dynamic events to be done in the future (note that you are removing the completed elemenst from events)
 
 */
+import * as SQLite from "expo-sqlite";
+
+const db = SQLite.openDatabase("db.db");
+
+//Tasks value is a JSON array of the static tasks
+const [staticTasksValue, setStaticTasksValue] = useState("");
+const [dynamicTasksValue, setDynamicTasksValue] = useState("");
+function getTasks() {
+  db.transaction((tx) => {
+    //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
+    tx.executeSql("select * from tasks", [], (_, { rows: { _array } }) =>
+      setStaticTasksValue(_array)
+    );
+    tx.executeSql("select * from dynamicTasks", [], (_, { rows: { _array } }) =>
+      setDynamicTasksValue(_array)
+    );
+  });
+}
+
 class Event {
   constructor(title, start, end, period, deadline, splitable) {
     this.title = title;
@@ -72,90 +92,52 @@ function schedule(staticCalendar, events, usrPref, scheduledCalendar) {
   var init = new Date();
   var currTime = init.getTime();
 
-  //-------------------------------------------------------------
-  if (staticCalendar.length() === 1 && events !== []) {
-    events[0].setStart() = currTime + delay;
-    events[0].setEnd() = events[0].getStart() + events[0].getPeriod();
-    scheduledCalendar = events.slice(0, 0, events[0]);
-    for (var i = 1; i < events.length() - 1; i++) {
-      events[i].getStart() = events[i - 1] + delay;
-      events[i].getEnd() = events[i].getStart() + events[i].getPeriod();
-      scheduledCalendar = events.slice(i, 0, events[i]);
-    }
-  } //if static is empty, add things in events recursively after setting start and end times
-  //-------------------------------------------------------------
-  else if (staticCalendar.length() > 1) {
-    var statCounter = 0;
-    var timer;
-    while (staticCalendar[statCounter].getStart() < currTime) {
-      statCounter++;
-    }
-    statCounter--; //point back at last thing that started before current time
+  var statCounter = 0;
+  var eventCounter = 0;
+  var timer;
+  while (staticCalendar[statCounter].getStart() < currTime) {
+    statCounter++;
+  }
+  statCounter--; //point back at last thing that started before current time
 
-    if (staticCalendar.length() === 1) {
-      timer = currTime;
-      statCounter = -1; //if theres just the tail, point backwards acting like theres something there and BE CAREFUL TO ACCESS THIS
-    } else timer = max(staticCalendar[statCounter].getEnd(), currTime);
+  if (statCounter === -1) {
+    //if staticCal was empty or if first static eveent is after current time whic no events before
+    timer = currTime;
+  } else timer = max(staticCalendar[statCounter].getEnd(), currTime);
 
-    var eventCounter = 0;
+  while (
+    statCounter < staticCalendar.length() - 1 ||
+    eventCounter < events.length() - 1
+  ) {
     while (
       eventCounter < events.length() - 1 &&
       staticCalendar[statCounter + 1].getStart() - timer >
         events[eventCounter].getPeriod() + 2 * delay
     ) {
       var event = new Event(
-        events[eventCounter].title,
+        event[eventCounter].title,
         timer + delay,
-        timer + delay + events[eventCounter].getPeriod(),
-        events[eventCounter].period,
-        events[eventCounter].deadline,
-        events[eventCounter].splitable
+        timer + delay + event[eventCounter].getPeriod(),
+        event[eventCounter].period,
+        event[eventCounter].deadline,
+        event[eventCounter].splitable
       );
-      scheduledCalendar.splice(eventCounter, 0, event);
+      scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
       eventCounter++;
-      timer += event.getEnd();
-    } //added every possible dynamic event to schedule before first static
+      timer = event.getEnd();
+    }
 
-    while (
-      statCounter < staticCalendar.length() - 1 &&
-      eventCounter < events.length() - 1
-    ) {
-      if (
-        staticCalendar[statCounter].getStart() < events[eventCounter].getStart()
-      ) {
-        var event = new Event(
-          staticCalendar[statCounter].title,
-          staticCalendar[statCounter].start,
-          staticCalendar[statCounter].end,
-          staticCalendar[statCounter].period,
-          staticCalendar[statCounter].deadline,
-          staticCalendar[statCounter].splitable
-        );
-        scheduledCalendar.splice(
-          scheduledCalendar.length(),
-          0,
-          staticCalendar[statCounter]
-        );
-      } else {
-        //fill between timer and the next static event
-        while (
-          eventCounter < events.length() - 1 &&
-          staticCalendar[statCounter + 1].getStart() - timer >
-            events[eventCounter].getPeriod() + 2 * delay
-        ) {
-          var event = new Event(
-            event[eventCounter].title,
-            timer + delay,
-            timer + delay + event[eventCounter].getPeriod(),
-            event[eventCounter].period,
-            event[eventCounter].deadline,
-            event[eventCounter].splitable
-          );
-          scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
-          eventCounter++;
-          timer += event.getEnd();
-        }
-      }
+    if (statCounter < staticCalendar.length() - 1) {
+      var event = new Event(
+        staticCalendar[statCounter].title,
+        staticCalendar[statCounter].start,
+        staticCalendar[statCounter].end,
+        staticCalendar[statCounter].period,
+        staticCalendar[statCounter].deadline,
+        staticCalendar[statCounter].splitable
+      );
+      timer = event.getEnd();
+      scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
     }
   }
 
@@ -163,3 +145,85 @@ function schedule(staticCalendar, events, usrPref, scheduledCalendar) {
   return unmetDeadlines;
   //return a list of all deadlines not met
 }
+//}]]]]]]]]]]]]]]]]]]]]]]]]]]}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+// //-------------------------------------------------------------
+// if (staticCalendar.length() === 1 && events !== []) {
+//   events[0].setStart() = currTime + delay;
+//   events[0].setEnd() = events[0].getStart() + events[0].getPeriod();
+//   scheduledCalendar = events.slice(0, 0, events[0]);
+//   for (var i = 1; i < events.length() - 1; i++) {
+//     events[i].getStart() = events[i - 1] + delay;
+//     events[i].getEnd() = events[i].getStart() + events[i].getPeriod();
+//     scheduledCalendar = events.slice(i, 0, events[i]);
+//   }
+// } //if static is empty, add things in events recursively after setting start and end times
+//-------------------------------------------------------------
+// else if (staticCalendar.length() > 1) {
+//   var statCounter = 0;
+//   var timer;
+//   while (staticCalendar[statCounter].getStart() < currTime) {
+//     statCounter++;
+//   }
+//   statCounter--; //point back at last thing that started before current time
+
+//   if (staticCalendar.length() === 1) {
+//     timer = currTime;
+//     statCounter = -1; //if theres just the tail, point backwards acting like theres something there and BE CAREFUL TO ACCESS THIS
+//   } else timer = max(staticCalendar[statCounter].getEnd(), currTime);
+
+//   var eventCounter = 0;
+//   while (
+//     eventCounter < events.length() - 1 &&
+//     staticCalendar[statCounter + 1].getStart() - timer >
+//       events[eventCounter].getPeriod() + 2 * delay
+//   ) {
+//     var event = new Event(
+//       events[eventCounter].title,
+//       timer + delay,
+//       timer + delay + events[eventCounter].getPeriod(),
+//       events[eventCounter].period,
+//       events[eventCounter].deadline,
+//       events[eventCounter].splitable
+//     );
+//     scheduledCalendar.splice(eventCounter, 0, event);
+//     eventCounter++;
+//     timer += event.getEnd();
+//   } //added every possible dynamic event to schedule before first static
+
+//   while (
+//     statCounter < staticCalendar.length() - 1 &&
+//     eventCounter < events.length() - 1
+//   ) {
+//     while (
+//       eventCounter < events.length() - 1 &&
+//       staticCalendar[statCounter + 1].getStart() - timer >
+//         events[eventCounter].getPeriod() + 2 * delay
+//     ) {
+//       var event = new Event(
+//         event[eventCounter].title,
+//         timer + delay,
+//         timer + delay + event[eventCounter].getPeriod(),
+//         event[eventCounter].period,
+//         event[eventCounter].deadline,
+//         event[eventCounter].splitable
+//       );
+//       scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
+//       eventCounter++;
+//       timer += event.getEnd();
+//     }
+
+//     var event = new Event(
+//       staticCalendar[statCounter].title,
+//       staticCalendar[statCounter].start,
+//       staticCalendar[statCounter].end,
+//       staticCalendar[statCounter].period,
+//       staticCalendar[statCounter].deadline,
+//       staticCalendar[statCounter].splitable
+//     );
+//     scheduledCalendar.splice(
+//       scheduledCalendar.length(),
+//       0,
+//       staticCalendar[statCounter]
+//     );
+//   }
+// }
