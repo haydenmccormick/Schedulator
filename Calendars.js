@@ -85,7 +85,6 @@ function showTasks() {
 	  }}
 	  />
 	  <Button title="Click to show tasks" onPress={() => showTasks()} />
-
       </View>
 	  <View>{tableview}</View>
       <View style={styles.buttonwrapper}>
