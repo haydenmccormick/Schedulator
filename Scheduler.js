@@ -9,6 +9,8 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase("db.db");
 
+const [tasks, setTasks] = useState("");
+const [tasks2, setTasks2] = useState("");
 function showTasks() {
     db.transaction(tx => {
 	//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
