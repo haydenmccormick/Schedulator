@@ -48,7 +48,7 @@ function showTasks() {
     : null)
     let tableview;
     if(tasks != "") {
-	tableview =	  <TableView horizontalScroll={true} columnWidth={50}
+	tableview =	  <TableView horizontalScroll={true} columnWidth={50} height={150}
       headers={[
 	{
 	    name:"Taskname",
