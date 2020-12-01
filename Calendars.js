@@ -21,17 +21,6 @@ function MonthView() {
 	setSelected(day.dateString);
 	alert(day.dateString);
     };
-    function showTasks() {
-	db.transaction(tx => {
-	    //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
-	    tx.executeSql(
-		"select * from tasks",
-		[],
-		(_, { rows: { _array } }) => setTasks(_array)
-	    );
-	});
-	setTasks2(JSON.stringify(tasks));
-    }
 
     function showDates() {
 	const tempDates={};
@@ -48,6 +37,11 @@ function MonthView() {
 		    setDates(tempDates);
 		}
 	    );
+		tx.executeSql(
+		"select * from tasks",
+		[],
+		(_, { rows: { _array } }) => setTasks(_array)
+	    );
 	});
     }
 
@@ -55,7 +49,6 @@ function MonthView() {
     const [addingEvent, setAddingEvent] = useState(false);
     const addEventPressHandler = () => {
 	showDates();
-	showTasks();
 	setAddingEvent(!addingEvent);
     };
     // Only render a form if the user is adding an event
@@ -93,7 +86,7 @@ function MonthView() {
 	/>;
     }
     else {
-	tableview = <Text>When you add a task, they will be displayed here</Text>
+	tableview = <Text>When you add a task, it will be displayed here</Text>
     }
     return (
 	<View style={styles.container}>
