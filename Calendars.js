@@ -48,7 +48,7 @@ function showTasks() {
     : null)
     let tableview;
     if(tasks != "") {
-	tableview =	  <TableView horizontalScroll={true} columnWidth={70}
+	tableview =	  <TableView horizontalScroll={true} columnWidth={50}
       headers={[
 	{
 	    name:"Taskname",
@@ -85,8 +85,9 @@ function showTasks() {
 	  }}
 	  />
 	  <Button title="Click to show tasks" onPress={() => showTasks()} />
-	  {tableview}
+
       </View>
+	  <View>{tableview}</View>
       <View style={styles.buttonwrapper}>
 	<TouchableOpacity onPress={addEventPressHandler}>
 	  <Image
