@@ -1,24 +1,30 @@
 /*
-I take in a:
-  Calendar: 'Array' containing all static tasks in the timeline
+*Note you did not add an earliest start date for dynamics
+staticCalendar is a list of all static events in order
+events is a list of all dynamic events to be done in the future (note that you are removing the completed elemenst from events)
 
-// You take in an array of events
-****Note you did not add a start date for dynamics
-This function takes in the current schedulee array with an extra element added to it
-The array should hold X's if there is an event scheduled in the part of the array
-that is static: meetings, classes, sleeping schedule, etc.
-This function will return a schedule that satisfies the deadlines of the tasks given
-While meetiong the user's configuration as well as possible (daily work hours,
-    sleeeping on time, low work days, optionnal events)
-Note that events pushed into this function should have a 10 minute beffer attached
 */
+class Event {
+  constructor(title, start, end, period, deadline, splitable) {
+    this.title = title;
+    this.start = start;
+    this.end = end;
+    this.period = period;
+    this.deadline = deadline;
+    this.splitable = splitable;
+  }
+}
 
-/*you need to have a pointer to the even t that is curretly in session. This means that
-each event will need a variable indicating whether it is currently in session. This is so that
-the scheduler can schdule based off current time. This needs to be constantly updated in staticCalendar
-the head pointer of staticCalendar shoul dbe at the current event in session. If the varisable in the
-object says that it is not ciurrently in session then it is in between that and the veent after.
-*/
+class usrPref {
+  constructor(avgLength, maxlength, delaySize) {
+    this.avgLength = avgLength;
+    this.maxlength = maxlength;
+    this.delaySize = delaySize;
+  }
+}
+
+// staticCalendar, events, scheduledCalendar are all arrays of Event
+
 function schedule(staticCalendar, events, usrPref, scheduledCalendar) {
   // note that the staticCalendar shows the blocks taken up by static events
   //events contains a random array of all events
@@ -26,84 +32,128 @@ function schedule(staticCalendar, events, usrPref, scheduledCalendar) {
     a.getDeadline() - b.getDeadline();
   }); //sorts events in ascending order of date
   //note for later, events here sorted so that in the future the cost of the sort is lowered
-
+  var tail = new Event(null, Number.MAX_SAFE_INT, MAX_SAFE_INT, null, null);
+  staticCalendar.splice(events.length(), 0, tail);
+  events.splice(events.length(), 0, tail);
   /*in your config set the buffer period. Default buffer period for events is 15 minutes
   usrPref.maxlength is the maximum amount of time worked and is usually initialized to 90
   usrPref.avgLength is the average time of work before a break and is initialized to 50 minutes*/
-  for (var i = 0; i < events.length(); i++) {
+  for (var i = 0; i < events.length() - 1; i++) {
     if (events[i].splitable() && events[i].getLength() > usrPref.maxlength) {
       var initialPeriod = events[i].getPeriod();
       var nPieces = floor(initialLength / usrPref.avgLength);
       var title = events[i].getTitle();
       var startTime = events[i].getStart();
+      var deadline = events[i].getDeadline();
       var split = events[i].splitable();
-      events[i].getPeriod() = usrPref.maxlength;
-      initialPeriod -= usrPref.maxlength;
-      for (var j = 0; j < nPieces; j++) {
+      events[i].setPeriod() = usrPref.avglength;
+      initialPeriod -= usrPref.avglength; //make an initial piece of avg size
+      for (var j = 1; j < nPieces; j++, i++) {
         var period =
-          floor(initialPeriod / usrPref.avgLength) === 1
+          floor(initialPeriod / usrPref.avgLength) === 1 //set period to avg size until you get to the last chunk and take the whole thing
             ? initialPeriod
             : usrPref.avgLength;
-        let piece = new Event(title, startTime, period, split);
-        events.splice(i + j + 1, 0, piece);
+        initialPeriod -= period;
+        let piece = new Event(
+          title,
+          startTime,
+          startTime + period,
+          period,
+          deadline,
+          split
+        );
+        events.splice(i + j, 0, piece);
       }
     }
   }
   //all events have now been split up into appropriate chunks
 
-  var initCal = new Date();
-  var ci = 0;
-  while (ci + 1 < staticCalendar.length()) {
-    if (
-      (initCal.getTime() >= staticCalendar[ci].getStart() &&
-        initCal.getTime() <= staticCalendar[ci].getEnd()) ||
-      (initCal.getTime() <= staticCalendar[ci + 1].getStart() &&
-        initCal.getTime() >= staticCalendar[ci].getEnd())
-    ) {
-      break;
-    }
-    ci++;
-  }
-
-  // ci===0 ?
-
-  scheduledCalendar = slice(ci);
-  //getting rid of old staticCalendar information now you point to a tasl last/currently in session
   var delay = usrPref.delaySize * 1000 * 60; //convert delay to ms (note you begin scheduel after delay mintes)
-  for (var i = 0; i < events.length(); i++) {
-    //add event by event
-    var period = events[i].getPeriod();
+  var init = new Date();
+  var currTime = init.getTime();
 
-    var eventTime = new Date(); //by default current real time in ms
-    eventTime.setMinutes(15 * round((eventTime.getMinutes() + 1) / 15) - 1); //set eventTime to rounded nearest 15 minutes
-    eventTime.setTime(eventTime.getTime() + delay); //avoid immediately scheduling
+  //-------------------------------------------------------------
+  if (staticCalendar.length() === 1 && events !== []) {
+    events[0].setStart() = currTime + delay;
+    events[0].setEnd() = events[0].getStart() + events[0].getPeriod();
+    scheduledCalendar = events.slice(0, 0, events[0]);
+    for (var i = 1; i < events.length() - 1; i++) {
+      events[i].getStart() = events[i - 1] + delay;
+      events[i].getEnd() = events[i].getStart() + events[i].getPeriod();
+      scheduledCalendar = events.slice(i, 0, events[i]);
+    }
+  } //if static is empty, add things in events recursively after setting start and end times
+  //-------------------------------------------------------------
+  else if (staticCalendar.length() > 1) {
+    var statCounter = 0;
+    var timer;
+    while (staticCalendar[statCounter].getStart() < currTime) {
+      statCounter++;
+    }
+    statCounter--; //point back at last thing that started before current time
 
-    if (staticCalendar === []) {
-      events[i].setStart(eventTime.getTime()); //set start time to the given val
-      events[i].setEnd(eventTime.getTime() + events[i].getPeriod());
-      scheduledCalendar = staticCalendar.slice(0, 0, events[i]);
-    } else if (staticCalendar.length() === 1) {
+    if (staticCalendar.length() === 1) {
+      timer = currTime;
+      statCounter = -1; //if theres just the tail, point backwards acting like theres something there and BE CAREFUL TO ACCESS THIS
+    } else timer = max(staticCalendar[statCounter].getEnd(), currTime);
+
+    var eventCounter = 0;
+    while (
+      eventCounter < events.length() - 1 &&
+      staticCalendar[statCounter + 1].getStart() - timer >
+        events[eventCounter].getPeriod() + 2 * delay
+    ) {
+      var event = new Event(
+        events[eventCounter].title,
+        timer + delay,
+        timer + delay + events[eventCounter].getPeriod(),
+        events[eventCounter].period,
+        events[eventCounter].deadline,
+        events[eventCounter].splitable
+      );
+      scheduledCalendar.splice(eventCounter, 0, event);
+      eventCounter++;
+      timer += event.getEnd();
+    } //added every possible dynamic event to schedule before first static
+
+    while (
+      statCounter < staticCalendar.length() - 1 &&
+      eventCounter < events.length() - 1
+    ) {
       if (
-        eventTime.getTime() + events[i].getPeriod() >
-        staticCalendar[0].getStart() - delay
+        staticCalendar[statCounter].getStart() < events[eventCounter].getStart()
       ) {
-        events[i].setStart(staticCalendar[0].getEnd() + delay); //set start time to the given val
-        events[i].setEnd(eventTime.getTime() + events[i].getPeriod());
-        scheduledCalendar = staticCalendar.slice(1, 0, events[i]);
+        var event = new Event(
+          staticCalendar[statCounter].title,
+          staticCalendar[statCounter].start,
+          staticCalendar[statCounter].end,
+          staticCalendar[statCounter].period,
+          staticCalendar[statCounter].deadline,
+          staticCalendar[statCounter].splitable
+        );
+        scheduledCalendar.splice(
+          scheduledCalendar.length(),
+          0,
+          staticCalendar[statCounter]
+        );
       } else {
-        events[i].setStart(eventTime.getTime()); //set start time to the given val
-        events[i].setEnd(eventTime.getTime() + events[i].getPeriod());
-        scheduledCalendar = staticCalendar.slice(0, 0, events[i]);
-      }
-    } else {
-      for (var j = 0; j + 1 < staticCalendar.length(); j++) {
-        if (
-          events[i].getPeriod() + 2 * delay <
-          staticCalendar[j + 1].getStart() - staticCalendar[j].getEnd()
+        //fill between timer and the next static event
+        while (
+          eventCounter < events.length() - 1 &&
+          staticCalendar[statCounter + 1].getStart() - timer >
+            events[eventCounter].getPeriod() + 2 * delay
         ) {
-          events[i].setStart(staticCalendar[j].getEnd() + delay); //set start time to the given val
-          events[i].setEnd(eventTime.getTime() + events[i].getPeriod());
-          scheduledCalendar = staticCalendar.slice(j + 1, 0, events[i]);
+          var event = new Event(
+            event[eventCounter].title,
+            timer + delay,
+            timer + delay + event[eventCounter].getPeriod(),
+            event[eventCounter].period,
+            event[eventCounter].deadline,
+            event[eventCounter].splitable
+          );
+          scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
+          eventCounter++;
+          timer += event.getEnd();
         }
       }
     }
@@ -113,13 +163,3 @@ function schedule(staticCalendar, events, usrPref, scheduledCalendar) {
   return unmetDeadlines;
   //return a list of all deadlines not met
 }
-
-//unnecessary as this is done using the get time method
-// function dateToNum(date) {
-//   // date here is a struct. We convert this to a number
-//   var time = date.minute;
-//   time += date.hour * 60;
-//   time += date.day * 24 * 60;
-//   time += date.year * 24 * 60 * 365;
-//   return time; //ret7urns time in minutes
-// }
