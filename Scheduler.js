@@ -5,6 +5,9 @@ staticCalendar is a list of all static events in order
 events is a list of all dynamic events to be done in the future (note that you are removing the completed elemenst from events)
 
 */
+import * as SQLite from 'expo-sqlite';
+
+const db = SQLite.openDatabase("db.db");
 
 class Event {
   constructor(title, start, end, period, deadline, splitable) {
@@ -51,20 +54,20 @@ function schedule(staticCalendar, events, usrPref, scheduledCalendar) {
       events[i].setPeriod() = usrPref.avglength;
       initialPeriod -= usrPref.avglength; //make an initial piece of avg size
       for (var j = 1; j < nPieces; j++, i++) {
-        var period =
-          floor(initialPeriod / usrPref.avgLength) === 1 //set period to avg size until you get to the last chunk and take the whole thing
-            ? initialPeriod
-            : usrPref.avgLength;
-        initialPeriod -= period;
-        let piece = new Event(
-          title,
-          startTime,
-          startTime + period,
-          period,
-          deadline,
-          split
-        );
-        events.splice(i + j, 0, piece);
+	var period =
+	  floor(initialPeriod / usrPref.avgLength) === 1 //set period to avg size until you get to the last chunk and take the whole thing
+	    ? initialPeriod
+	    : usrPref.avgLength;
+	initialPeriod -= period;
+	let piece = new Event(
+	  title,
+	  startTime,
+	  startTime + period,
+	  period,
+	  deadline,
+	  split
+	);
+	events.splice(i + j, 0, piece);
       }
     }
   }
@@ -103,15 +106,15 @@ function schedule(staticCalendar, events, usrPref, scheduledCalendar) {
     while (
       eventCounter < events.length() - 1 &&
       staticCalendar[statCounter + 1].getStart() - timer >
-        events[eventCounter].getPeriod() + 2 * delay
+	events[eventCounter].getPeriod() + 2 * delay
     ) {
       var event = new Event(
-        events[eventCounter].title,
-        timer + delay,
-        timer + delay + events[eventCounter].getPeriod(),
-        events[eventCounter].period,
-        events[eventCounter].deadline,
-        events[eventCounter].splitable
+	events[eventCounter].title,
+	timer + delay,
+	timer + delay + events[eventCounter].getPeriod(),
+	events[eventCounter].period,
+	events[eventCounter].deadline,
+	events[eventCounter].splitable
       );
       scheduledCalendar.splice(eventCounter, 0, event);
       eventCounter++;
@@ -123,35 +126,35 @@ function schedule(staticCalendar, events, usrPref, scheduledCalendar) {
       eventCounter < events.length() - 1
     ) {
       while (
-        eventCounter < events.length() - 1 &&
-        staticCalendar[statCounter + 1].getStart() - timer >
-          events[eventCounter].getPeriod() + 2 * delay
+	eventCounter < events.length() - 1 &&
+	staticCalendar[statCounter + 1].getStart() - timer >
+	  events[eventCounter].getPeriod() + 2 * delay
       ) {
-        var event = new Event(
-          event[eventCounter].title,
-          timer + delay,
-          timer + delay + event[eventCounter].getPeriod(),
-          event[eventCounter].period,
-          event[eventCounter].deadline,
-          event[eventCounter].splitable
-        );
-        scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
-        eventCounter++;
-        timer += event.getEnd();
+	var event = new Event(
+	  event[eventCounter].title,
+	  timer + delay,
+	  timer + delay + event[eventCounter].getPeriod(),
+	  event[eventCounter].period,
+	  event[eventCounter].deadline,
+	  event[eventCounter].splitable
+	);
+	scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
+	eventCounter++;
+	timer += event.getEnd();
       }
 
       var event = new Event(
-        staticCalendar[statCounter].title,
-        staticCalendar[statCounter].start,
-        staticCalendar[statCounter].end,
-        staticCalendar[statCounter].period,
-        staticCalendar[statCounter].deadline,
-        staticCalendar[statCounter].splitable
+	staticCalendar[statCounter].title,
+	staticCalendar[statCounter].start,
+	staticCalendar[statCounter].end,
+	staticCalendar[statCounter].period,
+	staticCalendar[statCounter].deadline,
+	staticCalendar[statCounter].splitable
       );
       scheduledCalendar.splice(
-        scheduledCalendar.length(),
-        0,
-        staticCalendar[statCounter]
+	scheduledCalendar.length(),
+	0,
+	staticCalendar[statCounter]
       );
     }
   }
