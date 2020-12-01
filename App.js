@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { Table, Text, Button, View, TouchableOpacity, Image } from 'react-native';
+import { Table, Text, Button, View, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars'
 import * as SQLite from 'expo-sqlite';
 import {TableView} from "react-native-responsive-table"
@@ -78,8 +78,8 @@ export default function App() {
 	    />;
     }
   return (
-    <View style={styles.container}>
-      <View style={styles.calendararea}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.calendararea} horizontal= {false}>
 	<Calendar
 	  onDayPress={onDayPress}
 	  markedDates={{
@@ -92,9 +92,8 @@ export default function App() {
 	  }}
 	  />
 	  <Button title="Click to show tasks" onPress={() => showTasks()} />
-	  <Text>{tasks2}</Text>
 	  {tableview}
-      </View>
+      </ScrollView>
       <View style={styles.buttonwrapper}>
 	<TouchableOpacity onPress={addEventPressHandler}>
 	  <Image
@@ -105,6 +104,6 @@ export default function App() {
       </View>
       <StatusBar style="auto" />
       {render_form}
-    </View>
+    </SafeAreaView>
   );
 }
