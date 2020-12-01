@@ -63,7 +63,8 @@ function MonthView() {
 	: null)
     let tableview;
     if (tasks != "") {
-	tableview = <TableView horizontalScroll={true} columnWidth={50} height={150}
+	//horizontalScroll={true} columnWidth={50} height={150}
+	tableview = <TableView
 	    headers={[
 		{
 		    name: "Taskname",
@@ -96,7 +97,7 @@ function MonthView() {
 		    markedDates={dates}
 		/>
 	    </View>
-	    <View>{tableview}</View>
+	    <View style={{height:100}}>{tableview}</View>
 	    <View style={styles.buttonwrapper}>
 		<TouchableOpacity onPress={addEventPressHandler}>
 		    <Image
