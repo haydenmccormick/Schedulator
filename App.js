@@ -3,9 +3,15 @@ import React, { useState } from 'react';
 import { Table, Text, Button, View, TouchableOpacity, Image } from 'react-native';
 import { Calendar } from 'react-native-calendars'
 import * as SQLite from 'expo-sqlite';
+import {TableView} from "react-native-responsive-table"
+import * as FileSystem from 'expo-file-system';
 
 import { Form, Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
+FileSystem.downloadAsync(
+    Expo.Asset.fromModule(require('./db.db')).uri,
+    `${FileSystem.documentDirectory}SQLite/db.db`
+  );
   const db = SQLite.openDatabase("db.db");
 
 // Main render method
@@ -43,11 +49,11 @@ export default function App() {
 	    tx.executeSql(
 		"select * from tasks",
 		[],
-		(_, { rows: { _array } }) => setTasks(JSON.stringify(_array))
+		(_, { rows: { _array } }) => setTasks(_array)
 	    );
 	});
-	let output = Math.random() + 100;
-	setTasks2(tasks);
+	//let output = Math.random() + 100;
+	setTasks2(JSON.stringify(tasks));
 	//return 1;
     }
   return (
@@ -66,7 +72,27 @@ export default function App() {
 	  />
 	  <Button title="Click to show tasks" onPress={() => showTasks()} />
 	  <Text>{tasks2}</Text>
-
+	  <TableView
+      headers={[
+	{
+	    name:"S.no.",
+	    reference_key:"taskname",
+	},
+	{
+	    name:"Name",
+	    reference_key:"date",
+	},
+	{
+	    name:"Age",
+	    reference_key:"startTime",
+	},
+	  {
+	      name:"endTime",
+	      reference_key:"endTime",
+	  },
+      ]}
+      rows={tasks}
+      />
       </View>
       <View style={styles.buttonwrapper}>
 	<TouchableOpacity onPress={addEventPressHandler}>
