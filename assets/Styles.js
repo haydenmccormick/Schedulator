@@ -6,6 +6,7 @@ export default StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       alignContent: 'center',
+      backgroundColor: 'white',
     },
     calendararea: {
       flex: 1.5,
