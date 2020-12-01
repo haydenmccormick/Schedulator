@@ -21,7 +21,7 @@ function getTasks() {
 	    (_, { rows: { _array } }) => setStaticTasksValue(_array)
 	);
 	tx.executeSql(
-	    "select * from tasks",
+	    "select * from dynamicTasks",
 	    [],
 	    (_, { rows: { _array } }) => setDynamicTasksValue(_array)
 	);
