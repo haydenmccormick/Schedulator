@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text, Button } from 'react-native';
+import { View, TouchableOpacity, Image, Text, Button, SafeAreaView, ScrollView } from 'react-native';
 import { Calendar, Agenda } from 'react-native-calendars'
 import {TableView} from "react-native-responsive-table"
 import { Form, Dynamic } from './EventForm.js'
@@ -103,7 +103,8 @@ function showTasks() {
 
 function DayView() {
     return (
-	<Agenda />
+	    <Agenda />
+
     );
 }
 
