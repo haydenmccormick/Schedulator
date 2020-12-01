@@ -43,7 +43,6 @@ export default function App() {
     </View>
     : null)
     function showTasks() {
-	//alert(1);
 	db.transaction(tx => {
 	    //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
 	    tx.executeSql(
@@ -52,9 +51,7 @@ export default function App() {
 		(_, { rows: { _array } }) => setTasks(_array)
 	    );
 	});
-	//let output = Math.random() + 100;
 	setTasks2(JSON.stringify(tasks));
-	//return 1;
     }
     let tableview;
     if(tasks != "") {
