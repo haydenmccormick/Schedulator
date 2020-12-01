@@ -9,18 +9,23 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase("db.db");
 
-const [tasks, setTasks] = useState("");
-const [tasks2, setTasks2] = useState("");
-function showTasks() {
+//Tasks value is a JSON array of the static tasks
+const [staticTasksValue, setStaticTasksValue] = useState("");
+const [dynamicTasksValue, setDynamicTasksValue] = useState("");
+function getTasks() {
     db.transaction(tx => {
 	//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
 	tx.executeSql(
 	    "select * from tasks",
 	    [],
-	    (_, { rows: { _array } }) => setTasks(_array)
+	    (_, { rows: { _array } }) => setStaticTasksValue(_array)
+	);
+	tx.executeSql(
+	    "select * from tasks",
+	    [],
+	    (_, { rows: { _array } }) => setDynamicTasksValue(_array)
 	);
     });
-    setTasks2(JSON.stringify(tasks));
 }
 
 class Event {
