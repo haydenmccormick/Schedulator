@@ -69,12 +69,13 @@ const styles = StyleSheet.create({
   eventcontainer: {
     backgroundColor: 'white',
     alignSelf: "center",
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
     width: '95%',
+    minHeight: 100,
     marginVertical: 10,
     marginHorizontal: 10,
-    paddingVertical: 20,
-    paddingHorizontal: 15,
+    
   },
   emptytext: {
     fontFamily: 'Roboto_100Thin',
@@ -91,6 +92,14 @@ const styles = StyleSheet.create({
   eventname: {
     marginLeft: 30,
     alignSelf: 'center',
+  },
+  icon: {
+    width: 25,
+    height: 25,
+  },
+  staticevent: {
+    backgroundColor: '#70d3f4',
+    width: 7,
   },
 });
 

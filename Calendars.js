@@ -112,12 +112,8 @@ function DayView() {
 	function event(item) {
 		return (
 			<View style={styles.eventcontainer}>
+				<View style={styles.staticevent} />
 				<View style={styles.eventdate}>
-					<Text style={styles.eventdate}>
-						{item.startTime}{"\n"}
-						-{"\n"}
-						{item.endTime}
-					</Text>
 					<Text style={styles.eventname}>
 						{item.name}
 					</Text>

@@ -4,7 +4,7 @@ import { View, TouchableOpacity, Image, Text, Button, SafeAreaView, ScrollView }
 import { Calendar, Agenda } from 'react-native-calendars'
 import { TableView } from "react-native-responsive-table"
 import { Form, Dynamic } from './EventForm.js'
-import { DeleteStaticTasks } from './DeleteForm.js'
+import { DeleteDynamicTasks } from './DeleteForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
 
@@ -17,7 +17,7 @@ export default function TaskList() {
 	const tempDates={};
 	db.transaction(tx => {
 		tx.executeSql(
-		"select * from tasks",
+		"select * from dynamicTasks",
 		[],
 		(_, { rows: { _array } }) => setTasks(_array)
 	    );
@@ -36,7 +36,7 @@ export default function TaskList() {
 	    {/* So the user can click outside of form box to cancel*/}
 	    <TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
 	    <View style={styles.formcontainer}>
-		<Form retFunc={addEventPressHandler}/>
+		<Dynamic retFunc={addEventPressHandler}/>
 	    </View>
 	</View>
 	: null)
@@ -54,12 +54,16 @@ export default function TaskList() {
 		    reference_key: "date",
 		},
 		{
-		    name: "Start Time",
-		    reference_key: "startTime",
-		},
-		{
 		    name: "End Time",
 		    reference_key: "endTime",
+		},
+		{
+		    name: "Period",
+		    reference_key: "period",
+		},
+		{
+		    name: "Splittable",
+		    reference_key: "split",
 		},
 	    ]}
 	    rows={tasks}
