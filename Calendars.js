@@ -65,6 +65,26 @@ function DayView() {
 							tempTasks[results.rows.item(i).date] = [newTask];
 						}
 					}
+				}
+			);
+			tx.executeSql(
+				"select * from dynamictasks",
+				[],
+				(tx, results) => {
+					for (let i = 0; i < results.rows.length; i++) {
+						newTask = {
+							name: results.rows.item(i).taskname,
+							startTime: "Dynamic",
+							endTime: results.rows.item(i).endTime
+						};
+						console.log(newTask);
+						if (tempTasks[results.rows.item(i).date]) {
+							tempTasks[results.rows.item(i).date].push(newTask);
+						}
+						else {
+							tempTasks[results.rows.item(i).date] = [newTask];
+						}
+					}
 					setTaskEntries(tempTasks);
 				}
 			);
@@ -110,9 +130,14 @@ function DayView() {
 	)
 
 	function event(item) {
+		let renderbar;
+		if (item.startTime == 'Dynamic')
+			renderbar = styles.dynamicevent;
+		else
+			renderbar = styles.staticevent;
 		return (
 			<View style={styles.eventcontainer}>
-				<View style={styles.staticevent} />
+				<View style={renderbar} />
 				<View style={styles.eventdate}>
 					<Text style={styles.eventname}>
 						{item.name}
