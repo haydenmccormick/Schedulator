@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native"
 
-export default StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     position: "absolute",
     top: 0, bottom: 0, left: 0, right: 0,
@@ -69,16 +69,29 @@ export default StyleSheet.create({
   eventcontainer: {
     backgroundColor: 'white',
     alignSelf: "center",
+    justifyContent: 'center',
     width: '95%',
     marginVertical: 10,
     marginHorizontal: 10,
-    paddingVertical: 40,
+    paddingVertical: 20,
     paddingHorizontal: 15,
   },
   emptytext: {
     fontFamily: 'Roboto_100Thin',
   },
   eventtext: {
-    fontFamily: 'Roboto_300Light'
+    fontFamily: 'Roboto_300Light',
+  },
+  datetext: {
+    textAlign: 'center',
+  },
+  eventdate: {
+    flexDirection: 'row',
+  },
+  eventname: {
+    marginLeft: 30,
+    alignSelf: 'center',
   },
 });
+
+export default styles;

@@ -5,17 +5,18 @@ import { Agenda } from 'react-native-calendars'
 import { Form, Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
-import { useFonts, Roboto_300Light, Roboto_100Thin } from '@expo-google-fonts/roboto';
+import { useFonts, Roboto_100Thin, Roboto_300Light } from '@expo-google-fonts/roboto';
+import { AppLoading } from 'expo';
 
 const db = SQLite.openDatabase("db.db");
 
 function DayView() {
-	useFonts({ Roboto_300Light, Roboto_100Thin });
+
 	const d = new Date();
 	const month = d.getMonth() + 1;
 	const string = d.getFullYear() + '-' + month + '-' + d.getDate();
 	const [selected, setSelected] = useState(string);
-	const [taskEntries, setTaskEntries] = useState("");
+	const [taskEntries, setTaskEntries] = useState([{}]);
 	const [dates, setDates] = useState([{}]);
 	const onDayPress = (day) => {
 		setSelected(day.dateString);
@@ -40,27 +41,35 @@ function DayView() {
 		});
 	}
 
-// Generates an array of events and passes it to tasks
+	// Generates an array of events and passes it to tasks
 
-function findTasks() {
-	const tempTasks = {};
-	db.transaction(tx => {
-		//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
-		tx.executeSql(
-			"select * from tasks",
-			[],
-			(tx, results) => {
-				for (let i = 0; i < results.rows.length; i++) {
-					if (tempTasks[results.rows.item(i).date])
-						tempTasks[results.rows.item(i).date].push({name: results.rows.item(i).taskname});
-					else
-						tempTasks[results.rows.item(i).date] = [{name: results.rows.item(i).taskname}];
+	function findTasks() {
+		const tempTasks = {};
+		db.transaction(tx => {
+			//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
+			tx.executeSql(
+				"select * from tasks",
+				[],
+				(tx, results) => {
+					for (let i = 0; i < results.rows.length; i++) {
+						newTask = {
+							name: results.rows.item(i).taskname,
+							startTime: results.rows.item(i).startTime,
+							endTime: results.rows.item(i).endTime
+						};
+						console.log(newTask);
+						if (tempTasks[results.rows.item(i).date]) {
+							tempTasks[results.rows.item(i).date].push(newTask);
+						}
+						else {
+							tempTasks[results.rows.item(i).date] = [newTask];
+						}
+					}
+					setTaskEntries(tempTasks);
 				}
-				setTaskEntries(tempTasks);
-			}
-		);
-	});
-}
+			);
+		});
+	}
 
 
 	/***** Executed on "Add" button press, renders an EventForm *****/
@@ -68,7 +77,6 @@ function findTasks() {
 	const addEventPressHandler = () => {
 		findDates();
 		findTasks();
-		console.log(taskEntries);
 		setAddingEvent(!addingEvent);
 	};
 	// Only render a form if the user is adding an event
@@ -82,6 +90,16 @@ function findTasks() {
 		</View>
 		: null)
 
+	// Load in expo google fonts
+	let [fontsLoaded] = useFonts({
+		Roboto_100Thin,
+		Roboto_300Light
+	});
+	// If it's not loaded in time, make the user wait
+	if (!fontsLoaded) {
+		return <AppLoading />;
+	}
+
 	// Displayed when no events are planned for a given day
 	const emptyday = (
 		<View style={styles.eventcontainer}>
@@ -94,9 +112,16 @@ function findTasks() {
 	function event(item) {
 		return (
 			<View style={styles.eventcontainer}>
-				<Text style={styles.eventtext}>
-					{item.name}
-			</Text>
+				<View style={styles.eventdate}>
+					<Text style={styles.eventdate}>
+						{item.startTime}{"\n"}
+						-{"\n"}
+						{item.endTime}
+					</Text>
+					<Text style={styles.eventname}>
+						{item.name}
+					</Text>
+				</View>
 			</View>
 		)
 	}
