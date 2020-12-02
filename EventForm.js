@@ -47,7 +47,7 @@ function Form(props) {
 		(_, { rows: { _array } }) => alert(JSON.stringify(_array))
 	    );
 	});
-        props.retFunc();
+	props.retFunc();
     }
     let button;
     if (check()) {

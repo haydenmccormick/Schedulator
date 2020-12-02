@@ -16,7 +16,7 @@ export default function TaskList() {
 	const tempDates={};
 	db.transaction(tx => {
 		tx.executeSql(
-		"select * from tasks",
+		"select * from dynamicTasks",
 		[],
 		(_, { rows: { _array } }) => setTasks(_array)
 	    );
@@ -35,7 +35,7 @@ export default function TaskList() {
 	    {/* So the user can click outside of form box to cancel*/}
 	    <TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
 	    <View style={styles.formcontainer}>
-		<Form retFunc={addEventPressHandler}/>
+		<Dynamic retFunc={addEventPressHandler}/>
 	    </View>
 	</View>
 	: null)
