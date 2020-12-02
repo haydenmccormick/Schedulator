@@ -1,8 +1,9 @@
-import { View, Text } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 import styles from './assets/Styles';
 import * as SQLite from 'expo-sqlite';
 import { TableView } from "react-native-responsive-table"
 import React, { useState } from 'react';
+import RadioButton from "react-native-animated-radio-button";
 
 const db = SQLite.openDatabase("db.db");
 
@@ -22,7 +23,8 @@ export default function TaskList() {
 	let tableview;
     if (tasks != "") {
 	//horizontalScroll={true} columnWidth={50} height={150}
-	tableview = <TableView
+	tableview = <TableView width={Math.round(Dimensions.get('window').width)} horizontalScroll={true}
+	columnWidth={Math.round(Dimensions.get('window').width)/5}
 	    headers={[
 		{
 		    name: "Taskname",
@@ -47,11 +49,12 @@ export default function TaskList() {
     else {
 	tableview = <Text>When you add a task, it will be displayed here</Text>
     }
+    //Change the style for the button
     return (
 	    <View style={{padding: 30}}>
-	    <Text>
 	    {tableview}
-	    </Text>
+	    <RadioButton disableText={true} disableBuiltinStateManagement={true} onPress={showTasks}
+/>
 	    </View>
     );
 }
