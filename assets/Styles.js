@@ -69,12 +69,16 @@ export default StyleSheet.create({
   eventcontainer: {
     backgroundColor: 'white',
     alignSelf: "center",
+    width: '95%',
     marginVertical: 10,
     marginHorizontal: 10,
     paddingVertical: 40,
     paddingHorizontal: 15,
   },
-  eventtext: {
+  emptytext: {
     fontFamily: 'Roboto_100Thin',
+  },
+  eventtext: {
+    fontFamily: 'Roboto_300Light'
   },
 });
