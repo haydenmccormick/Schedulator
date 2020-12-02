@@ -35,7 +35,7 @@ export default function TaskList() {
 	    {/* So the user can click outside of form box to cancel*/}
 	    <TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
 	    <View style={styles.formcontainer}>
-		<Dynamic retFunc={addEventPressHandler}/>
+		<Form retFunc={addEventPressHandler}/>
 	    </View>
 	</View>
 	: null)
