@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TextInput, Button, ScrollView } from 'react-native';
+import { Text, View, TextInput, Button, ScrollView, CheckBox } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import TimePicker from 'react-native-simple-time-picker';
 import styles from "./assets/Styles.js"
