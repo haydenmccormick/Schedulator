@@ -69,20 +69,16 @@ function DeleteDynamicTasks(props) {
 	alert("Fill in the taskname to remove the task");
     }
     function submit() {
-	/*
-	let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' + Minutes2 + "')";
-	//Add stuff to database
-	//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
+	  const values = "'" +input + "'";
 	db.transaction(tx => {
-	    tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
+	    tx.executeSql("delete from dynamicTasks where taskname =" + values, []);
 	    tx.executeSql(
 		"select * from tasks",
 		[],
 		(_, { rows: { _array } }) => alert(JSON.stringify(_array))
 	    );
 	});
-	*/
-	alert(1);
+	//alert(1);
 	props.retFunc();
     }
     let button;
