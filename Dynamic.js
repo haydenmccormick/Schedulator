@@ -53,12 +53,12 @@ export default function TaskList() {
 		    reference_key: "date",
 		},
 		{
-		    name: "Start Time",
-		    reference_key: "startTime",
-		},
-		{
 		    name: "End Time",
 		    reference_key: "endTime",
+		},
+		{
+		    name: "Splittable",
+		    reference_key: "split",
 		},
 	    ]}
 	    rows={tasks}
