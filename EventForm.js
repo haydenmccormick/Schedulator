@@ -47,8 +47,7 @@ function Form(props) {
 		(_, { rows: { _array } }) => alert(JSON.stringify(_array))
 	    );
 	});
-
-	//alert("Adding task");
+        props.retFunc();
     }
     let button;
     if (check()) {
