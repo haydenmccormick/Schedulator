@@ -2,7 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as FileSystem from 'expo-file-system';
-import { MonthView, DayView } from './Calendars.js'
+import { MonthView, DayView } from './Calendars.js';
+import TaskList from './Tasks.js';
 import * as SQLite from 'expo-sqlite';
 
 const Tab = createBottomTabNavigator();
@@ -17,8 +18,8 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        <Tab.Screen name="Day" component={DayView} />
         <Tab.Screen name="Month" component={MonthView} />
+        <Tab.Screen name="Tasks" component={TaskList} />
       </Tab.Navigator>
     </NavigationContainer>
   );
