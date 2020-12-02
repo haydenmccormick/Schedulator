@@ -12,7 +12,7 @@ const db = SQLite.openDatabase("db.db");
 export default function TaskList() {
     const [tasks, setTasks] = useState("");
 
-    function showDates() {
+    function showTasks() {
 	const tempDates={};
 	db.transaction(tx => {
 		tx.executeSql(
@@ -26,7 +26,7 @@ export default function TaskList() {
     /***** Executed on "Add" button press, renders an EventForm *****/
     const [addingEvent, setAddingEvent] = useState(false);
     const addEventPressHandler = () => {
-	showDates();
+	showTasks();
 	setAddingEvent(!addingEvent);
     };
     // Only render a form if the user is adding an event
