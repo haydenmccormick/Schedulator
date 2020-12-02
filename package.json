@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo-google-fonts/roboto": "^0.1.0",
     "@expo/metro-config": "^0.1.42",
     "@react-native-community/art": "^1.2.0",
     "@react-native-community/datetimepicker": "3.0.0",
@@ -16,6 +17,7 @@
     "expo": "^39.0.5",
     "expo-asset": "~8.2.0",
     "expo-file-system": "~9.2.0",
+    "expo-font": "~8.3.0",
     "expo-status-bar": "~1.0.2",
     "nativescript-modal-datetimepicker": "^2.1.2",
     "rc-picker": "^2.4.3",
