@@ -9,7 +9,7 @@ const db = SQLite.openDatabase("db.db");
 
 export default function TaskList() {
     const [tasks, setTasks] = useState("");
-	function showDates() {
+	function showTasks() {
 	const tempDates={};
 	db.transaction(tx => {
 		tx.executeSql(
