@@ -57,6 +57,10 @@ export default function TaskList() {
 		    reference_key: "endTime",
 		},
 		{
+		    name: "Period",
+		    reference_key: "period",
+		},
+		{
 		    name: "Splittable",
 		    reference_key: "split",
 		},
