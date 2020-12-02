@@ -6,6 +6,7 @@ events is a list of all dynamic events to be done in the future (note that you a
 
 */
 import * as SQLite from 'expo-sqlite';
+//const SQLite = require("expo-sqlite");
 
 const db = SQLite.openDatabase("db.db");
 
