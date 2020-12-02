@@ -4,6 +4,7 @@ import { View, TouchableOpacity, Image, Text, Button, SafeAreaView, ScrollView }
 import { Calendar, Agenda } from 'react-native-calendars'
 import { TableView } from "react-native-responsive-table"
 import { Form, Dynamic } from './EventForm.js'
+import { DeleteDynamicTasks } from './DeleteForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
 
