@@ -1,16 +1,18 @@
-import { View, Text, Dimensions } from 'react-native';
-import styles from './assets/Styles';
-import * as SQLite from 'expo-sqlite';
-import { TableView } from "react-native-responsive-table"
+import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import RadioButton from "react-native-animated-radio-button";
+import { View, TouchableOpacity, Image, Text, Button, SafeAreaView, ScrollView } from 'react-native';
+import { Calendar, Agenda } from 'react-native-calendars'
+import { TableView } from "react-native-responsive-table"
+import { Form, Dynamic } from './EventForm.js'
+import styles from './assets/Styles.js'
+import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase("db.db");
 
-
 export default function TaskList() {
     const [tasks, setTasks] = useState("");
-	function showTasks() {
+
+    function showDates() {
 	const tempDates={};
 	db.transaction(tx => {
 		tx.executeSql(
@@ -19,12 +21,28 @@ export default function TaskList() {
 		(_, { rows: { _array } }) => setTasks(_array)
 	    );
 	});
-	}
-	let tableview;
+    }
+
+    /***** Executed on "Add" button press, renders an EventForm *****/
+    const [addingEvent, setAddingEvent] = useState(false);
+    const addEventPressHandler = () => {
+	showDates();
+	setAddingEvent(!addingEvent);
+    };
+    // Only render a form if the user is adding an event
+    const render_form = (addingEvent ?
+	<View style={styles.formwrapper}>
+	    {/* So the user can click outside of form box to cancel*/}
+	    <TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
+	    <View style={styles.formcontainer}>
+		<Form retFunc={addEventPressHandler}/>
+	    </View>
+	</View>
+	: null)
+    let tableview;
     if (tasks != "") {
 	//horizontalScroll={true} columnWidth={50} height={150}
-	tableview = <TableView width={Math.round(Dimensions.get('window').width)} horizontalScroll={true}
-	columnWidth={Math.round(Dimensions.get('window').width)/5}
+	tableview = <TableView
 	    headers={[
 		{
 		    name: "Taskname",
@@ -49,12 +67,19 @@ export default function TaskList() {
     else {
 	tableview = <Text>When you add a task, it will be displayed here</Text>
     }
-    //Change the style for the button
     return (
-	    <View style={{padding: 30}}>
-	    {tableview}
-	    <RadioButton disableText={true} disableBuiltinStateManagement={true} onPress={showTasks}
-/>
+	<View style={styles.container} >
+	    <View style={{height:100,padding:30}}>{tableview}</View>
+	    <View style={styles.buttonwrapper}>
+		<TouchableOpacity onPress={addEventPressHandler}>
+		    <Image
+			source={require('./assets/event-button.png')}
+			style={styles.button}
+		    />
+		</TouchableOpacity>
 	    </View>
+	    <StatusBar style="auto" />
+	    {render_form}
+	</View>
     );
 }
