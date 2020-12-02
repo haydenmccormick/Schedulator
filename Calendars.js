@@ -9,7 +9,7 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase("db.db");
 
-function MonthView() {
+function DayView() {
     const d = new Date();
     const month = d.getMonth() + 1;
     const string = d.getFullYear() + '-' + month + '-' + d.getDate();
@@ -91,13 +91,11 @@ function MonthView() {
     }
     return (
 	<View style={styles.container}>
-	    <View style={styles.calendararea}>
-		<Calendar
+		<Agenda style={styles.container}
 		    onDayPress={onDayPress}
-		    markedDates={dates}
+			markedDates={dates}
+			items={{'2020-12-02': [{name: 'work ye loada shite'}]}}
 		/>
-	    </View>
-	    <View style={{height:100}}>{tableview}</View>
 	    <View style={styles.buttonwrapper}>
 		<TouchableOpacity onPress={addEventPressHandler}>
 		    <Image
@@ -112,16 +110,6 @@ function MonthView() {
     );
 }
 
-function DayView() {
-    return (
-	<>
-	    <Agenda />
-	    <Text>abc</Text>
-	    </>
-    );
-}
-
 module.exports = {
-    MonthView: MonthView,
     DayView: DayView,
 }

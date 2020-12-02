@@ -18,7 +18,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        <Tab.Screen name="Month" component={MonthView} />
+        <Tab.Screen name="Agenda" component={DayView} />
         <Tab.Screen name="Tasks" component={TaskList} />
       </Tab.Navigator>
     </NavigationContainer>

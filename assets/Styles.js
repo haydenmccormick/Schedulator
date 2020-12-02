@@ -2,11 +2,8 @@ import { StyleSheet } from "react-native"
 
 export default StyleSheet.create({
     container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      alignContent: 'center',
-      backgroundColor: 'white',
+      position: "absolute",
+      top: 0, bottom: 0, left: 0, right: 0,
     },
     calendararea: {
       flex: 1.5,
@@ -37,11 +34,12 @@ export default StyleSheet.create({
       borderBottomWidth: 1.5,
     },
     buttonwrapper: {
-        top: '8%',
+        bottom: '5%',
+        right: '8%',
         flex: 1,
         alignContent: 'center',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
     },
     button: {
         width: 100,
