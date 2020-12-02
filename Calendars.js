@@ -114,8 +114,10 @@ function MonthView() {
 
 function DayView() {
     return (
-	<Agenda />
-
+	<>
+	    <Agenda />
+	    <Text>abc</Text>
+	    </>
     );
 }
 
