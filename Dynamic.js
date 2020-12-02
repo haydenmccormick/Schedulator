@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text, Button, SafeAreaView, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Image, Text, Button, SafeAreaView, ScrollView, Dimensions } from 'react-native';
 import { Calendar, Agenda } from 'react-native-calendars'
 import { TableView } from "react-native-responsive-table"
 import { Form, Dynamic } from './EventForm.js'
@@ -43,7 +43,7 @@ export default function TaskList() {
     let tableview;
     if (tasks != "") {
 	//horizontalScroll={true} columnWidth={50} height={150}
-	tableview = <TableView
+	tableview = <TableView height={Math.round(Dimensions.get('window').height)}
 	    headers={[
 		{
 		    name: "Taskname",
@@ -74,7 +74,7 @@ export default function TaskList() {
     }
     return (
 	<View style={styles.container} >
-	    <View style={{height:100,padding:30}}>{tableview}</View>
+	    <View style={{paddingTop: 50,alignItems: 'center'}}>{tableview}</View>
 	    <View style={styles.buttonwrapper}>
 		<TouchableOpacity onPress={addEventPressHandler}>
 		    <Image
