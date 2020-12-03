@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text, FlatList } from 'react-native';
+import { View, TouchableOpacity, Image, Text, FlatList, ImageBackground } from 'react-native';
 import { Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
@@ -60,9 +60,10 @@ export default function TaskList() {
 		/>
 	}
 	else {
-		listview = <View style={styles.emptyeventlistcontainer}>
-			<Text style={styles.emptyeventlisttext}>When you add a task, it will be displayed here</Text>
-		</View>
+		listview =
+			<View style={styles.emptyeventlistcontainer}>
+				<Text style={styles.emptyeventlisttext}>When you add a task, it will be displayed here</Text>
+			</View>
 	}
 	return (
 		<View style={styles.container} >
@@ -73,7 +74,7 @@ export default function TaskList() {
 			<View style={styles.buttonwrapper}>
 				<TouchableOpacity onPress={addEventPressHandler}>
 					<Image
-						source={require('./assets/event-button.png')}
+						source={require('./assets/task-button.png')}
 						style={styles.button}
 					/>
 				</TouchableOpacity>

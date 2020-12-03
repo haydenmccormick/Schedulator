@@ -5,8 +5,6 @@ import { Agenda } from 'react-native-calendars'
 import { Form, Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
-import { useFonts, Roboto_100Thin, Roboto_300Light } from '@expo-google-fonts/roboto';
-import { AppLoading } from 'expo';
 
 const db = SQLite.openDatabase("db.db");
 
@@ -109,16 +107,6 @@ function DayView() {
 			</View>
 		</View>
 		: null)
-
-	// Load in expo google fonts
-	let [fontsLoaded] = useFonts({
-		Roboto_100Thin,
-		Roboto_300Light
-	});
-	// If it's not loaded in time, make the user wait
-	if (!fontsLoaded) {
-		return <AppLoading />;
-	}
 
 	// Displayed when no events are planned for a given day
 	const emptyday = (

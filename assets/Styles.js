@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     width: 350,
     borderRadius: 175,
     padding: 50,
-    bottom: '-5%',
+    bottom: '-10%',
     alignSelf: 'center',
   },
   eventlistcontainer: {
