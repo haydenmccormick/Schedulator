@@ -75,23 +75,28 @@ const styles = StyleSheet.create({
     minHeight: 100,
     marginVertical: 10,
     marginHorizontal: 10,
-    
+
   },
   emptytext: {
     fontFamily: 'Roboto_100Thin',
-  },
-  eventtext: {
-    fontFamily: 'Roboto_300Light',
+    alignSelf: 'center',
   },
   datetext: {
     textAlign: 'center',
   },
   eventdate: {
-    flexDirection: 'row',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+  },
+  eventdatetext: {
+    fontFamily: 'Roboto_300Light',
+    marginLeft: 30,
   },
   eventname: {
     marginLeft: 30,
-    alignSelf: 'center',
+    fontFamily: 'Roboto_300Light',
+    fontSize: 25,
+    color: '#4a4a4a',
   },
   icon: {
     width: 25,
@@ -99,6 +104,10 @@ const styles = StyleSheet.create({
   },
   staticevent: {
     backgroundColor: '#70d3f4',
+    width: 7,
+  },
+  dynamicevent: {
+    backgroundColor: '#f49a70',
     width: 7,
   },
 });

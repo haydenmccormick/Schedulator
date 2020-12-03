@@ -129,23 +129,34 @@ function DayView() {
 		</View>
 	)
 
+	// Render event on agenda (different if Dynamic or Static)
 	function event(item) {
 		let renderbar;
-		if (item.startTime == 'Dynamic')
+		let message = "";
+		let timedisplay;
+		if (item.startTime == 'Dynamic') {
+			message = " due"
 			renderbar = styles.dynamicevent;
-		else
+			timedisplay = <Text style={styles.eventdatetext}>{item.endTime}</Text>
+		}
+		else {
 			renderbar = styles.staticevent;
+			timedisplay = <Text style={styles.eventdatetext}>{item.startTime} - {item.endTime}</Text>
+		}
 		return (
 			<View style={styles.eventcontainer}>
 				<View style={renderbar} />
 				<View style={styles.eventdate}>
 					<Text style={styles.eventname}>
-						{item.name}
+						{item.name}{message}
 					</Text>
+					{timedisplay}
 				</View>
 			</View>
 		)
 	}
+
+	// TODO: render an indication of where in the day the user is
 
 	return (
 		<View style={styles.container}>
