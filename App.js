@@ -8,6 +8,9 @@ import DynamicTaskList from './Dynamic.js';
 import * as SQLite from 'expo-sqlite';
 import { Image } from 'react-native';
 import styles from './assets/Styles.js';
+import { useFonts, Roboto_100Thin, Roboto_300Light } from '@expo-google-fonts/roboto';
+import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
+import { AppLoading } from 'expo';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +33,18 @@ function options() {
 }
 
 export default function App() {
+
+  // Load in expo google fonts
+  let [fontsLoaded] = useFonts({
+    Roboto_100Thin,
+    Roboto_300Light,
+    AbrilFatface_400Regular
+  });
+  // If it's not loaded in time, make the user wait
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
     <NavigationContainer>
       <Tab.Navigator

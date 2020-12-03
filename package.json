@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo-google-fonts/abril-fatface": "^0.1.0",
     "@expo-google-fonts/roboto": "^0.1.0",
     "@expo/metro-config": "^0.1.42",
     "@react-native-community/art": "^1.2.0",

@@ -110,6 +110,50 @@ const styles = StyleSheet.create({
     backgroundColor: '#f49a70',
     width: 7,
   },
+  emptyeventlistcontainer: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 350,
+    width: 350,
+    borderRadius: 175,
+    padding: 50,
+    bottom: '-5%',
+    alignSelf: 'center',
+  },
+  eventlistcontainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 100,
+    width: '95%',
+    marginVertical: 10,
+    marginHorizontal: 10,
+  },
+  eventlisttext: {
+    fontFamily: 'Roboto_300Light',
+    fontSize: 25,
+    color: '#4a4a4a',
+  },
+  emptyeventlisttext: {
+    fontFamily: 'Roboto_300Light',
+    fontSize: 25,
+    color: '#4a4a4a',
+  },
+  listheader: {
+    width: '100%',
+    height: '13%',
+    backgroundColor: '#f49a70',
+    justifyContent: 'center',
+  },
+  listheadertext: {
+    textAlign: 'center',
+    marginTop: 10,
+    fontFamily: 'AbrilFatface_400Regular',
+    fontSize: 45,
+    color: '#f4f4f4',
+  },
 });
 
 export default styles;
