@@ -15,9 +15,13 @@ function updateDynamicTaskTimes(title, start, end) {
   });
 }
 
+//fix bug
 function updateSplitPiece(title, newTitle, period) {
   db.transaction((tx) => {
-    tx.executeSql("insert into dynamicTasks(period) value(?)", [period]);
+    tx.executeSql(
+      "update dynamicTasks set title = ? period = ? where title=?",
+      [newTitle, period, title]
+    );
   });
 }
 

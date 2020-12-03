@@ -1,64 +1,86 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
-import { Calendar } from 'react-native-calendars'
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import * as FileSystem from 'expo-file-system';
+import { DayView } from './Calendars.js';
+import TaskList from './Tasks.js';
+import DynamicTaskList from './Dynamic.js';
+import * as SQLite from 'expo-sqlite';
+import { Image } from 'react-native';
+import styles from './assets/Styles.js';
+import { useFonts, Roboto_100Thin, Roboto_300Light } from '@expo-google-fonts/roboto';
+import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
+import { AppLoading } from 'expo';
 
-import { Form, Dynamic } from './EventForm.js'
-import styles from './assets/Styles.js'
+const Tab = createBottomTabNavigator();
 
+FileSystem.downloadAsync(
+  Expo.Asset.fromModule(require('./db.db')).uri,
+  `${FileSystem.documentDirectory}SQLite/db.db`
+);
+const db = SQLite.openDatabase("db.db");
 
-// Main render method
+//tab bar style options
+function options() {
+  console
+  tabBarOptions: { showIcon: true }
+  tabBarIcon: (() => {
+    return (<Image
+      style={{ width: 50, height: 50 }}
+      source={{ url: "https://facebook.github.io/react/img/logo_og.png" }} />);
+  }
+  )
+}
+
 export default function App() {
-  const d = new Date();
-  const month = d.getMonth() + 1;
-  const string = d.getFullYear() + '-' + month + '-' + d.getDate();
-  const [selected, setSelected] = useState(string);
-  const onDayPress = (day) => {
-    setSelected(day.dateString);
-    alert(day.dateString);
-  };
 
-  /***** Executed on "Add" button press, renders an EventForm *****/
-  const [addingEvent, setAddingEvent] = useState(false);
-  const addEventPressHandler = () => {
-    setAddingEvent(!addingEvent);
-  };
-  // Only render a form if the user is adding an event
-  const render_form = (addingEvent ?
-    <View style={styles.formwrapper}>
-      {/* So the user can click outside of form box to cancel*/}
-      <TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
-      <View style={styles.formcontainer}>
-        <Form />
-      </View>
-    </View>
-    : null)
+  // Load in expo google fonts
+  let [fontsLoaded] = useFonts({
+    Roboto_100Thin,
+    Roboto_300Light,
+    AbrilFatface_400Regular
+  });
+  // If it's not loaded in time, make the user wait
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.calendararea}>
-        <Calendar
-          onDayPress={onDayPress}
-          markedDates={{
-            [selected]: {
-              selected: true,
-              disableTouchEvent: true,
-              selectedColor: 'lightblue',
-              selectedTextColor: 'black',
-            },
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={options}
+      >
+        <Tab.Screen name="Agenda" component={DayView}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <Image
+                style={styles.icon}
+                source={require('./assets/Tab_Icons/agenda-on.png')
+                } />
+            ),
+          }}
+        />{/*
+        <Tab.Screen name="Tasks" component={TaskList}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Image
+              style={styles.icon}
+              source={require('./assets/Tab_Icons/tasks-on.png')                  
+              }/>
+          ), 
+        }}
+      />*/}
+        <Tab.Screen name="Tasks" component={DynamicTaskList}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <Image
+                style={styles.icon}
+                source={require('./assets/Tab_Icons/tasks-on.png')
+                } />
+            ),
           }}
         />
-      </View>
-      <View style={styles.buttonwrapper}>
-        <TouchableOpacity onPress={addEventPressHandler}>
-          <Image
-            source={require('./assets/event-button.png')}
-            style={styles.button}
-          />
-        </TouchableOpacity>
-      </View>
-      <StatusBar style="auto" />
-      {render_form}
-    </View>
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
