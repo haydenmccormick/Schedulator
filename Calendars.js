@@ -33,6 +33,15 @@ function DayView() {
 					for (let i = 0; i < results.rows.length; i++) {
 						tempDates[results.rows.item(i).date] = { marked: true };
 					}
+				}
+			);
+			tx.executeSql(
+				"select * from dynamictasks",
+				[],
+				(tx, results) => {
+					for (let i = 0; i < results.rows.length; i++) {
+						tempDates[results.rows.item(i).date] = { marked: true };
+					}
 					setDates(tempDates);
 				}
 			);
@@ -55,7 +64,6 @@ function DayView() {
 							startTime: results.rows.item(i).startTime,
 							endTime: results.rows.item(i).endTime
 						};
-						console.log(newTask);
 						if (tempTasks[results.rows.item(i).date]) {
 							tempTasks[results.rows.item(i).date].push(newTask);
 						}
@@ -75,7 +83,6 @@ function DayView() {
 							startTime: "Dynamic",
 							endTime: results.rows.item(i).endTime
 						};
-						console.log(newTask);
 						if (tempTasks[results.rows.item(i).date]) {
 							tempTasks[results.rows.item(i).date].push(newTask);
 						}
@@ -93,8 +100,6 @@ function DayView() {
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const addEventPressHandler = () => {
-		findDates();
-		findTasks();
 		setAddingEvent(!addingEvent);
 	};
 	// Only render a form if the user is adding an event
@@ -144,6 +149,13 @@ function DayView() {
 		)
 	}
 
+	// TODO: This is slow. Is there a more efficient way to do it?
+	function getItems() {
+		findDates();
+		findTasks();
+		return taskEntries;
+	}
+
 	// TODO: render an indication of where in the day the user is
 
 	return (
@@ -153,7 +165,7 @@ function DayView() {
 				markedDates={dates}
 				renderEmptyData={() => { return emptyday; }}
 				renderItem={(item) => { return event(item); }}
-				items={taskEntries}
+				items={getItems()}
 			/>
 			<View style={styles.buttonwrapper}>
 				<TouchableOpacity onPress={addEventPressHandler}>
