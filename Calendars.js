@@ -55,15 +55,15 @@ function DayView() {
 		db.transaction(tx => {
 			//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
 			tx.executeSql(
-				"SELECT * FROM tasks UNION SELECT * FROM dynamicTasks",
+				"SELECT taskname, endTime, date, 'static' AS type FROM tasks UNION SELECT taskname, endTime, date, 'dynamic' as type FROM dynamicTasks ORDER BY endTime",
 				[],
 				(tx, results) => {
 					for (let i = 0; i < results.rows.length; i++) {
-						console.log(results.rows.item(i));
 						newTask = {
 							name: results.rows.item(i).taskname,
 							startTime: results.rows.item(i).startTime,
-							endTime: results.rows.item(i).endTime
+							endTime: results.rows.item(i).endTime,
+							type: results.rows.item(i).type
 						};
 						if (tempTasks[results.rows.item(i).date]) {
 							tempTasks[results.rows.item(i).date].push(newTask);
@@ -82,8 +82,10 @@ function DayView() {
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const addEventPressHandler = () => {
+		findTasks();
 		setAddingEvent(!addingEvent);
 	};
+
 	// Only render a form if the user is adding an event
 	const render_form = (addingEvent ?
 		<View style={styles.formwrapper}>
@@ -109,7 +111,7 @@ function DayView() {
 		let renderbar;
 		let message = "";
 		let timedisplay;
-		if (item.startTime == 'Dynamic') {
+		if (item.type == 'dynamic') {
 			message = " due"
 			renderbar = styles.dynamicevent;
 			timedisplay = <Text style={styles.eventdatetext}>{item.endTime}</Text>
@@ -134,7 +136,6 @@ function DayView() {
 	// TODO: This is slow. Is there a more efficient way to do it?
 	function getItems() {
 		findDates();
-		findTasks();
 		return taskEntries;
 	}
 
@@ -162,9 +163,6 @@ function DayView() {
 		</View>
 	);
 }
-
-
-
 
 module.exports = {
 	DayView: DayView,
