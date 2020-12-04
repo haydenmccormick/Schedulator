@@ -10,13 +10,17 @@ import styles from './assets/Styles.js';
 import { useFonts, Roboto_100Thin, Roboto_300Light } from '@expo-google-fonts/roboto';
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
+//import RNBackgroundDownloader from 'react-native-background-downloader';
+
+const addr = "http://192.168.86.27:8000/";
 
 const Tab = createBottomTabNavigator();
 
 FileSystem.downloadAsync(
-  Expo.Asset.fromModule(require('./db.db')).uri,
+  Expo.Asset.fromModule(require('./server/db.db')).uri,
   `${FileSystem.documentDirectory}SQLite/db.db`
 );
+
 const db = SQLite.openDatabase("db.db");
 
 //tab bar style options
@@ -50,25 +54,25 @@ export default function App() {
     db.transaction(tx => {
       //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
       tx.executeSql(
-        "SELECT taskname, endTime, date, 'static' AS type FROM tasks UNION SELECT taskname, endTime, date, 'dynamic' as type FROM dynamicTasks ORDER BY endTime",
-        [],
-        (tx, results) => {
-          for (let i = 0; i < results.rows.length; i++) {
-            newTask = {
-              name: results.rows.item(i).taskname,
-              startTime: results.rows.item(i).startTime,
-              endTime: results.rows.item(i).endTime,
-              type: results.rows.item(i).type
-            };
-            if (tempTasks[results.rows.item(i).date]) {
-              tempTasks[results.rows.item(i).date].push(newTask);
-            }
-            else {
-              tempTasks[results.rows.item(i).date] = [newTask];
-            }
-          }
-          setTaskEntries(tempTasks);
-        }
+	"SELECT taskname, endTime, date, 'static' AS type FROM tasks UNION SELECT taskname, endTime, date, 'dynamic' as type FROM dynamicTasks ORDER BY endTime",
+	[],
+	(tx, results) => {
+	  for (let i = 0; i < results.rows.length; i++) {
+	    newTask = {
+	      name: results.rows.item(i).taskname,
+	      startTime: results.rows.item(i).startTime,
+	      endTime: results.rows.item(i).endTime,
+	      type: results.rows.item(i).type
+	    };
+	    if (tempTasks[results.rows.item(i).date]) {
+	      tempTasks[results.rows.item(i).date].push(newTask);
+	    }
+	    else {
+	      tempTasks[results.rows.item(i).date] = [newTask];
+	    }
+	  }
+	  setTaskEntries(tempTasks);
+	}
       );
     });
   }
@@ -80,28 +84,28 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator
-        screenOptions={options}
+	screenOptions={options}
       >
-        <Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()} />}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Image
-                style={styles.icon}
-                source={require('./assets/Tab_Icons/agenda-on.png')
-                } />
-            ),
-          }}
-        />
-        <Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} />}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Image
-                style={styles.icon}
-                source={require('./assets/Tab_Icons/tasks-on.png')
-                } />
-            ),
-          }}
-        />
+	<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()} />}
+	  options={{
+	    tabBarIcon: ({ color }) => (
+	      <Image
+		style={styles.icon}
+		source={require('./assets/Tab_Icons/agenda-on.png')
+		} />
+	    ),
+	  }}
+	/>
+	<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} />}
+	  options={{
+	    tabBarIcon: ({ color }) => (
+	      <Image
+		style={styles.icon}
+		source={require('./assets/Tab_Icons/tasks-on.png')
+		} />
+	    ),
+	  }}
+	/>
       </Tab.Navigator>
     </NavigationContainer>
   );

@@ -5,7 +5,7 @@ import TimePicker from 'react-native-simple-time-picker';
 import styles from "./assets/Styles.js"
 import * as SQLite from 'expo-sqlite';
 
-
+const addr = "http://192.168.86.27:8000/";
 
 // Database integration
 const db = SQLite.openDatabase("db.db");
@@ -36,18 +36,26 @@ function Form(props) {
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
-		let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' + Minutes2 + "')";
-		//Add stuff to database
-		//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
-		db.transaction(tx => {
-			tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []); /*
+	    let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' + Minutes2 + "')";
+	    //Add stuff to database
+	    //insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
+	    db.transaction(tx => {
+		tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []); /*
 			tx.executeSql(
 				"select * from tasks",
 				[],
 				(_, { rows: { _array } }) => alert(JSON.stringify(_array))
 			);*/
 		});
-		props.retFunc();
+	    var body = new FormData();
+	    //body.append('file_attachment',`${FileSystem.documentDirectory}SQLite/db.db`);
+
+	    body.append('text',"insert into tasks(taskname,date,startTime,endTime) values" + values);
+	    //body.append('file_attachment',FileSystem.readAsStringAsync("db.db"));
+	    var xhr = new XMLHttpRequest();
+	    xhr.open('PUT','http://192.168.86.27:8000/');
+	    xhr.send(body);
+	    props.retFunc();
 	}
 	let button;
 	if (check()) {
