@@ -4,8 +4,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "./assets/Styles.js"
 import * as SQLite from 'expo-sqlite';
 
-
-
 // Database integration
 const db = SQLite.openDatabase("db.db");
 
@@ -29,17 +27,19 @@ function Form(props) {
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
-		//let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' + Minutes2 + "')";
+		let datestring = start.toISOString().split('T')[0];
+		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
+		//alert(values);
 		//Add stuff to database
 		//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
-		/*db.transaction(tx => {
-			tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []); /*
+		db.transaction(tx => {
+			tx.executeSql("insert into tasks(taskname,date,startTime,endTime,dateString) values" + values, []);/*
 			tx.executeSql(
 				"select * from tasks",
 				[],
 				(_, { rows: { _array } }) => alert(JSON.stringify(_array))
-			);
-		});*/
+			);*/
+		});
 		props.retFunc();
 	}
 	const datePressHandler = () => {
@@ -123,7 +123,6 @@ function Dynamic(props) {
 	const [start, setStart] = useState(tempDate);
 	const [end, setEnd] = useState(tempDate);
 	const [form, setForm] = useState('');
-	const [SE, setSE] = useState();
 	const [toggleCheckBox, setToggleCheckBox] = useState(true);
 
 	function check() {
@@ -136,16 +135,16 @@ function Dynamic(props) {
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
-		let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' +
-			Minutes2 + "','" + toggleCheckBox + "')";
+		let datestring = start.toISOString().split('T')[0];
+		let values = "('" + input + "','" + end.getTime() + "','" + toggleCheckBox + "','" + datestring + "')";
 		//Add stuff to database
 		//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
 		db.transaction(tx => {
-			tx.executeSql("insert into dynamicTasks(taskname,date,endTime,period,split) values" + values, []); /*
+			tx.executeSql("insert into dynamicTasks(taskname,deadline,split,dateString) values" + values, []);/*
 			tx.executeSql(
 				"select * from dynamicTasks",
 				[],
-				(_, {rows: {_array} }) => alert(JSON.stringify(_array))
+				(_, { rows: { _array } }) => alert(JSON.stringify(_array))
 			);*/
 		});
 		props.retFunc();
@@ -156,27 +155,22 @@ function Dynamic(props) {
 			setForm("date");
 		else
 			setForm("");
-		setSE('start');
 	}
 	const timePressHandler = (val) => {
 		if (form == '')
 			setForm("time");
 		else
 			setForm("");
-		setSE(val == 1 ? 'start' : 'end');
 	}
 	const onChange = (event, selectedDate) => {
 		const newDate = selectedDate || start;
-		SE == 'start' ? setStart(newDate) : setEnd(newDate);
+		setEnd(newDate);
 	};
-	const formItem = (
-		<DateTimePicker mode={form} style={styles.datepicker} value={SE == 'start' ? start : end} onChange={onChange} />
-	);
 	const render_form = (form != '' ?
 		<View>
 			<Image source={require('./assets/FormTop.png')} style={styles.formtop} />
 			<View style={styles.form2}>
-				{formItem}
+				<DateTimePicker mode={form} style={styles.datepicker} value={end} onChange={onChange} />
 			</View>
 		</View>
 		: null);
@@ -199,13 +193,13 @@ function Dynamic(props) {
 				<View style={styles.enterdate}>
 					<Text style={styles.formtext}>Date Due</Text>
 					<Text style={styles.formtext} onPress={(form) => datePressHandler()} >
-						{start.toDateString()}
+						{end.toDateString()}
 					</Text>
 				</View>
 				<View style={styles.enterdate}>
 					<Text style={styles.formtext}>Deadline</Text>
 					<Text style={styles.formtext} onPress={(form) => timePressHandler(1)} >
-						{start.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
+						{end.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
 					</Text>
 				</View>
 				<View style={[styles.enterdate, { marginBottom: 20 }]}>

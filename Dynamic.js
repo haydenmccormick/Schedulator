@@ -13,7 +13,7 @@ export default function TaskList(props) {
 		const tempDates = {};
 		db.transaction(tx => {
 			tx.executeSql(
-				"SELECT * FROM dynamicTasks ORDER BY endTime",
+				"SELECT * FROM dynamicTasks ORDER BY deadline",
 				[],
 				(_, { rows: { _array } }) => setTasks(_array)
 			);

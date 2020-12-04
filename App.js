@@ -19,18 +19,6 @@ FileSystem.downloadAsync(
 );
 const db = SQLite.openDatabase("db.db");
 
-//tab bar style options
-function options() {
-  console
-  tabBarOptions: { showIcon: true }
-  tabBarIcon: (() => {
-    return (<Image
-      style={{ width: 50, height: 50 }}
-      source={{ url: "https://facebook.github.io/react/img/logo_og.png" }} />);
-  }
-  )
-}
-
 export default function App() {
   const [taskEntries, setTaskEntries] = useState({});
   const [dateEntries, setDateEntries] = useState({});
@@ -52,23 +40,25 @@ export default function App() {
     db.transaction(tx => {
       //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
       tx.executeSql(
-        "SELECT taskname, startTime, endTime, date, 'static' AS type FROM tasks UNION SELECT taskname, '' AS startTime, endTime, date, 'dynamic' as type FROM dynamicTasks ORDER BY endTime",
+        "SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname, dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks",
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; i++) {
             newTask = {
               name: results.rows.item(i).taskname,
+              date: results.rows.item(i).dateString,
               startTime: results.rows.item(i).startTime,
               endTime: results.rows.item(i).endTime,
               type: results.rows.item(i).type
             };
             newDate = { marked: true };
-            if (tempTasks[results.rows.item(i).date]) {
-              tempTasks[results.rows.item(i).date].push(newTask);
+            console.log(newTask);
+            if (tempTasks[results.rows.item(i).dateString]) {
+              tempTasks[results.rows.item(i).dateString].push(newTask);
             }
             else {
-              tempTasks[results.rows.item(i).date] = [newTask];
-              tempDates[results.rows.item(i).date] = newDate;
+              tempTasks[results.rows.item(i).dateString] = [newTask];
+              tempDates[results.rows.item(i).dateString] = newDate;
             }
           }
           setTaskEntries(tempTasks);
@@ -80,9 +70,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={options}
-      >
+      <Tab.Navigator>
         <Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={taskEntries} dates={dateEntries} />}
           options={{
             tabBarIcon: ({ color }) => (
