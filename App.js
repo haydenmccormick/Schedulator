@@ -32,8 +32,8 @@ function options() {
 }
 
 export default function App() {
-
-  const [taskEntries, setTaskEntries] = useState([{}]);
+  const [taskEntries, setTaskEntries] = useState({});
+  const [dateEntries, setDateEntries] = useState({});
   // Load in expo google fonts
   let [fontsLoaded] = useFonts({
     Roboto_100Thin,
@@ -45,8 +45,10 @@ export default function App() {
     return <AppLoading />;
   }
 
+  // Refresh tasks to send to agenda. This needs to be here to ensure that it can be accessed by Dynamic.js.
   function findTasks() {
     const tempTasks = {};
+    const tempDates = {};
     db.transaction(tx => {
       //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
       tx.executeSql(
@@ -62,19 +64,18 @@ export default function App() {
             };
             if (tempTasks[results.rows.item(i).date]) {
               tempTasks[results.rows.item(i).date].push(newTask);
+              tempDates[results.rows.item(i).date].push({ marked: true });
             }
             else {
               tempTasks[results.rows.item(i).date] = [newTask];
+              tempDates[results.rows.item(i).date] = ({ marked: true });
             }
           }
           setTaskEntries(tempTasks);
+          setDateEntries(tempDates);
         }
       );
     });
-  }
-
-  function gettaskEntries() {
-    return taskEntries;
   }
 
   return (
@@ -82,7 +83,7 @@ export default function App() {
       <Tab.Navigator
         screenOptions={options}
       >
-        <Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()} />}
+        <Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={taskEntries} dates={dateEntries} />}
           options={{
             tabBarIcon: ({ color }) => (
               <Image
