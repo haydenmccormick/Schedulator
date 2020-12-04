@@ -52,14 +52,18 @@ function DayView(props) {
 		let renderbar;
 		let message = "";
 		let timedisplay;
+		let start = (new Date(item.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' }));
+		let end = (new Date(item.endTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' }));
 		if (item.type == 'dynamic') {
 			message = " due"
 			renderbar = styles.dynamicevent;
-			timedisplay = <Text style={styles.eventdatetext}>{item.endTime}</Text>
+			timedisplay = <Text style={styles.eventdatetext}>{end}</Text>
 		}
 		else {
 			renderbar = styles.staticevent;
-			timedisplay = <Text style={styles.eventdatetext}>{item.startTime} - {item.endTime}</Text>
+			timedisplay = <Text style={styles.eventdatetext}>
+				{start} - {end}
+			</Text>
 		}
 		return (
 			<View style={styles.eventcontainer}>
