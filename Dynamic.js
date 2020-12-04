@@ -41,14 +41,15 @@ export default function TaskList() {
 
 	// list of tasks displayed to user
 	let listview;
-	const Item = ({ name }) => (
+	const Item = ({ name, dueDate }) => (
 		<View style={styles.eventlistcontainer}>
 			<Text style={styles.eventlisttext}>{name}</Text>
+			<Text style={styles.eventlisttext2}>Due {dueDate}</Text>
 		</View>
 	);
 
 	const renderItem = ({ item }) => (
-		<Item name={item.taskname} />
+		<Item name={item.taskname} dueDate={item.date} />
 	);
 
 	if (tasks != "") {
@@ -56,7 +57,6 @@ export default function TaskList() {
 		listview = <FlatList
 			data={tasks}
 			renderItem={renderItem}
-
 		/>
 	}
 	else {

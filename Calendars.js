@@ -55,32 +55,14 @@ function DayView() {
 		db.transaction(tx => {
 			//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
 			tx.executeSql(
-				"select * from tasks",
+				"SELECT * FROM tasks UNION SELECT * FROM dynamicTasks",
 				[],
 				(tx, results) => {
 					for (let i = 0; i < results.rows.length; i++) {
+						console.log(results.rows.item(i));
 						newTask = {
 							name: results.rows.item(i).taskname,
 							startTime: results.rows.item(i).startTime,
-							endTime: results.rows.item(i).endTime
-						};
-						if (tempTasks[results.rows.item(i).date]) {
-							tempTasks[results.rows.item(i).date].push(newTask);
-						}
-						else {
-							tempTasks[results.rows.item(i).date] = [newTask];
-						}
-					}
-				}
-			);
-			tx.executeSql(
-				"select * from dynamictasks",
-				[],
-				(tx, results) => {
-					for (let i = 0; i < results.rows.length; i++) {
-						newTask = {
-							name: results.rows.item(i).taskname,
-							startTime: "Dynamic",
 							endTime: results.rows.item(i).endTime
 						};
 						if (tempTasks[results.rows.item(i).date]) {

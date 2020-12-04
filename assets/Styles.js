@@ -131,11 +131,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 10,
   },
-  eventlisttext: {
-    fontFamily: 'Roboto_300Light',
-    fontSize: 25,
-    color: '#4a4a4a',
-  },
   emptyeventlisttext: {
     fontFamily: 'Roboto_300Light',
     fontSize: 25,
@@ -153,6 +148,17 @@ const styles = StyleSheet.create({
     fontFamily: 'AbrilFatface_400Regular',
     fontSize: 45,
     color: '#f4f4f4',
+  },
+  eventlisttext: {
+    fontFamily: 'Roboto_300Light',
+    fontSize: 25,
+    color: '#4a4a4a',
+    marginBottom: 10,
+  },
+  eventlisttext2: {
+    fontFamily: 'Roboto_300Light',
+    fontSize: 15,
+    color: '#4a4a4a',
   },
 });
 
