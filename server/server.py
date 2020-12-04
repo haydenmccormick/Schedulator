@@ -1,10 +1,7 @@
 import os
 import platform
-try:
-    import http.server as server
-except ImportError:
-    # Handle Python 2.x
-    import SimpleHTTPServer as server
+import http.server as server
+
 
 class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
     def do_PUT(self):
