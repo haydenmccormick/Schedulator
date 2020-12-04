@@ -7,9 +7,8 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase("db.db");
 
-export default function TaskList() {
+export default function TaskList(props) {
 	const [tasks, setTasks] = useState("");
-
 	function showTasks() {
 		const tempDates = {};
 		db.transaction(tx => {
@@ -25,6 +24,7 @@ export default function TaskList() {
 	const [addingEvent, setAddingEvent] = useState(false);
 	const addEventPressHandler = () => {
 		showTasks();
+		props.findTasks();
 		setAddingEvent(!addingEvent);
 	};
 

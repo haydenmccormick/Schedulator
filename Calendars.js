@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text, Button, SafeAreaView, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Image, Text } from 'react-native';
 import { Agenda } from 'react-native-calendars'
 import { Form, Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
@@ -8,18 +8,17 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase("db.db");
 
-function DayView() {
+function DayView(props) {
 
 	const d = new Date();
 	const month = d.getMonth() + 1;
 	const string = d.getFullYear() + '-' + month + '-' + d.getDate();
 	const [selected, setSelected] = useState(string);
-	const [taskEntries, setTaskEntries] = useState([{}]);
 	const [dates, setDates] = useState([{}]);
 	const onDayPress = (day) => {
 		setSelected(day.dateString);
 	};
-
+	const tasks = props.tasks;
 	// Generates an array of eventdates and passes it to dates
 
 	function findDates() {
@@ -50,39 +49,11 @@ function DayView() {
 
 	// Generates an array of events and passes it to tasks
 
-	function findTasks() {
-		const tempTasks = {};
-		db.transaction(tx => {
-			//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
-			tx.executeSql(
-				"SELECT taskname, endTime, date, 'static' AS type FROM tasks UNION SELECT taskname, endTime, date, 'dynamic' as type FROM dynamicTasks ORDER BY endTime",
-				[],
-				(tx, results) => {
-					for (let i = 0; i < results.rows.length; i++) {
-						newTask = {
-							name: results.rows.item(i).taskname,
-							startTime: results.rows.item(i).startTime,
-							endTime: results.rows.item(i).endTime,
-							type: results.rows.item(i).type
-						};
-						if (tempTasks[results.rows.item(i).date]) {
-							tempTasks[results.rows.item(i).date].push(newTask);
-						}
-						else {
-							tempTasks[results.rows.item(i).date] = [newTask];
-						}
-					}
-					setTaskEntries(tempTasks);
-				}
-			);
-		});
-	}
-
 
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const addEventPressHandler = () => {
-		findTasks();
+		props.findTasks();
 		setAddingEvent(!addingEvent);
 	};
 
@@ -136,7 +107,7 @@ function DayView() {
 	// TODO: This is slow. Is there a more efficient way to do it?
 	function getItems() {
 		findDates();
-		return taskEntries;
+		return tasks;
 	}
 
 	// TODO: render an indication of where in the day the user is
