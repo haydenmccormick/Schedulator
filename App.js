@@ -52,7 +52,7 @@ export default function App() {
     db.transaction(tx => {
       //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
       tx.executeSql(
-        "SELECT taskname, endTime, date, 'static' AS type FROM tasks UNION SELECT taskname, endTime, date, 'dynamic' as type FROM dynamicTasks ORDER BY endTime",
+        "SELECT taskname, startTime, endTime, date, 'static' AS type FROM tasks UNION SELECT taskname, '' AS startTime, endTime, date, 'dynamic' as type FROM dynamicTasks ORDER BY endTime",
         [],
         (tx, results) => {
           for (let i = 0; i < results.rows.length; i++) {
@@ -62,15 +62,16 @@ export default function App() {
               endTime: results.rows.item(i).endTime,
               type: results.rows.item(i).type
             };
+            newDate = { marked: true };
             if (tempTasks[results.rows.item(i).date]) {
               tempTasks[results.rows.item(i).date].push(newTask);
-              tempDates[results.rows.item(i).date].push({ marked: true });
             }
             else {
               tempTasks[results.rows.item(i).date] = [newTask];
-              tempDates[results.rows.item(i).date] = ({ marked: true });
+              tempDates[results.rows.item(i).date] = newDate;
             }
           }
+          console.log(tempDates);
           setTaskEntries(tempTasks);
           setDateEntries(tempDates);
         }

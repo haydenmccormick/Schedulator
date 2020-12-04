@@ -25,6 +25,7 @@ function DayView(props) {
 	const [addingEvent, setAddingEvent] = useState(false);
 	const addEventPressHandler = () => {
 		props.findTasks();
+		console.log(props.tasks);
 		setAddingEvent(!addingEvent);
 	};
 
