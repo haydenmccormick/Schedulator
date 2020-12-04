@@ -71,7 +71,6 @@ export default function App() {
               tempDates[results.rows.item(i).date] = newDate;
             }
           }
-          console.log(tempDates);
           setTaskEntries(tempTasks);
           setDateEntries(tempDates);
         }

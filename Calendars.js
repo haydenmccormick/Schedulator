@@ -19,13 +19,11 @@ function DayView(props) {
 	};
 	const tasks = props.tasks;
 	const dates = props.dates;
-	// Generates an array of eventdates and passes it to dates
 
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const addEventPressHandler = () => {
 		props.findTasks();
-		console.log(props.tasks);
 		setAddingEvent(!addingEvent);
 	};
 
@@ -33,7 +31,7 @@ function DayView(props) {
 	const render_form = (addingEvent ?
 		<View style={styles.formwrapper}>
 			{/* So the user can click outside of form box to cancel*/}
-			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
+			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
 				<Form retFunc={addEventPressHandler} />
 			</View>
@@ -75,8 +73,6 @@ function DayView(props) {
 			</View>
 		)
 	}
-
-	// TODO: This is slow. Is there a more efficient way to do it?
 
 	// TODO: render an indication of where in the day the user is
 
