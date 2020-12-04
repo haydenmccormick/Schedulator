@@ -10,13 +10,17 @@ import styles from './assets/Styles.js';
 import { useFonts, Roboto_100Thin, Roboto_300Light } from '@expo-google-fonts/roboto';
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
+//import RNBackgroundDownloader from 'react-native-background-downloader';
+
+const addr = "(http://[::]:8000/)";
 
 const Tab = createBottomTabNavigator();
 
 FileSystem.downloadAsync(
-  Expo.Asset.fromModule(require('./db.db')).uri,
+  Expo.Asset.fromModule(require('./server/db.db')).uri,
   `${FileSystem.documentDirectory}SQLite/db.db`
 );
+
 const db = SQLite.openDatabase("db.db");
 
 export default function App() {

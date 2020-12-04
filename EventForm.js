@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "./assets/Styles.js"
 import * as SQLite from 'expo-sqlite';
 
-const addr = "http://192.168.86.27:8000/";
+const addr = "http://[::]:8000/";
 
 // Database integration
 const db = SQLite.openDatabase("db.db");
@@ -42,6 +42,14 @@ function Form(props) {
 				(_, { rows: { _array } }) => alert(JSON.stringify(_array))
 			);*/
 		});
+		var body = new FormData();
+		//body.append('file_attachment',`${FileSystem.documentDirectory}SQLite/db.db`);
+
+		body.append('text', "insert into tasks(taskname,date,startTime,endTime) values" + values);
+		//body.append('file_attachment',FileSystem.readAsStringAsync("db.db"));
+		var xhr = new XMLHttpRequest();
+		xhr.open('PUT', 'http://[::]:8000/');
+		xhr.send(body);
 		props.retFunc();
 	}
 	const datePressHandler = () => {
