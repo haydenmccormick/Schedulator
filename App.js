@@ -12,7 +12,7 @@ import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const addr = "http://192.168.86.27:8000/";
+const addr = "http://192.168.86.45:8000/";
 
 const Tab = createBottomTabNavigator();
 

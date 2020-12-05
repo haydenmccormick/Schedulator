@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text, FlatList, ImageBackground } from 'react-native';
+import { View, TouchableOpacity, Image, Text, FlatList } from 'react-native';
 import { Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';

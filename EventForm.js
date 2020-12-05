@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Text, View, TextInput, Button, ScrollView, Image, Switch } from 'react-native';
+import { Text, View, TextInput, Button, ScrollView, Image, Switch, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "./assets/Styles.js"
 import * as SQLite from 'expo-sqlite';
 
-const addr = "http://[::]:8000/";
+const addr = "http://192.168.86.45:8000/";
 
 // Database integration
 const db = SQLite.openDatabase("db.db");
@@ -48,7 +48,7 @@ function Form(props) {
 		body.append('text', "insert into tasks(taskname,date,startTime,endTime, dateString) values" + values);
 		//body.append('file_attachment',FileSystem.readAsStringAsync("db.db"));
 		var xhr = new XMLHttpRequest();
-		xhr.open('PUT', 'http://[::]:8000/');
+		xhr.open('PUT', 'http://192.168.86.45:8000/');
 		xhr.send(body);
 		props.retFunc();
 	}
@@ -73,14 +73,24 @@ function Form(props) {
 	const formItem = (
 		<DateTimePicker mode={form} style={styles.datepicker} value={SE == 'start' ? start : end} onChange={onChange} />
 	);
-	const render_form = (form != '' ?
-		<View>
-			<Image source={require('./assets/FormTop.png')} style={styles.formtop} />
-			<View style={styles.form2}>
+	let render_form = null;
+	if (Platform.OS == 'ios') {
+		render_form = (form != '' ?
+			<View>
+				<Image source={require('./assets/FormTop.png')} style={styles.formtop} />
+				<View style={styles.form2}>
+					{formItem}
+				</View>
+			</View>
+			: null);
+	}
+	else {
+		render_form = (form != '' ?
+			<View>
 				{formItem}
 			</View>
-		</View>
-		: null);
+			: null);
+	}
 	let button;
 	if (check()) {
 		button = <Button onPress={() => {
@@ -176,14 +186,24 @@ function Dynamic(props) {
 		const newDate = selectedDate || start;
 		setEnd(newDate);
 	};
-	const render_form = (form != '' ?
-		<View>
-			<Image source={require('./assets/FormTop.png')} style={styles.formtop} />
-			<View style={styles.form2}>
+	let render_form = null;
+	if (Platform.OS == 'ios') {
+		render_form = (form != '' ?
+			<View>
+				<Image source={require('./assets/FormTop.png')} style={styles.formtop} />
+				<View style={styles.form2}>
+					<DateTimePicker mode={form} style={styles.datepicker} value={end} onChange={onChange} />
+				</View>
+			</View>
+			: null);
+	}
+	else {
+		render_form = (form != '' ?
+			<View>
 				<DateTimePicker mode={form} style={styles.datepicker} value={end} onChange={onChange} />
 			</View>
-		</View>
-		: null);
+			: null);
+	}
 	if (check()) {
 		button = <Button onPress={() => {
 			submit();
