@@ -41,16 +41,18 @@ export default function TaskList(props) {
 
 	// list of tasks displayed to user
 	let listview;
-	const Item = ({ name, dueDate }) => (
+	const Item = ({ name, dueDate, dueTime }) => (
 		<View style={styles.eventlistcontainer}>
 			<Text style={styles.eventlisttext}>{name}</Text>
-			<Text style={styles.eventlisttext2}>Due {dueDate}</Text>
+			<Text style={styles.eventlisttext2}>Due {dueDate} at {dueTime}</Text>
 		</View>
 	);
 
 	const renderItem = ({ item }) => (
-		<Item name={item.taskname} dueDate={item.date} />
+		<Item name={item.taskname} dueDate={new Date(item.deadline).toDateString()}
+			dueTime={new Date(item.deadline).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })} />
 	);
+
 
 	if (tasks != "") {
 		//horizontalScroll={true} columnWidth={50} height={150}

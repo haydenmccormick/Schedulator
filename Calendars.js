@@ -14,41 +14,11 @@ function DayView(props) {
 	const month = d.getMonth() + 1;
 	const string = d.getFullYear() + '-' + month + '-' + d.getDate();
 	const [selected, setSelected] = useState(string);
-	const [dates, setDates] = useState([{}]);
 	const onDayPress = (day) => {
 		setSelected(day.dateString);
 	};
 	const tasks = props.tasks;
-	// Generates an array of eventdates and passes it to dates
-
-	function findDates() {
-		const tempDates = {};
-		db.transaction(tx => {
-			//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
-			tx.executeSql(
-				"select * from tasks",
-				[],
-				(tx, results) => {
-					for (let i = 0; i < results.rows.length; i++) {
-						tempDates[results.rows.item(i).date] = { marked: true };
-					}
-				}
-			);
-			tx.executeSql(
-				"select * from dynamictasks",
-				[],
-				(tx, results) => {
-					for (let i = 0; i < results.rows.length; i++) {
-						tempDates[results.rows.item(i).date] = { marked: true };
-					}
-					setDates(tempDates);
-				}
-			);
-		});
-	}
-
-	// Generates an array of events and passes it to tasks
-
+	const dates = props.dates;
 
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
@@ -61,7 +31,7 @@ function DayView(props) {
 	const render_form = (addingEvent ?
 		<View style={styles.formwrapper}>
 			{/* So the user can click outside of form box to cancel*/}
-			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
+			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
 				<Form retFunc={addEventPressHandler} />
 			</View>
@@ -82,14 +52,18 @@ function DayView(props) {
 		let renderbar;
 		let message = "";
 		let timedisplay;
+		let start = (new Date(item.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' }));
+		let end = (new Date(item.endTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' }));
 		if (item.type == 'dynamic') {
 			message = " due"
 			renderbar = styles.dynamicevent;
-			timedisplay = <Text style={styles.eventdatetext}>{item.endTime}</Text>
+			timedisplay = <Text style={styles.eventdatetext}>{end}</Text>
 		}
 		else {
 			renderbar = styles.staticevent;
-			timedisplay = <Text style={styles.eventdatetext}>{item.startTime} - {item.endTime}</Text>
+			timedisplay = <Text style={styles.eventdatetext}>
+				{start} - {end}
+			</Text>
 		}
 		return (
 			<View style={styles.eventcontainer}>
@@ -104,12 +78,6 @@ function DayView(props) {
 		)
 	}
 
-	// TODO: This is slow. Is there a more efficient way to do it?
-	function getItems() {
-		findDates();
-		return tasks;
-	}
-
 	// TODO: render an indication of where in the day the user is
 
 	return (
@@ -119,7 +87,7 @@ function DayView(props) {
 				markedDates={dates}
 				renderEmptyData={() => { return emptyday; }}
 				renderItem={(item) => { return event(item); }}
-				items={getItems()}
+				items={tasks}
 			/>
 			<View style={styles.buttonwrapper}>
 				<TouchableOpacity onPress={addEventPressHandler}>

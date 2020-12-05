@@ -15,12 +15,10 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   input: {
-    textAlign: 'center',
-    padding: 5,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    borderColor: 'skyblue',
-    borderWidth: 2,
+    fontSize: 20,
+    marginVertical: 20,
+    flexWrap: 'wrap',
+    color: '#4a4a4a',
   },
   title: {
     alignSelf: 'center',
@@ -50,21 +48,38 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: 'black',
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+  },
+  miniformwrapper: {
+    backgroundColor: 'blue',
   },
   formcontainer: {
-    width: '75%',
-    height: '90%',
-    bottom: '-5%',
+    width: '95%',
     alignSelf: 'center',
-  },
-  formshell: {
   },
   form: {
     borderRadius: 30,
     paddingHorizontal: 40,
     paddingTop: 10,
     backgroundColor: 'white',
+  },
+
+  formtop: {
+    width: '95%',
+    height: 25,
+    resizeMode: 'stretch',
+    alignSelf: 'center',
+    marginBottom: -.5
+  },
+  form2: {
+    borderRadius: 30,
+    paddingHorizontal: 40,
+    paddingVertical: 10,
+    backgroundColor: 'white',
+    height: 200,
+    justifyContent: 'center',
+    marginTop: 0,
   },
   eventcontainer: {
     backgroundColor: 'white',
@@ -75,7 +90,6 @@ const styles = StyleSheet.create({
     minHeight: 100,
     marginVertical: 10,
     marginHorizontal: 10,
-
   },
   emptytext: {
     fontFamily: 'Roboto_100Thin',
@@ -159,6 +173,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto_300Light',
     fontSize: 15,
     color: '#4a4a4a',
+  },
+  taskname: {
+    marginTop: 10,
+  },
+  enterdate: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+  },
+  datepicker: {
+    width: '95%',
+    alignSelf: 'center',
+  },
+  formtext: {
+    fontFamily: 'Roboto_300Light',
+    fontSize: 18,
+    marginTop: 25,
   },
 });
 
