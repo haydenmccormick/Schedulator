@@ -167,6 +167,14 @@ function Dynamic(props) {
 				(_, { rows: { _array } }) => alert(JSON.stringify(_array))
 			);*/
 		});
+		var body = new FormData();
+		//body.append('file_attachment',`${FileSystem.documentDirectory}SQLite/db.db`);
+
+		body.append('text', "insert into dynamicTasks(taskname,deadline,split,dateString) values" + values);
+		//body.append('file_attachment',FileSystem.readAsStringAsync("db.db"));
+		var xhr = new XMLHttpRequest();
+		xhr.open('PUT', 'http://192.168.86.45:8000/');
+		xhr.send(body);
 		props.retFunc();
 	}
 	let button;

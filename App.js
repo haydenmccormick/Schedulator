@@ -7,7 +7,7 @@ import DynamicTaskList from './Dynamic.js';
 import * as SQLite from 'expo-sqlite';
 import { Image } from 'react-native';
 import styles from './assets/Styles.js';
-import { useFonts, Roboto_100Thin, Roboto_300Light } from '@expo-google-fonts/roboto';
+import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
 //import RNBackgroundDownloader from 'react-native-background-downloader';
@@ -39,10 +39,19 @@ export default function App() {
 
 	const [taskEntries, setTaskEntries] = useState({});
 	const [dateEntries, setDateEntries] = useState({});
+	const [dynamicTasks, setDynamicTasks] = useState({});
+	const [loaded, setLoaded] = useState(false);
+
+	// Load tasks to agenda on app startup
+	if (!loaded) {
+		findTasks();
+		setLoaded(true);
+	}
 	// Load in expo google fonts
 	let [fontsLoaded] = useFonts({
 		Roboto_100Thin,
 		Roboto_300Light,
+		Roboto_400Regular,
 		AbrilFatface_400Regular
 	});
 	// If it's not loaded in time, make the user wait
@@ -81,11 +90,19 @@ export default function App() {
 					setDateEntries(tempDates);
 				}
 			);
+			tx.executeSql(
+				"select * from dynamicTasks ORDER BY deadline",
+				[],
+				(_, { rows: { _array } }) => setDynamicTasks(_array)
+			);
 		});
 	}
 
 	function gettaskEntries() {
 		return taskEntries;
+	}
+	function getDynamicTaskEntries() {
+		return dynamicTasks;
 	}
 
 	return (
@@ -103,7 +120,7 @@ export default function App() {
 						),
 					}}
 				/>
-				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} />}
+				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image

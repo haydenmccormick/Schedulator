@@ -191,6 +191,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 25,
   },
+  deletearea: {
+    right: 10, top: 10,
+    position: 'absolute',
+  },
+  delete: {
+    color: '#f47970',
+    fontFamily: 'Roboto_400Regular',
+  },
 });
 
 export default styles;

@@ -1,29 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text, FlatList } from 'react-native';
+import { View, TouchableOpacity, Image, Text, FlatList, Alert } from 'react-native';
 import { Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
+import deleteDynamicTasks from './DeleteForm.js';
 
 const db = SQLite.openDatabase("db.db");
 
 export default function TaskList(props) {
-	const [tasks, setTasks] = useState("");
-	function showTasks() {
-		const tempDates = {};
-		db.transaction(tx => {
-			tx.executeSql(
-				"select * from dynamicTasks",
-				[],
-				(_, { rows: { _array } }) => setTasks(_array)
-			);
-		});
-	}
-
+	const tasks = props.tasks;
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const addEventPressHandler = () => {
-		showTasks();
 		props.findTasks();
 		setAddingEvent(!addingEvent);
 	};
@@ -39,12 +28,32 @@ export default function TaskList(props) {
 		</View>
 		: null)
 
+	function deleteItem(itemName) {
+		db.transaction(tx => {
+			tx.executeSql("delete from dynamicTasks where taskname ='" + itemName + "'", []);
+		});
+		props.findTasks();
+	}
+
+	function handleDelete(itemName) {
+		Alert.alert("Are you sure you want to delete " + itemName + "?",
+			"This can't be undone.", [
+			{ text: "Yes", onPress: () => { deleteItem(itemName) } },
+			{ text: "Cancel" },
+		]);
+	}
+
 	// list of tasks displayed to user
 	let listview;
 	const Item = ({ name, dueDate, dueTime }) => (
 		<View style={styles.eventlistcontainer}>
-			<Text style={styles.eventlisttext}>{name}</Text>
-			<Text style={styles.eventlisttext2}>Due {dueDate} at {dueTime}</Text>
+			<View style={styles.deletearea}>
+				<Text style={styles.delete} onPress={() => { handleDelete(name) }}>X</Text>
+			</View>
+			<View>
+				<Text style={styles.eventlisttext}>{name}</Text>
+				<Text style={styles.eventlisttext2}>Due {dueDate} at {dueTime}</Text>
+			</View>
 		</View>
 	);
 
