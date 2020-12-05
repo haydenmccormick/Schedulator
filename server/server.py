@@ -21,6 +21,8 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
         for n in file2:
             if "insert into" in n:
                 str = n
+            if "delete from" in n:
+                str = n
         if str == "":
             print("No command")
             exit(1)
