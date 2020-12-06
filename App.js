@@ -63,7 +63,7 @@ export default function App() {
 
     function findTasks() {
 	var xhr = new XMLHttpRequest();
-	xhr.open("GET", "http://192.168.86.27:8000/all.json", true);
+	xhr.open("GET", addr + "all.json", true);
 	xhr.onload = function (e) {
   if (xhr.readyState === 4) {
     if (xhr.status === 200) {
