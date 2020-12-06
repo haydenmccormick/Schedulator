@@ -2,7 +2,6 @@ import os
 import platform
 import http.server as server
 
-
 class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
     def do_PUT(self):
         file_length = int(self.headers['Content-Length'])
@@ -31,8 +30,4 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
         os.system(command)
 
 if __name__ == '__main__':
-    if platform.system() == 'Darwin':
-        os.system("ipconfig getifaddr en0")
-    else:
-        os.system("hostname -I")
     server.test(HandlerClass=HTTPRequestHandler)

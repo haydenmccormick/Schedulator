@@ -7,7 +7,7 @@ import * as SQLite from 'expo-sqlite';
 import deleteDynamicTasks from './DeleteForm.js';
 
 const db = SQLite.openDatabase("db.db");
-const addr = "http://192.168.86.45:8000/";
+const addr = "http://192.168.86.27:8000/";
 
 export default function TaskList(props) {
 	const tasks = props.tasks;
@@ -38,7 +38,7 @@ export default function TaskList(props) {
 		body.append('text', "delete from dynamicTasks where taskname ='" + itemName + "'");
 		//body.append('file_attachment',FileSystem.readAsStringAsync("db.db"));
 		var xhr = new XMLHttpRequest();
-		xhr.open('PUT', 'http://192.168.86.45:8000/');
+	    xhr.open('PUT',addr);
 		xhr.send(body);
 		props.findTasks();
 	}
