@@ -10,7 +10,10 @@ import styles from './assets/Styles.js';
 import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
+import loadLocalResource from 'react-native-local-resource'
 //import RNBackgroundDownloader from 'react-native-background-downloader';
+
+const addr = "http://192.168.86.27:8000/";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,6 +21,7 @@ FileSystem.downloadAsync(
 	Expo.Asset.fromModule(require('./server/db.db')).uri,
 	`${FileSystem.documentDirectory}SQLite/db.db`
 );
+
 
 const db = SQLite.openDatabase("db.db");
 
@@ -57,7 +61,26 @@ export default function App() {
 		return <AppLoading />;
 	}
 
-	function findTasks() {
+    function findTasks() {
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", "http://192.168.86.27:8000/all.json", true);
+	xhr.onload = function (e) {
+  if (xhr.readyState === 4) {
+    if (xhr.status === 200) {
+      alert(xhr.responseText);
+    } else {
+      console.error(xhr.statusText);
+    }
+  }
+};
+xhr.onerror = function (e) {
+  console.error(xhr.statusText);
+};
+	xhr.send(null);
+/*
+    loadLocalResource(myResource).then((myResourceContent) => {
+	    alert("myResource was loaded: " + myResourceContent)
+	});*/
 		const tempTasks = {};
 		const tempDates = {};
 		db.transaction(tx => {
@@ -91,7 +114,7 @@ export default function App() {
 			tx.executeSql(
 				"select * from dynamicTasks ORDER BY deadline",
 				[],
-				(_, { rows: { _array } }) => setDynamicTasks(_array)
+			    (_, { rows: { _array } }) => console.log(1)
 			);
 		});
 	}

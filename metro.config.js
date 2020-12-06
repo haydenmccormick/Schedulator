@@ -4,6 +4,6 @@ const defaultConfig = getDefaultConfig(__dirname);
 
 module.exports = {
   resolver: {
-    assetExts: [...defaultConfig.resolver.assetExts, 'db'],
+      assetExts: [...defaultConfig.resolver.assetExts, 'db', 'json', 'txt'],
   },
 };
