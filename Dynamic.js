@@ -24,7 +24,7 @@ export default function TaskList(props) {
 			{/* So the user can click outside of form box to cancel*/}
 			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
 			<View style={styles.formcontainer}>
-				<Dynamic retFunc={addEventPressHandler} />
+				<Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} />
 			</View>
 		</View>
 		: null)
@@ -33,13 +33,7 @@ export default function TaskList(props) {
 		db.transaction(tx => {
 			tx.executeSql("delete from dynamicTasks where taskname ='" + itemName + "'", []);
 		});
-		var body = new FormData();
-		//body.append('file_attachment',`${FileSystem.documentDirectory}SQLite/db.db`);
-		body.append('text', "delete from dynamicTasks where taskname ='" + itemName + "'");
-		//body.append('file_attachment',FileSystem.readAsStringAsync("db.db"));
-		var xhr = new XMLHttpRequest();
-		xhr.open('PUT', 'http://192.168.86.45:8000/');
-		xhr.send(body);
+		props.pushServer("delete from dynamicTasks where taskname ='" + itemName + "'");
 		props.findTasks();
 	}
 
@@ -54,10 +48,10 @@ export default function TaskList(props) {
 	// list of tasks displayed to user
 	let listview;
 	const Item = ({ name, dueDate, dueTime }) => (
-		<View style={styles.eventlistcontainer}>
-			<View style={styles.deletearea}>
-				<Text style={styles.delete} onPress={() => { handleDelete(name) }}>X</Text>
-			</View>
+		<View style={styles.eventlistcontainer} >
+			<TouchableOpacity style={styles.deletearea} onPress={() => handleDelete(name)}>
+				<Image source={require('./assets/dynamic-delete-button.png')} style={styles.delete} />
+			</TouchableOpacity>
 			<View>
 				<Text style={styles.eventlisttext}>{name}</Text>
 				<Text style={styles.eventlisttext2}>Due {dueDate} at {dueTime}</Text>

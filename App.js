@@ -59,7 +59,19 @@ export default function App() {
 		return <AppLoading />;
 	}
 
+	// Push data to the server
+	function pushServer(command) {
+		var body = new FormData();
+		//body.append('file_attachment',`${FileSystem.documentDirectory}SQLite/db.db`);
+		body.append('text', command);
+		//body.append('file_attachment',FileSystem.readAsStringAsync("db.db"));
+		var xhr = new XMLHttpRequest();
+		xhr.open('PUT', addr);
+		xhr.send(body);
+	}
+
 	function findTasks() {
+		console.log("Finding tasks...")
 		const tempTasks = {};
 		const tempDates = {};
 		db.transaction(tx => {
@@ -68,6 +80,7 @@ export default function App() {
 				"SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname, dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks",
 				[],
 				(tx, results) => {
+					console.log(results.rows.length);
 					for (let i = 0; i < results.rows.length; i++) {
 						newTask = {
 							name: results.rows.item(i).taskname,
@@ -88,12 +101,12 @@ export default function App() {
 					}
 					setTaskEntries(tempTasks);
 					setDateEntries(tempDates);
-				}
+				}, (tx, results) => { console.log("Error in Execute SQL! === " + results) }
 			);
 			tx.executeSql(
 				"select * from dynamicTasks ORDER BY deadline",
 				[],
-				(_, { rows: { _array } }) => setDynamicTasks(_array)
+				(_, { rows: { _array } }) => { setDynamicTasks(_array); }
 			);
 		});
 	}
@@ -110,7 +123,8 @@ export default function App() {
 			<Tab.Navigator
 				screenOptions={options}
 			>
-				<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()} />}
+				<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()}
+					pushServer={pushServer} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image
@@ -120,7 +134,8 @@ export default function App() {
 						),
 					}}
 				/>
-				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()} />}
+				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()}
+					pushServer={pushServer} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image

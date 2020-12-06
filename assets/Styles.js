@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
   eventdate: {
     flexDirection: 'column',
     justifyContent: 'space-around',
+    paddingRight: 25,
   },
   eventdatetext: {
     fontFamily: 'Roboto_300Light',
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
     width: '95%',
     marginVertical: 10,
     marginHorizontal: 10,
+    padding: 10,
   },
   emptyeventlisttext: {
     fontFamily: 'Roboto_300Light',
@@ -196,8 +198,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   delete: {
-    color: '#f47970',
-    fontFamily: 'Roboto_400Regular',
+    resizeMode: 'contain',
+    width: 20,
+    height: 20,
   },
 });
 
