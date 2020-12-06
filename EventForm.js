@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "./assets/Styles.js"
 import * as SQLite from 'expo-sqlite';
 
-const addr = "http://192.168.86.45:8000/";
+const addr = "http://192.168.86.27:8000/";
 
 // Database integration
 const db = SQLite.openDatabase("db.db");
@@ -31,9 +31,6 @@ function Form(props) {
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
 		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
-		//alert(values);
-		//Add stuff to database
-		//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
 		db.transaction(tx => {
 			tx.executeSql("insert into tasks(taskname,date,startTime,endTime,dateString) values" + values, []);/*
 			tx.executeSql(
@@ -43,12 +40,9 @@ function Form(props) {
 			);*/
 		});
 		var body = new FormData();
-		//body.append('file_attachment',`${FileSystem.documentDirectory}SQLite/db.db`);
-
 		body.append('text', "insert into tasks(taskname,date,startTime,endTime, dateString) values" + values);
-		//body.append('file_attachment',FileSystem.readAsStringAsync("db.db"));
 		var xhr = new XMLHttpRequest();
-		xhr.open('PUT', 'http://192.168.86.45:8000/');
+		xhr.open('PUT',addr);
 		xhr.send(body);
 		props.retFunc();
 	}
@@ -157,23 +151,13 @@ function Dynamic(props) {
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
 		let values = "('" + input + "','" + end.getTime() + "','" + toggleCheckBox + "','" + datestring + "')";
-		//Add stuff to database
-		//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
 		db.transaction(tx => {
-			tx.executeSql("insert into dynamicTasks(taskname,deadline,split,dateString) values" + values, []);/*
-			tx.executeSql(
-				"select * from dynamicTasks",
-				[],
-				(_, { rows: { _array } }) => alert(JSON.stringify(_array))
-			);*/
+			tx.executeSql("insert into dynamicTasks(taskname,deadline,split,dateString) values" + values, []);
 		});
 		var body = new FormData();
-		//body.append('file_attachment',`${FileSystem.documentDirectory}SQLite/db.db`);
-
 		body.append('text', "insert into dynamicTasks(taskname,deadline,split,dateString) values" + values);
-		//body.append('file_attachment',FileSystem.readAsStringAsync("db.db"));
 		var xhr = new XMLHttpRequest();
-		xhr.open('PUT', 'http://192.168.86.45:8000/');
+		xhr.open('PUT',addr);
 		xhr.send(body);
 		props.retFunc();
 	}
