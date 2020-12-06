@@ -23,7 +23,6 @@ def changeFiles():
         os.system("sed -i \"6s/.*/" + addr + "/" + "EventForm.js")
 
 def main():
-    removeEvents()
     print(ip())
     os.chdir("server")
     os.system("python3 server.py")
