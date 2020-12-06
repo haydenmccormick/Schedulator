@@ -15,6 +15,7 @@
     "@react-native-community/datetimepicker": "3.0.0",
     "@react-navigation/bottom-tabs": "^5.11.2",
     "@react-navigation/native": "^5.8.10",
+    "@react-navigation/stack": "^5.12.8",
     "expo": "^39.0.5",
     "expo-asset": "~8.2.0",
     "expo-file-system": "~9.2.0",
@@ -39,10 +40,14 @@
     "react-native-modal-datetime-picker": "^9.1.0",
     "react-native-number-please": "^1.0.5",
     "react-native-responsive-table": "^1.0.4",
-    "react-native-screens": "^2.15.0",
+    "react-native-screens": "~2.10.1",
     "react-native-simple-time-picker": "^0.2.0",
     "react-native-sqlite-storage": "^5.0.0",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "react-native-gesture-handler": "~1.7.0",
+    "react-native-reanimated": "~1.13.0",
+    "react-native-safe-area-context": "3.1.4",
+    "@react-native-community/masked-view": "0.1.10"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"

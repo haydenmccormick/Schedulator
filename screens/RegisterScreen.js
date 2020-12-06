@@ -5,12 +5,21 @@ import AppButton from '../components/AppButton';
 import AppTextInput from '../components/AppTextInput';
 import Screen from '../components/Screen';
 
-function LoginScreen() {
+function RegisterScreen() {
+  const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
   return(
     <Screen style={styles.container}>
+        <AppTextInput 
+            autoCapitalize="word"
+            autoCorrect={false}
+            icon="account"
+            onChangeText={(text) => setName(text)}
+            placeholder="Name"
+            textContentType="name"
+        />
         <AppTextInput 
             autoCapitalize="none"
             autoCorrect={false}
@@ -31,8 +40,8 @@ function LoginScreen() {
         />
         <AppButton 
             color="secondary" 
-            onPress={() => console.log(email, password)}
-            title="Login" 
+            onPress={() => console.log(name, email, password)}
+            title="Register" 
         />
     </Screen>
     );
@@ -44,4 +53,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default LoginScreen;
+export default RegisterScreen;
