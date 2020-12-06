@@ -30,31 +30,35 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
         print(str)
         command = "sqlite3 db.db " + "\"" + str + ";\""
         os.system(command)
-        command = "sqlite3 db.db \" select * from dynamicTasks order by deadline;\">dynamicTasks.txt"
-        os.system(command)
-        command = "sqlite3 db.db \" SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname"
-        command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks\""
-        command += ">all.txt"
-        os.system(command)
-        command = "sed -i 's/|/,/g'"
-        os.system(command + " all.txt")
-        os.system(command + " dynamicTasks.txt")
-        command = "sed -i \'1 i\\taskname,date,endTime,period,split,dateString,deadline\' dynamicTasks.txt"
-        os.system(command)
-        command = "sed -i \'1 i\\taskname,dateString,startTime,endTime,type\' all.txt"
-        os.system(command)
-        with open('all.txt') as f:
-            reader = csv.DictReader(f)
-            rows = list(reader)
-        with open('all.json', 'w') as f:
-            json.dump(rows, f)
-        with open('dynamicTasks.txt') as f:
-            reader = csv.DictReader(f)
-            rows = list(reader)
-        with open('dynamicTasks.json', 'w') as f:
-            json.dump(rows, f)
+        createJSON()
+
+def createJSON():
+    command = "sqlite3 db.db \" select * from dynamicTasks order by deadline;\">dynamicTasks.txt"
+    os.system(command)
+    command = "sqlite3 db.db \" SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname"
+    command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks\""
+    command += ">all.txt"
+    os.system(command)
+    command = "sed -i 's/|/,/g'"
+    os.system(command + " all.txt")
+    os.system(command + " dynamicTasks.txt")
+    command = "sed -i \'1 i\\taskname,date,endTime,period,split,dateString,deadline\' dynamicTasks.txt"
+    os.system(command)
+    command = "sed -i \'1 i\\taskname,dateString,startTime,endTime,type\' all.txt"
+    os.system(command)
+    with open('all.txt') as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+    with open('all.json', 'w') as f:
+        json.dump(rows, f)
+    with open('dynamicTasks.txt') as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+    with open('dynamicTasks.json', 'w') as f:
+        json.dump(rows, f)
 
 if __name__ == '__main__':
+    createJSON()
     if platform.system() == 'Darwin':
         os.system("ipconfig getifaddr en0")
     else:
