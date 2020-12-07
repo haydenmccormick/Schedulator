@@ -39,14 +39,13 @@ def createJSON():
     command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks\""
     command += ">all.txt"
     os.system(command)
-    command = "sed -i 's/|/,/g'"
-    print(command)
-    exit()
+    sed = "/usr/local/Cellar/gnu-sed/4.8/bin/gsed "
+    command = sed + "-i 's/|/,/g'"
     os.system(command + " all.txt")
     os.system(command + " dynamicTasks.txt")
-    command = "sed -i \'1 i\\taskname,date,endTime,period,split,dateString,deadline\' dynamicTasks.txt"
+    command = sed + "-i \'1 i\\taskname,date,endTime,period,split,dateString,deadline\' dynamicTasks.txt"
     os.system(command)
-    command = "sed -i \'1 i\\taskname,dateString,startTime,endTime,type\' all.txt"
+    command = sed + "-i \'1 i\\taskname,dateString,startTime,endTime,type\' all.txt"
     os.system(command)
     with open('all.txt') as f:
         reader = csv.DictReader(f)
