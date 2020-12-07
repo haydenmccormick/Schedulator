@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "./assets/Styles.js"
 import * as SQLite from 'expo-sqlite';
 
-const addr = "http://192.168.86.27:8000/";
+const addr = "http://192.168.86.45:8000/";
 
 // Database integration
 const db = SQLite.openDatabase("db.db");
@@ -31,19 +31,20 @@ function Form(props) {
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
 		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
-		db.transaction(tx => {
-			tx.executeSql("insert into tasks(taskname,date,startTime,endTime,dateString) values" + values, []);/*
-			tx.executeSql(
-				"select * from tasks",
-				[],
-				(_, { rows: { _array } }) => alert(JSON.stringify(_array))
-			);*/
-		});
+		// db.transaction(tx => {
+		// 	tx.executeSql("insert into tasks(taskname,date,startTime,endTime,dateString) values" + values, []);/*
+		// 	tx.executeSql(
+		// 		"select * from tasks",
+		// 		[],
+		// 		(_, { rows: { _array } }) => alert(JSON.stringify(_array))
+		// 	);*/
+		// });
 		var body = new FormData();
-		body.append('text', "insert into tasks(taskname,date,startTime,endTime, dateString) values" + values);
+		body.append('text', "insert into tasks(taskname,date,startTime,endTime,dateString) values" + values);
 		var xhr = new XMLHttpRequest();
-		xhr.open('PUT',addr);
+		xhr.open('PUT', addr);
 		xhr.send(body);
+		console.log("XML is " + xhr.responseURL);
 		props.retFunc();
 	}
 	const datePressHandler = () => {
@@ -157,7 +158,7 @@ function Dynamic(props) {
 		var body = new FormData();
 		body.append('text', "insert into dynamicTasks(taskname,deadline,split,dateString) values" + values);
 		var xhr = new XMLHttpRequest();
-		xhr.open('PUT',addr);
+		xhr.open('PUT', addr);
 		xhr.send(body);
 		props.retFunc();
 	}

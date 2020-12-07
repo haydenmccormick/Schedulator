@@ -7,7 +7,7 @@ import * as SQLite from 'expo-sqlite';
 import deleteDynamicTasks from './DeleteForm.js';
 
 const db = SQLite.openDatabase("db.db");
-const addr = "http://192.168.86.27:8000/";
+const addr = "http://192.168.86.45:8000/";
 
 export default function TaskList(props) {
 	const tasks = props.tasks;
@@ -29,29 +29,15 @@ export default function TaskList(props) {
 		</View>
 		: null)
 
-    function deleteItem(itemName) {
-	let str = "delete from dynamicTasks where taskname = '" + itemName + "'";
-	changeLocalDB(itemName);
-
+	function deleteItem(itemName) {
+		let str = "delete from dynamicTasks where taskname = '" + itemName + "'";
 		var body = new FormData();
 		body.append('text', str);
 		var xhr = new XMLHttpRequest();
-		xhr.open('PUT',addr);
+		xhr.open('PUT', addr);
 		xhr.send(body);
 		props.findTasks();
-    }
-    function changeLocalDB(str) {
-	str = "'" + str + "'";
-	alert(str);
-	db.transaction(tx => {
-	    tx.executeSql("delete from tasks where taskname =" + str, []);
-	    tx.executeSql(
-			  "select * from dynamicTasks",
-			  [],
-			  (_, { rows: { _array } }) => alert(JSON.stringify(_array))
-			  );
-	});
-    }
+	}
 
 	function handleDelete(itemName) {
 		Alert.alert("Are you sure you want to delete " + itemName + "?",
@@ -66,7 +52,7 @@ export default function TaskList(props) {
 	const Item = ({ name, dueDate, dueTime }) => (
 		<View style={styles.eventlistcontainer}>
 			<View style={styles.deletearea}>
-				<Text style={styles.delete} onPress={() => { handleDelete(name) }}>X</Text>
+				<Text style={styles.delete} onPress={() => { handleDelete(name) }}>x</Text>
 			</View>
 			<View>
 				<Text style={styles.eventlisttext}>{name}</Text>
@@ -76,8 +62,8 @@ export default function TaskList(props) {
 	);
 
 	const renderItem = ({ item }) => (
-		<Item name={item.taskname} dueDate={new Date(item.deadline).toDateString()}
-			dueTime={new Date(item.deadline).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })} />
+		<Item name={item.taskname} dueDate={new Date(parseInt(item.endTime)).toDateString()}
+			dueTime={new Date(parseInt(item.endTime)).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })} />
 	);
 
 

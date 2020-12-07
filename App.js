@@ -13,7 +13,7 @@ import { AppLoading } from 'expo';
 import loadLocalResource from 'react-native-local-resource'
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const addr = "http://192.168.86.27:8000/";
+const addr = "http://192.168.86.45:8000/";
 
 const Tab = createBottomTabNavigator();
 
@@ -39,7 +39,7 @@ function options() {
 
 export default function App() {
 
-	const [taskEntries, setTaskEntries] = useState({});
+	const [taskEntries, setTaskEntries] = useState([{}]);
 	const [dateEntries, setDateEntries] = useState({});
 	const [dynamicTasks, setDynamicTasks] = useState({});
 	const [loaded, setLoaded] = useState(false);
@@ -61,62 +61,56 @@ export default function App() {
 		return <AppLoading />;
 	}
 
-    function findTasks() {
-	var xhr = new XMLHttpRequest();
-	xhr.open("GET", addr + "all.json", true);
-	xhr.onload = function (e) {
-  if (xhr.readyState === 4) {
-    if (xhr.status === 200) {
-      alert(xhr.responseText);
-    } else {
-      console.error(xhr.statusText);
-    }
-  }
-};
-xhr.onerror = function (e) {
-  console.error(xhr.statusText);
-};
-	xhr.send(null);
-/*
-    loadLocalResource(myResource).then((myResourceContent) => {
-	    alert("myResource was loaded: " + myResourceContent)
-	});*/
+	function getTaskInfo(tasks) {
 		const tempTasks = {};
 		const tempDates = {};
-		db.transaction(tx => {
-			//tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
-			tx.executeSql(
-				"SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname, dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks",
-				[],
-				(tx, results) => {
-					for (let i = 0; i < results.rows.length; i++) {
-						newTask = {
-							name: results.rows.item(i).taskname,
-							date: results.rows.item(i).dateString,
-							startTime: results.rows.item(i).startTime,
-							endTime: results.rows.item(i).endTime,
-							type: results.rows.item(i).type
-						};
-						newDate = { marked: true };
-						console.log(newTask);
-						if (tempTasks[results.rows.item(i).dateString]) {
-							tempTasks[results.rows.item(i).dateString].push(newTask);
-						}
-						else {
-							tempTasks[results.rows.item(i).dateString] = [newTask];
-							tempDates[results.rows.item(i).dateString] = newDate;
-						}
-					}
-					setTaskEntries(tempTasks);
-					setDateEntries(tempDates);
+		const tempDynamic = [];
+		var parsed = JSON.parse(tasks);
+		for (var i in parsed) {
+			if (parsed[i].type == 'dynamic') {
+				tempDynamic.push(parsed[i]);
+			}
+			newTask = {
+				name: parsed[i].taskname,
+				date: parsed[i].dateString,
+				startTime: parsed[i].startTime,
+				endTime: parsed[i].endTime,
+				type: parsed[i].type
+			};
+			newDate = { marked: true };
+			console.log(newTask);
+			if (tempTasks[parsed[i].dateString]) {
+				tempTasks[parsed[i].dateString].push(newTask);
+			}
+			else {
+				tempTasks[parsed[i].dateString] = [newTask];
+				tempDates[parsed[i].dateString] = newDate;
+			}
+		}
+		setTaskEntries(tempTasks);
+		setDateEntries(tempDates);
+		setDynamicTasks(tempDynamic);
+		console.log(dynamicTasks);
+	}
+
+
+	function findTasks() {
+		var xhr = new XMLHttpRequest();
+		xhr.onload = function (e) {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200) {
+					getTaskInfo(xhr.responseText);
+				} else {
+					console.error(xhr.statusText);
+					return <AppLoading />;
 				}
-			);
-			tx.executeSql(
-				"select * from dynamicTasks ORDER BY deadline",
-				[],
-			    (_, { rows: { _array } }) => console.log(1)
-			);
-		});
+			}
+		};
+		xhr.onerror = function (e) {
+			console.error(xhr.statusText);
+		};
+		xhr.open("GET", addr + "all.json", true);
+		xhr.send(null);
 	}
 
 	function gettaskEntries() {

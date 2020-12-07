@@ -4,12 +4,13 @@ import http.server as server
 import csv
 import json
 
+
 class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
     def do_PUT(self):
         file_length = int(self.headers['Content-Length'])
-        #print(self.headers)
+        # print(self.headers)
         file = self.rfile.read(file_length)
-        #print(file)
+        # print(file)
         file = file.decode()
         file2 = []
         str = ""
@@ -32,11 +33,12 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
         os.system(command)
         createJSON()
 
+
 def createJSON():
     command = "sqlite3 db.db \" select * from dynamicTasks order by deadline;\">dynamicTasks.txt"
     os.system(command)
     command = "sqlite3 db.db \" SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname"
-    command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks\""
+    command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks ORDER BY endTime\""
     command += ">all.txt"
     os.system(command)
     sed = "/usr/local/Cellar/gnu-sed/4.8/bin/gsed "
@@ -57,6 +59,7 @@ def createJSON():
         rows = list(reader)
     with open('dynamicTasks.json', 'w') as f:
         json.dump(rows, f)
+
 
 if __name__ == '__main__':
     createJSON()

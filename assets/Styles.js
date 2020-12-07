@@ -193,11 +193,20 @@ const styles = StyleSheet.create({
   },
   deletearea: {
     right: 10, top: 10,
+    backgroundColor: '#e7e8e9',
+    width: 18,
+    height: 18,
+    borderRadius: 10,
     position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   delete: {
-    color: '#f47970',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: '#ec7d6d',
     fontFamily: 'Roboto_400Regular',
+    fontSize: 15,
   },
 });
 
