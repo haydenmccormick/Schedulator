@@ -39,7 +39,10 @@ def createJSON():
     command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks\""
     command += ">all.txt"
     os.system(command)
-    sed = "/usr/local/Cellar/gnu-sed/4.8/bin/gsed "
+    sed = "sed "
+    if platform.system() == 'Darwin':
+        #brew install gnu-sed
+        sed = "/usr/local/Cellar/gnu-sed/4.8/bin/gsed "
     command = sed + "-i 's/|/,/g'"
     os.system(command + " all.txt")
     os.system(command + " dynamicTasks.txt")
