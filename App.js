@@ -13,7 +13,7 @@ import { AppLoading } from 'expo';
 import loadLocalResource from 'react-native-local-resource'
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const addr = "http://192.168.86.45:8000/";
+const addr = "http://192.168.0.4:8000/";
 
 const Tab = createBottomTabNavigator();
 
@@ -93,6 +93,14 @@ export default function App() {
 		console.log(dynamicTasks);
 	}
 
+	function pushServer(command) {
+		var body = new FormData();
+		body.append('text', command);
+		var xhr = new XMLHttpRequest();
+		xhr.open('PUT', addr);
+		xhr.send(body);
+		findTasks();
+	}
 
 	function findTasks() {
 		var xhr = new XMLHttpRequest();
@@ -125,7 +133,8 @@ export default function App() {
 			<Tab.Navigator
 				screenOptions={options}
 			>
-				<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()} />}
+				<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()}
+					pushServer={pushServer} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image
@@ -135,7 +144,8 @@ export default function App() {
 						),
 					}}
 				/>
-				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()} />}
+				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()}
+					pushServer={pushServer} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image

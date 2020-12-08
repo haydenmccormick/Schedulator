@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text } from 'react-native';
+import { View, TouchableOpacity, Image, Text, Alert } from 'react-native';
 import { Agenda } from 'react-native-calendars'
 import { Form, Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
@@ -23,9 +23,12 @@ function DayView(props) {
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const addEventPressHandler = () => {
-		props.findTasks();
 		setAddingEvent(!addingEvent);
 	};
+
+	function retFunc() {
+		setAddingEvent(false);
+	}
 
 	// Only render a form if the user is adding an event
 	const render_form = (addingEvent ?
@@ -33,7 +36,7 @@ function DayView(props) {
 			{/* So the user can click outside of form box to cancel*/}
 			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
-				<Form retFunc={addEventPressHandler} />
+				<Form retFunc={retFunc} pushServer={props.pushServer} />
 			</View>
 		</View>
 		: null)
@@ -46,6 +49,24 @@ function DayView(props) {
 			</Text>
 		</View>
 	)
+
+	function deleteItem(itemName, itemType) {
+		let table;
+		if (itemType == 'static')
+			table = 'tasks';
+		else
+			table = 'dynamicTasks';
+		let deleteStatement = "delete from " + table + " where taskname = '" + itemName + "'";
+		props.pushServer(deleteStatement);
+	}
+
+	function handleDelete(itemName, itemType) {
+		Alert.alert("Are you sure you want to delete " + itemName + "?",
+			"This can't be undone.", [
+			{ text: "Yes", onPress: () => { deleteItem(itemName, itemType) } },
+			{ text: "Cancel" },
+		]);
+	}
 
 	// Render event on agenda (different if Dynamic or Static)
 	function event(item) {
@@ -68,6 +89,10 @@ function DayView(props) {
 		return (
 			<View style={styles.eventcontainer}>
 				<View style={renderbar} />
+				<View style={styles.deletearea}>
+					<Text style={item.type == 'static' ? styles.staticdelete : styles.delete}
+						onPress={() => { handleDelete(item.name, item.type) }}>x</Text>
+				</View>
 				<View style={styles.eventdate}>
 					<Text style={styles.eventname}>
 						{item.name}{message}
@@ -78,8 +103,6 @@ function DayView(props) {
 		)
 	}
 
-	// TODO: render an indication of where in the day the user is
-
 	return (
 		<View style={styles.container}>
 			<Agenda style={styles.container}
@@ -87,7 +110,7 @@ function DayView(props) {
 				markedDates={dates}
 				renderEmptyData={() => { return emptyday; }}
 				renderItem={(item) => { return event(item); }}
-				items={tasks}
+				items={props.tasks}
 			/>
 			<View style={styles.buttonwrapper}>
 				<TouchableOpacity onPress={addEventPressHandler}>

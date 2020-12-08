@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "./assets/Styles.js"
 import * as SQLite from 'expo-sqlite';
 
-const addr = "http://192.168.86.45:8000/";
+const addr = "http://192.168.0.4:8000/";
 
 // Database integration
 const db = SQLite.openDatabase("db.db");
@@ -30,22 +30,14 @@ function Form(props) {
 	}
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
+		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";
 		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
-		// db.transaction(tx => {
-		// 	tx.executeSql("insert into tasks(taskname,date,startTime,endTime,dateString) values" + values, []);/*
-		// 	tx.executeSql(
-		// 		"select * from tasks",
-		// 		[],
-		// 		(_, { rows: { _array } }) => alert(JSON.stringify(_array))
-		// 	);*/
-		// });
-		var body = new FormData();
-		body.append('text', "insert into tasks(taskname,date,startTime,endTime,dateString) values" + values);
-		var xhr = new XMLHttpRequest();
-		xhr.open('PUT', addr);
-		xhr.send(body);
-		console.log("XML is " + xhr.responseURL);
+		props.pushServer(insert + values);
 		props.retFunc();
+		refresh();
+	}
+	function refresh() {
+
 	}
 	const datePressHandler = () => {
 		if (form == '')
@@ -151,15 +143,9 @@ function Dynamic(props) {
 	}
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
+		let insert = "insert into dynamicTasks('taskname','deadline','split','dateString') values ";
 		let values = "('" + input + "','" + end.getTime() + "','" + toggleCheckBox + "','" + datestring + "')";
-		db.transaction(tx => {
-			tx.executeSql("insert into dynamicTasks(taskname,deadline,split,dateString) values" + values, []);
-		});
-		var body = new FormData();
-		body.append('text', "insert into dynamicTasks(taskname,deadline,split,dateString) values" + values);
-		var xhr = new XMLHttpRequest();
-		xhr.open('PUT', addr);
-		xhr.send(body);
+		props.pushServer(insert + values);
 		props.retFunc();
 	}
 	let button;

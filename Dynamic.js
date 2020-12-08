@@ -7,7 +7,6 @@ import * as SQLite from 'expo-sqlite';
 import deleteDynamicTasks from './DeleteForm.js';
 
 const db = SQLite.openDatabase("db.db");
-const addr = "http://192.168.86.45:8000/";
 
 export default function TaskList(props) {
 	const tasks = props.tasks;
@@ -24,18 +23,14 @@ export default function TaskList(props) {
 			{/* So the user can click outside of form box to cancel*/}
 			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
 			<View style={styles.formcontainer}>
-				<Dynamic retFunc={addEventPressHandler} />
+				<Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} />
 			</View>
 		</View>
 		: null)
 
 	function deleteItem(itemName) {
-		let str = "delete from dynamicTasks where taskname = '" + itemName + "'";
-		var body = new FormData();
-		body.append('text', str);
-		var xhr = new XMLHttpRequest();
-		xhr.open('PUT', addr);
-		xhr.send(body);
+		let deleteStatement = "delete from dynamicTasks where taskname = '" + itemName + "'";
+		props.pushServer(deleteStatement);
 		props.findTasks();
 	}
 
