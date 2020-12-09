@@ -16,6 +16,7 @@ function DayView(props) {
 	const [selected, setSelected] = useState(string);
 	const onDayPress = (day) => {
 		setSelected(day.dateString);
+		props.findTasks();
 	};
 	const tasks = props.tasks;
 	const dates = props.dates;
@@ -26,17 +27,13 @@ function DayView(props) {
 		setAddingEvent(!addingEvent);
 	};
 
-	function retFunc() {
-		setAddingEvent(false);
-	}
-
 	// Only render a form if the user is adding an event
 	const render_form = (addingEvent ?
 		<View style={styles.formwrapper}>
 			{/* So the user can click outside of form box to cancel*/}
 			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
-				<Form retFunc={retFunc} pushServer={props.pushServer} />
+				<Form retFunc={addEventPressHandler} pushServer={props.pushServer} />
 			</View>
 		</View>
 		: null)

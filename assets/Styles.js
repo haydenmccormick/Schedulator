@@ -101,6 +101,8 @@ const styles = StyleSheet.create({
   eventdate: {
     flexDirection: 'column',
     justifyContent: 'space-around',
+    margin: 10,
+    marginRight: 35,
   },
   eventdatetext: {
     fontFamily: 'Roboto_300Light',
@@ -111,6 +113,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto_300Light',
     fontSize: 25,
     color: '#4a4a4a',
+    marginBottom: 10,
   },
   icon: {
     width: 25,
@@ -167,12 +170,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto_300Light',
     fontSize: 25,
     color: '#4a4a4a',
-    marginBottom: 10,
+    margin: 15,
+    marginRight: 39,
   },
   eventlisttext2: {
     fontFamily: 'Roboto_300Light',
     fontSize: 15,
     color: '#4a4a4a',
+    marginLeft: 15,
+    marginBottom: 15,
+
   },
   taskname: {
     marginTop: 10,
@@ -207,6 +214,30 @@ const styles = StyleSheet.create({
     color: '#ec7d6d',
     fontFamily: 'Roboto_400Regular',
     fontSize: 15,
+  },
+  staticdelete: {
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: '#2e94ac',
+    fontFamily: 'Roboto_400Regular',
+    fontSize: 15,
+  },
+  period: {
+    alignItems: 'center',
+  },
+  forminput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input2: {
+    borderColor: '#70d3f4',
+    borderWidth: 1,
+    fontSize: 20,
+    marginVertical: 20,
+    flexWrap: 'wrap',
+    color: '#4a4a4a',
+    padding: 5,
+    marginRight: 10,
   },
 });
 

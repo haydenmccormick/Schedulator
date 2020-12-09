@@ -32,12 +32,11 @@ function Form(props) {
 		let datestring = start.toISOString().split('T')[0];
 		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";
 		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
+		db.transaction(tx => {
+			tx.executeSql(insert + values, []);
+		});
 		props.pushServer(insert + values);
 		props.retFunc();
-		refresh();
-	}
-	function refresh() {
-
 	}
 	const datePressHandler = () => {
 		if (form == '')
@@ -131,6 +130,7 @@ function Dynamic(props) {
 	const [end, setEnd] = useState(tempDate);
 	const [form, setForm] = useState('');
 	const [toggleCheckBox, setToggleCheckBox] = useState(true);
+	const [period, setPeriod] = useState();
 
 	function check() {
 		if (input == "") {
@@ -143,8 +143,14 @@ function Dynamic(props) {
 	}
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
-		let insert = "insert into dynamicTasks('taskname','deadline','split','dateString') values ";
-		let values = "('" + input + "','" + end.getTime() + "','" + toggleCheckBox + "','" + datestring + "')";
+		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + end.getTime() + "','" + period + "','" + datestring + "')";
+		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period, dateString) values";
+		//alert(values);
+		//Add stuff to database
+		//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
+		db.transaction(tx => {
+			tx.executeSql(insert + values, []);
+		});
 		props.pushServer(insert + values);
 		props.retFunc();
 	}
@@ -210,6 +216,16 @@ function Dynamic(props) {
 					<Text style={styles.formtext} onPress={(form) => timePressHandler(1)} >
 						{end.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
 					</Text>
+				</View>
+				<View style={styles.period}>
+					<Text style={styles.formtext}>About how long will it take?</Text>
+					<View style={styles.forminput}>
+						<TextInput style={styles.input2} multiline placeholder="Enter Number" name="period"
+							type="text" value={period} onChangeText={(text) => setPeriod(text)}
+							selectionColor={'#70d3f4'}
+						/>
+						<Text style={styles.input}> hours</Text>
+					</View>
 				</View>
 				<View style={[styles.enterdate, { marginBottom: 20 }]}>
 					<Text style={styles.formtext}>Splitable?</Text>

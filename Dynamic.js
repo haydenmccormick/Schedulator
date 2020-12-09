@@ -30,8 +30,11 @@ export default function TaskList(props) {
 
 	function deleteItem(itemName) {
 		let deleteStatement = "delete from dynamicTasks where taskname = '" + itemName + "'";
-		props.pushServer(deleteStatement);
-		props.findTasks();
+		db.transaction(tx => {
+			tx.executeSql(deleteStatement, []);
+			props.pushServer(deleteStatement);
+			props.findTasks();
+		});
 	}
 
 	function handleDelete(itemName) {
@@ -57,8 +60,8 @@ export default function TaskList(props) {
 	);
 
 	const renderItem = ({ item }) => (
-		<Item name={item.taskname} dueDate={new Date(parseInt(item.endTime)).toDateString()}
-			dueTime={new Date(parseInt(item.endTime)).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })} />
+		<Item name={item.taskname} dueDate={new Date(parseInt(item.deadline)).toDateString()}
+			dueTime={new Date(parseInt(item.deadline)).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })} />
 	);
 
 
