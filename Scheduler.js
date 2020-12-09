@@ -2,16 +2,17 @@
 staticCalendar is a list of all static events in order
 events is a list of all dynamic events to be done in the future (note that you are removing the completed elemenst from events)*/
 import * as SQLite from "expo-sqlite";
+import { useState } from "react";
+
 const db = SQLite.openDatabase("db.db");
 
 function updateDynamicTaskTimes(title, start, end) {
   //updates task keyed by the title with a start and end time
   db.transaction((tx) => {
-    tx.executeSql("update dynamicTasks set start = ? end = ? where title = ?", [
-      start,
-      end,
-      title,
-    ]);
+    tx.executeSql(
+      "update dynamicTasks set start = ?, end = ?, dontShow = ? where title = ?",
+      [start, end, dontShow, title]
+    );
   });
 }
 
@@ -26,11 +27,11 @@ function updateSplitPiece(title, newTitle, period) {
 }
 
 function addSplitPiece(piece) {
-  var dateString = new Date();
+  var dateString = new Date(Date.now());
   dateString = dateString.setTime();
   db.transaction((tx) => {
     tx.executeSql(
-      "insert into dynamicTasks(taskname,date,endTime,period,split) value(?,?,?,?,?,?)",
+      "insert into scheduledDynamicTasks(taskname,startTime,endTime,period,deadline,split) value(?,?,?,?,?,?)",
       [
         piece.title,
         piece.start,
@@ -42,65 +43,67 @@ function addSplitPiece(piece) {
     );
   });
 }
-// var Event = {
-//   title: "title",
-//   start: "start",
-//   end: "end",
-//   period: "period",
-//   deadline: "deadline", //this is set to int max for statics and can act as a key for static and dynamic values
-//   splitable: "splitable",
-// };
 
-// var usrPref = {
-//   avgLength: avgLength,
-//   maxlength: maxlength,
-//   delaySize: delaySize,
-// };
-
-// staticCalendar, events, scheduledCalendar are all arrays of Event
-
-function schedule(usrPref, scheduledCalendar) {
+export default function schedule() {
   // note that the staticCalendar shows the blocks taken up by static events
   //events contains a random array of all events
-  const [staticCalendar, setStaticTasksValue] = useState("");
-  const [events, setDynamicTasksValue] = useState("");
+  var usrPref = { avgLength: 50, maxLength: 90, delaySize: 15 };
+
+  const [staticCalendarJSON, setStaticTasksValue] = useState("");
+  const [dynamicTasksValueJSON, setDynamicTasksValue] = useState("");
 
   db.transaction((tx) => {
     //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
-    tx.executeSql("select * from tasks", [], (_, { rows: { _array } }) =>
-      setStaticTasksValue(_array)
+    tx.executeSql(
+      "select * from tasks order by endTime",
+      [],
+      (_, { rows: { _array } }) => setStaticTasksValue(_array)
     );
-    tx.executeSql("select * from dynamicTasks", [], (_, { rows: { _array } }) =>
-      setDynamicTasksValue(_array)
+    tx.executeSql(
+      "select * from dynamicTasks order by deadline",
+      [],
+      (_, { rows: { _array } }) => setDynamicTasksValue(_array)
     );
   });
 
-  events = events.sort((a, b) => {
-    a.deadline - b.deadline;
-  }); //sorts events in ascending order of date
+  //sorts events in ascending order of date
   //note for later, events here sorted so that in the future the cost of the sort is lowered
-  var tail = { start: Number.MAX_SAFE_INT, end: Number.MAX_SAFE_INT };
-  staticCalendar.splice(events.length(), 0, tail);
-  events.splice(events.length(), 0, tail);
-  for (var i = 0; i < events.length() - 1; i++) {
-    if (events[i].splitable && events[i].period > usrPref.maxlength) {
-      var initialPeriod = events[i].period;
-      var nPieces = floor(initialLength / usrPref.avgLength);
+  let tail = { start: Number.MAX_SAFE_INTEGER, end: Number.MAX_SAFE_INTEGER };
+
+  let staticCalendar = [];
+  let events = [];
+
+  for (var i in staticCalendarJSON) staticCalendar.splice(0, 0, JSON.parse(i));
+  for (var i in dynamicTasksValueJSON) events.splice(0, 0, JSON.parse(i));
+
+  events.splice(events.length, 0, tail);
+  staticCalendar.splice(staticCalendar.length, 0, tail);
+
+  for (var i = 0; i < events.length - 1; i++) {
+    if (events[i].splitable && events[i].period > usrPref.maxLength) {
+      /* console.log(events[i].title + " used to be:") */ /* console.log(events[i]) */ var initialPeriod =
+        events[i].period;
+      var nPieces = Math.ceil(initialPeriod / usrPref.avgLength);
       var title = events[i].title;
-      var startTime = events[i].start;
+      var startTime = 0;
       var deadline = events[i].deadline;
       var split = events[i].splitable;
-      events[i].period = usrPref.avglength;
-      initialPeriod -= usrPref.avglength; //make an initial piece of avg size
-      updateSplitPiece(title, title + " (1)", usrPref.avgLength);
-      for (var j = 1; j < nPieces; j++, i++) {
+      events[i].title = events[i].title + " (Part 1)";
+      events[i].period = usrPref.avgLength;
+      initialPeriod -= usrPref.avgLength;
+      updateSplitPiece(title, events[i].title, usrPref.avgLength);
+      /* console.log("There should be "+nPieces +" pieces");
+      console.log("Piece 1");
+      console.log(events[i]); */
+      for (var j = 1; j < nPieces; j++) {
+        /*  console.log("Piece " + (j + 1)); */
         var period =
-          floor(initialPeriod / usrPref.avgLength) === 1 //set period to avg size until you get to the last chunk and take the whole thing
-            ? initialPeriod
-            : usrPref.avgLength;
+          initialPeriod > usrPref.avgLength ? usrPref.avgLength : initialPeriod;
+        /* console.log("Time left: "+initialPeriod);
+        console.log("Time decremented: "+period); */
         initialPeriod -= period;
         var piece = {
-          title: title + " (" + String(j + 1) + ")", //change title so you can index
+          title: title + " (Part " + String(j + 1) + ")",
           start: startTime,
           end: startTime + period,
           period: period,
@@ -109,14 +112,17 @@ function schedule(usrPref, scheduledCalendar) {
         };
         events.splice(i + j, 0, piece);
         addSplitPiece(piece);
+        /* console.log("Event just added:");
+        console.log(events[i + j]); */
       }
+      i += nPieces - 1;
     }
   }
+  /* console.log(events); */
   //all events have now been split up into appropriate chunks
 
-  var delay = usrPref.delaySize * 1000 * 60; //convert delay to ms (note you begin scheduel after delay mintes)
-  var init = new Date();
-  var currTime = init.getTime();
+  var delay = usrPref.delaySize; //convert delay to ms (note you begin scheduel after delay mintes)
+  var currTime = Date.now();
   var statCounter = 0;
   var eventCounter = 0;
   var timer;
@@ -125,113 +131,45 @@ function schedule(usrPref, scheduledCalendar) {
   }
   statCounter--; //point back at last thing that started before current time
   //be careful to access statCounter=-1
-  staticCalendar.length() === 1
+  statCounter === -1
     ? (timer = currTime)
-    : (timer = max(staticCalendar[statCounter].end, currTime));
+    : (timer = Math.max(staticCalendar[statCounter].end, currTime));
   //timer is valid start time for anything so we see if curr
   //time is inside of a static event, we update timer to end
   //of that event.
 
   while (
-    statCounter < staticCalendar.length() - 1 &&
-    eventCounter < events.length() - 1
+    statCounter < staticCalendar.length - 1 &&
+    eventCounter < events.length - 1
   ) {
+    // console.log("Note current time is " + timer);
+    // console.log("Filling between:");
+    // console.log(staticCalendar[statCounter]);
+    // console.log("And:");
+    // console.log(staticCalendar[statCounter + 1]);
     while (
-      eventCounter < events.length() - 1 &&
-      staticCalendar[statCounter + 1].start - timer > //index statCounter+1 must exist because of prve condition so dont worry
+      eventCounter < events.length - 1 &&
+      staticCalendar[statCounter + 1].start - timer >
         events[eventCounter].period + 2 * delay
     ) {
-      var event = {
-        title: event[eventCounter].title,
-        start: timer + delay,
-        end: timer + delay + event[eventCounter].period,
-        period: event[eventCounter].period,
-        deadline: event[eventCounter].deadline,
-        splitable: event[eventCounter].splitable,
-      };
-      scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
+      // console.log("Fill between criteria satisfied");
+      // console.log("Putting in event:");
+      events[eventCounter].start = timer + delay;
+      events[eventCounter].end = timer + delay + events[eventCounter].period;
+      // console.log(events[eventCounter]);
       updateDynamicTaskTimes(
         events[eventCounter].title,
         timer + delay,
         timer + delay + events[eventCounter].period
       );
+      timer = events[eventCounter].end;
       eventCounter++;
-      timer = event.end;
     }
-
-    var event = {
-      title: staticCalendar[statCounter].title,
-      start: taticCalendar[statCounter].start,
-      end: staticCalendar[statCounter].end,
-      period: staticCalendar[statCounter].period,
-      deadline: staticCalendar[statCounter].deadline,
-      splitable: staticCalendar[statCounter].splitable,
-    };
-    scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
-    //above can be removed as you only want to set database start and end time and returning scheduledCale is useless
     statCounter++;
+    timer = staticCalendar[statCounter].end;
   }
 
   var unmetDeadlines = events.filter((ev) => ev.end > ev.deadline);
   return unmetDeadlines;
-  //return a list of all deadlines not met
+  // return a list of all deadlines not met
 }
-
-//returns the staticArray for of the database
-// function getStaticArrayFromDB() {
-//   var staticCalendar = [];
-//   db.transaction((tx) => {
-//     tx.executSql("select * from tasks", {}, (results) => {
-//       for (var i = 0; i < results.rows.length; i++) {
-//         var startConcat =
-//           results.rows.item(i).date +
-//           " " +
-//           results.rows.item(i).startTime +
-//           ":00";
-//         var endConcat =
-//           results.rows.item(i).date +
-//           " " +
-//           results.rows.item(i).endTime +
-//           ":00";
-//         var start = Date.parse(startConcat);
-//         var end = Date.parse(endConcat);
-//         var event = new Event(
-//           results.rows.item(i).taskname,
-//           start,
-//           end,
-//           start - end,
-//           end,
-//           false
-//         );
-//         staticCalendar.splice(staticCalendar.length(), 0, event);
-//       }
-//     });
-//   });
-//   return staticCalendar;
-// }
-
-// function getDynamicArrayFromDB() {
-//   var dynamicCalendar = [];
-//   db.transaction((tx) => {
-//     tx.executSql("select * from dynamictasks", {}, (results) => {
-//       for (var i = 0; i < results.rows.length; i++) {
-//         var deadlineConcat =
-//           results.rows.item(i).date +
-//           " " +
-//           results.rows.item(i).endTime +
-//           ":00";
-//         var deadline = Date.parse(deadlineConcat);
-//         var event = new Event(
-//           results.rows.item(i).taskname,
-//           0,
-//           0,
-//           results.rows.item(i).period,
-//           deadline,
-//           results.rows.item(i).split
-//         );
-//         dynamicCalendar.splice(dynamicCalendar.length(), 0, event);
-//       }
-//     });
-//   });
-//   return dynamicCalendar;
-// }
