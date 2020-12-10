@@ -71,9 +71,9 @@ export default function App() {
 		const tempDates = {};
 		const tempList = [];
 		var parsed = tasks;
-		//var parsed = JSON.parse(tasks);
 		for (var i in parsed) {
-			tempList.push(parsed[i]);
+			if (parsed[i].type == 'static')
+				tempList.push(parsed[i]);
 			newTask = {
 				name: parsed[i].taskname,
 				date: parsed[i].dateString,
@@ -118,27 +118,6 @@ export default function App() {
 		schedule(taskList, dynamicTasks);
 
 	}
-
-	// function initializeTasks() {
-	// 	var xhr = new XMLHttpRequest();
-	// 	xhr.onload = function (e) {
-	// 		if (xhr.readyState === 4) {
-	// 			if (xhr.status === 200) {
-	// 				//getTaskInfo(xhr.responseText);
-	// 			} else {
-	// 				console.error(xhr.statusText);
-	// 				return <AppLoading />;
-	// 			}
-	// 		}
-	// 	};
-	// 	xhr.onerror = function (e) {
-	// 		console.error(xhr.statusText);
-	// 	};
-	// 	xhr.open("GET", addr + "all.json", true);
-	// 	xhr.send(null);
-	// 	findTasks();
-	// 	schedule();
-	// }
 
 	function gettaskEntries() {
 		return taskEntries;

@@ -52,6 +52,9 @@ export default function TaskList(props) {
 	let listview;
 	const Item = ({ name, dueDate, dueTime }) => (
 		<View style={styles.eventlistcontainer}>
+			<View style={styles.checkarea}>
+				<Text style={styles.check}>✓</Text>
+			</View>
 			<View style={styles.deletearea}>
 				<Text style={styles.delete} onPress={() => { handleDelete(name) }}>x</Text>
 			</View>
@@ -84,9 +87,9 @@ export default function TaskList(props) {
 	}
 	else {
 		listview =
-			<View style={styles.emptyeventlistcontainer}>
-				<Text style={styles.emptyeventlisttext}>When you add a task, it will be displayed here</Text>
-			</View>
+			<TouchableOpacity style={styles.emptyeventlistcontainer} onPress={handleRefresh} activeOpacity={1}>
+				<Text style={styles.emptyeventlisttext}>No tasks just yet. Tap the '+' button to add one, and tap here to refresh!</Text>
+			</TouchableOpacity>
 	}
 	return (
 		<View style={styles.container} >

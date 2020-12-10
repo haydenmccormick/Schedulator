@@ -40,11 +40,12 @@ function DayView(props) {
 
 	// Displayed when no events are planned for a given day
 	const emptyday = (
-		<View style={styles.emptycontainer}>
+		<TouchableOpacity style={styles.emptycontainer} onPress={() => { props.findTasks(); }} activeOpacity={1}>
 			<Text style={styles.emptytext}>
-				There's nothing here. Add an event to liven things up!
+				There's nothing here. Add an event to liven things up!{'\n'}
+				(or press here to reload)
 			</Text>
-		</View>
+		</TouchableOpacity>
 	)
 
 	function deleteItem(itemName, itemType) {

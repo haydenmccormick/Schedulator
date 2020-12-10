@@ -144,8 +144,8 @@ function Dynamic(props) {
 	}
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
-		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString) values";
-		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + end.getTime() + "','" + period + "','" + datestring + "')";
+		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,deadline,dontShow,finished) values";
+		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + end.getTime() + "','" + period + "','" + datestring + "','false','false'" + ")";
 		props.pushServer(insert + values);
 		props.retFunc();
 	}

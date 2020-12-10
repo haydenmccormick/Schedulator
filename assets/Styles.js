@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
   emptytext: {
     fontFamily: 'Roboto_100Thin',
     alignSelf: 'center',
+    textAlign: 'center',
   },
   datetext: {
     textAlign: 'center',
@@ -157,7 +158,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
-    justifyContent: 'center',
+    //justifyContent: 'center',
+    flexDirection: 'row',
     minHeight: 100,
     width: '95%',
     marginVertical: 10,
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
   listheader: {
     width: '100%',
     height: '13%',
-    backgroundColor: '#f49a70',
+    backgroundColor: '#f58f73',
     justifyContent: 'center',
   },
   listheadertext: {
@@ -253,6 +255,18 @@ const styles = StyleSheet.create({
     color: '#4a4a4a',
     padding: 5,
     marginRight: 10,
+  },
+  checkarea: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#ff9585',
+    width: 50,
+    height: '100%',
+    justifyContent: 'center',
+  },
+  check: {
+    textAlign: 'center',
+    fontSize: 50,
+    color: '#ffd5ce',
   },
 });
 
