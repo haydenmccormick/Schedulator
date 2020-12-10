@@ -16,6 +16,7 @@ function DayView(props) {
 	const [selected, setSelected] = useState(string);
 	const onDayPress = (day) => {
 		setSelected(day.dateString);
+		props.findTasks();
 	};
 	const tasks = props.tasks;
 	const dates = props.dates;

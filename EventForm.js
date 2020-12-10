@@ -34,6 +34,9 @@ function Form(props) {
 		console.log(datestring);
 		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";
 		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
+		// db.transaction(tx => {
+		// 	tx.executeSql(insert + values, []);
+		// });
 		props.pushServer(insert + values);
 		props.retFunc();
 	}

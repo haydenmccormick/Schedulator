@@ -28,7 +28,6 @@ const db = SQLite.openDatabase("db.db");
 
 //tab bar style options
 function options() {
-	console
 	tabBarOptions: { showIcon: true }
 	tabBarIcon: (() => {
 		return (<Image
@@ -40,14 +39,18 @@ function options() {
 
 export default function App() {
 
+	// In {Date: [{event1}, {event2}]} format for display on Agenda
 	const [taskEntries, setTaskEntries] = useState([{}]);
 	const [dateEntries, setDateEntries] = useState({});
+
+	// In [{event1}, {event2}] format for scheduler/task list
 	const [dynamicTasks, setDynamicTasks] = useState({});
 	const [taskList, setTaskList] = useState({});
 	const [loaded, setLoaded] = useState(false);
 
 	// Load tasks to agenda on app startup
 	if (!loaded) {
+		// initializeTasks();
 		findTasks();
 		setLoaded(true);
 	}
@@ -113,6 +116,27 @@ export default function App() {
 		getTaskInfo(response);
 		// schedule(taskList, dynamicTasks);
 	}
+
+	// function initializeTasks() {
+	// 	var xhr = new XMLHttpRequest();
+	// 	xhr.onload = function (e) {
+	// 		if (xhr.readyState === 4) {
+	// 			if (xhr.status === 200) {
+	// 				//getTaskInfo(xhr.responseText);
+	// 			} else {
+	// 				console.error(xhr.statusText);
+	// 				return <AppLoading />;
+	// 			}
+	// 		}
+	// 	};
+	// 	xhr.onerror = function (e) {
+	// 		console.error(xhr.statusText);
+	// 	};
+	// 	xhr.open("GET", addr + "all.json", true);
+	// 	xhr.send(null);
+	// 	findTasks();
+	// 	schedule();
+	// }
 
 	function gettaskEntries() {
 		return taskEntries;

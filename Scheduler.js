@@ -83,7 +83,6 @@ export default function schedule(tasks, dynamic) {
   let staticCalendar = tasks;
   let events = dynamic;
 
-  console.log(staticCalendar[0]);
   console.log("Start --------------------------------------------------------------------------------------------------------");
   //console.log(events);
 
