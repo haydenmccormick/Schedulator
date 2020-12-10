@@ -144,6 +144,10 @@ export default function App() {
 	    //alert(2);
 	}
     }
+    function createAccount() {
+	pushServer("insert into users(username,password) values('" + username + "','" + password + "')");
+	setCorrect(2);
+    }
     if (correct == 0) {
 	content = <ScrollView style={{padding:30}}>
 	    <Button title="Click here to sign up" onPress={()=>{setCorrect(1)}}/>
@@ -162,7 +166,7 @@ export default function App() {
 	    <Text>Password:</Text>
 	    <TextInput style={styles.input} value="" type="text" onChangeText={(text) => passw(text)}/>
 	    <Button title="Clear Password" onPress={()=>{setPassword(" ")}}/>
-	    <Button title="Create account" onPress={()=>{}}/>
+	    <Button title="Create account" onPress={()=>{createAccount()}}/>
 	    </ScrollView>;
     }
     else{
