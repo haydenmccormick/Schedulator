@@ -140,12 +140,13 @@ export default function App() {
 	for (var i = 0; i < password.length; i++) if(i != 0) fixPassword += password[i];
 	//alert(fixPassword);
 	if (username == cred[0] && fixPassword == cred[1]) {
-	    setCorrect(1);
+	    setCorrect(2);
 	    //alert(2);
 	}
     }
     if (correct == 0) {
 	content = <ScrollView style={{padding:30}}>
+	    <Button title="Click here to sign up" onPress={()=>{setCorrect(1)}}/>
 	    <Text>Enter username:</Text>
 	    <TextInput style={styles.input} value={username} type="text" onChangeText={(text) => setUsername(text)}/>
 	    <Text>Password:</Text>
@@ -154,7 +155,17 @@ export default function App() {
 	    <Button title="Submit" onPress={()=>{checkCreds()}}/>
 	    </ScrollView>;
     }
-    else {
+    else if(correct == 1) {
+	content = <ScrollView style={{padding:30}}>
+	    <Text>Enter username:</Text>
+	    <TextInput style={styles.input} value={username} type="text" onChangeText={(text) => setUsername(text)}/>
+	    <Text>Password:</Text>
+	    <TextInput style={styles.input} value="" type="text" onChangeText={(text) => passw(text)}/>
+	    <Button title="Clear Password" onPress={()=>{setPassword(" ")}}/>
+	    <Button title="Create account" onPress={()=>{}}/>
+	    </ScrollView>;
+    }
+    else{
 	content = <Tab.Navigator
 				screenOptions={options}
 			>
