@@ -11,9 +11,10 @@ import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular } from '@e
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
 import loadLocalResource from 'react-native-local-resource'
+import schedule from './Scheduler.js';
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const addr = "http://192.168.0.4:8000/";
+const addr = "http://192.168.86.45:8000/";
 
 const Tab = createBottomTabNavigator();
 
@@ -42,6 +43,7 @@ export default function App() {
 	const [taskEntries, setTaskEntries] = useState([{}]);
 	const [dateEntries, setDateEntries] = useState({});
 	const [dynamicTasks, setDynamicTasks] = useState({});
+	const [taskList, setTaskList] = useState({});
 	const [loaded, setLoaded] = useState(false);
 
 	// Load tasks to agenda on app startup
@@ -65,11 +67,15 @@ export default function App() {
 		const tempTasks = {};
 		const tempDates = {};
 		const tempDynamic = [];
-		var parsed = JSON.parse(tasks);
+		const tempList = [];
+		var parsed = tasks;
+		//var parsed = JSON.parse(tasks);
 		for (var i in parsed) {
 			if (parsed[i].type == 'dynamic') {
 				tempDynamic.push(parsed[i]);
 			}
+			else
+				tempList.push(parsed[i]);
 			newTask = {
 				name: parsed[i].taskname,
 				date: parsed[i].dateString,
@@ -78,7 +84,6 @@ export default function App() {
 				type: parsed[i].type
 			};
 			newDate = { marked: true };
-			console.log(newTask);
 			if (tempTasks[parsed[i].dateString]) {
 				tempTasks[parsed[i].dateString].push(newTask);
 			}
@@ -90,10 +95,10 @@ export default function App() {
 		setTaskEntries(tempTasks);
 		setDateEntries(tempDates);
 		setDynamicTasks(tempDynamic);
-		console.log(dynamicTasks);
+		setTaskList(tempList);
 	}
 
-	function pushServer(command) {
+	async function pushServer(command) {
 		var body = new FormData();
 		body.append('text', command);
 		var xhr = new XMLHttpRequest();
@@ -102,23 +107,11 @@ export default function App() {
 		findTasks();
 	}
 
-	function findTasks() {
-		var xhr = new XMLHttpRequest();
-		xhr.onload = function (e) {
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200) {
-					getTaskInfo(xhr.responseText);
-				} else {
-					console.error(xhr.statusText);
-					return <AppLoading />;
-				}
-			}
-		};
-		xhr.onerror = function (e) {
-			console.error(xhr.statusText);
-		};
-		xhr.open("GET", addr + "all.json", true);
-		xhr.send(null);
+	async function findTasks() {
+		let response = await fetch(addr + "all.json", { cache: 'force-cache' });
+		response = await response.json()
+		getTaskInfo(response);
+		// schedule(taskList, dynamicTasks);
 	}
 
 	function gettaskEntries() {

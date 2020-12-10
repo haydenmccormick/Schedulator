@@ -23,12 +23,9 @@ function DayView(props) {
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const addEventPressHandler = () => {
+		props.findTasks();
 		setAddingEvent(!addingEvent);
 	};
-
-	function retFunc() {
-		setAddingEvent(false);
-	}
 
 	// Only render a form if the user is adding an event
 	const render_form = (addingEvent ?
@@ -36,7 +33,7 @@ function DayView(props) {
 			{/* So the user can click outside of form box to cancel*/}
 			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
-				<Form retFunc={retFunc} pushServer={props.pushServer} />
+				<Form retFunc={addEventPressHandler} pushServer={props.pushServer} />
 			</View>
 		</View>
 		: null)
