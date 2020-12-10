@@ -115,8 +115,6 @@ export default function App() {
 	async function findTasks() {
 		getTaskInfo(require('./server/all.json'));
 		getDynamicInfo(require('./server/dynamicTasks.json'));
-		//schedule(taskList, dynamicTasks);
-
 	}
 
 	function gettaskEntries() {
@@ -143,7 +141,7 @@ export default function App() {
 					}}
 				/>
 				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()}
-					pushServer={pushServer} />}
+					pushServer={pushServer} static={taskList} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image

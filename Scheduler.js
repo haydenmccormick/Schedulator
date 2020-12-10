@@ -25,12 +25,12 @@ function updateDynamicTaskTimes(title, start, end) {
 
 //fix bug
 function updateSplitPiece(title, newTitle, period) {
-  let command = "update dynamicTasks set taskName = '" + newTitle + "' period = '" + period + "' where taskName = '" + title + "'";
+  let command = "update dynamicTasks set taskName = '" + newTitle + "', period = '" + period + "' where taskName = '" + title + "'";
   pushServer(command);
 }
 
 function addSplitPiece(piece) {
-  let datestring = new Date(piece.start).toISOString().split('T')[0];
+  let dateString = new Date(piece.start).toISOString().split('T')[0];
   let values = "('" + piece.title + "','" + piece.start + "','" + piece.deadline + "','" + piece.splittable + "','" + piece.period + "','" + dateString + "','" + piece.start + "','" + piece.end + "','')";
   pushServer("insert into dynamicTasks(taskname,date,deadline,split,period,dateString,startTime,endTime) values" + values);
 }

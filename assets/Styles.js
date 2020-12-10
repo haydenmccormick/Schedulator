@@ -40,11 +40,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: '5%',
     right: '8%',
+    flexDirection: 'row',
   },
   button: {
     width: 85,
     height: 85,
     resizeMode: 'contain',
+    marginLeft: 10,
   },
   formwrapper: {
     position: 'absolute',
