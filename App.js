@@ -136,12 +136,11 @@ export default function App() {
     }
     //let correct = 0;
     function checkCreds() {
+	let parsed = require('./server/users.json');
 	let fixPassword = "";
 	for (var i = 0; i < password.length; i++) if(i != 0) fixPassword += password[i];
-	//alert(fixPassword);
-	if (username == cred[0] && fixPassword == cred[1]) {
-	    setCorrect(2);
-	    //alert(2);
+	for (var i in parsed) {
+	    if(parsed[i].username == username && parsed[i].password == fixPassword) setCorrect(2);
 	}
     }
     function createAccount() {
