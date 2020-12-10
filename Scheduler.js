@@ -1,10 +1,9 @@
 /*Note you did not add an earliest start date for dynamics
 staticCalendar is a list of all static events in order
 events is a list of all dynamic events to be done in the future (note that you are removing the completed elemenst from events)*/
-import * as SQLite from "expo-sqlite";
-import React, { useState } from "react";
 
-const db = SQLite.openDatabase("db.db");
+const addr = "http://192.168.86.45:8000/";
+
 
 async function pushServer(command) {
   var body = new FormData();
@@ -16,14 +15,14 @@ async function pushServer(command) {
 
 function updateDynamicTaskTimes(title, start, end) {
   console.log("Updating!");
-  let command = "update dynamicTasks set start = '" + start + "' end = '" + end + "' dontShow = '" + dontShow + "' where title = '" + title + "'";
+  let command = "update dynamicTasks set startTime = '" + start + "', endTime = '" + end + "', dontShow = '" + "False" + "' where taskName = '" + title + "'";
   //updates task keyed by the title with a start and end time
   pushServer(command);
 }
 
 //fix bug
 function updateSplitPiece(title, newTitle, period) {
-  let command = "update dynamicTasks set title = '" + newTitle + "' period = '" + period + "' where title = '" + title + "'";
+  let command = "update dynamicTasks set taskName = '" + newTitle + "' period = '" + period + "' where taskName = '" + title + "'";
   pushServer(command);
 }
 

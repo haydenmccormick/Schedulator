@@ -5,6 +5,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0, bottom: 0, left: 0, right: 0,
   },
+  agendacontainer: {
+    position: "absolute",
+    top: 0, bottom: 0, left: 0, right: 0,
+    backgroundColor: 'white',
+  },
   calendararea: {
     flex: 1.5,
     justifyContent: 'flex-end',
@@ -88,6 +93,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '95%',
     minHeight: 100,
+    marginVertical: 10,
+    marginHorizontal: 10,
+  },
+  emptycontainer: {
+    backgroundColor: 'white',
+    alignSelf: "center",
+    justifyContent: 'center',
+    flexDirection: 'row',
+    width: '95%',
+    height: 100,
     marginVertical: 10,
     marginHorizontal: 10,
   },

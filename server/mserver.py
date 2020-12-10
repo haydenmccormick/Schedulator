@@ -25,6 +25,8 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
                 str = n
             if "delete from" in n:
                 str = n
+            if "update" in n:
+                str = n
         if str == "":
             print("No command")
             exit(1)

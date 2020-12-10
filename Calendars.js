@@ -18,8 +18,7 @@ function DayView(props) {
 		setSelected(day.dateString);
 		props.findTasks();
 	};
-	const tasks = props.tasks;
-	const dates = props.dates;
+
 
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
@@ -41,7 +40,7 @@ function DayView(props) {
 
 	// Displayed when no events are planned for a given day
 	const emptyday = (
-		<View style={styles.eventcontainer}>
+		<View style={styles.emptycontainer}>
 			<Text style={styles.emptytext}>
 				There's nothing here. Add an event to liven things up!
 			</Text>
@@ -103,13 +102,14 @@ function DayView(props) {
 	}
 
 	return (
-		<View style={styles.container}>
-			<Agenda style={styles.container}
+		<View style={styles.agendacontainer}>
+			<Agenda style={{ marginTop: 10 }}
 				onDayPress={onDayPress}
-				markedDates={dates}
+				markedDates={props.dates}
 				renderEmptyData={() => { return emptyday; }}
 				renderItem={(item) => { return event(item); }}
 				items={props.tasks}
+				onRefresh={() => { props.findTasks(); }}
 			/>
 			<View style={styles.buttonwrapper}>
 				<TouchableOpacity onPress={addEventPressHandler}>

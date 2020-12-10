@@ -212,19 +212,19 @@ function Dynamic(props) {
 						{end.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
 					</Text>
 				</View>
+				<View style={[styles.enterdate, { marginBottom: 20 }]}>
+					<Text style={styles.formtext}>Splitable?</Text>
+					<Switch value={toggleCheckBox} onValueChange={() => { setToggleCheckBox(!toggleCheckBox) }} />
+				</View>
 				<View style={styles.period}>
 					<Text style={styles.formtext}>About how long will it take?</Text>
 					<View style={styles.forminput}>
 						<TextInput style={styles.input2} multiline placeholder="Enter Number" name="period"
 							type="text" value={period} onChangeText={(text) => setPeriod(text)}
-							selectionColor={'#70d3f4'}
+							selectionColor={'#70d3f4'} keyboardType='number-pad'
 						/>
 						<Text style={styles.input}> hours</Text>
 					</View>
-				</View>
-				<View style={[styles.enterdate, { marginBottom: 20 }]}>
-					<Text style={styles.formtext}>Splitable?</Text>
-					<Switch value={toggleCheckBox} onValueChange={() => { setToggleCheckBox(!toggleCheckBox) }} />
 				</View>
 				{button}
 			</ScrollView >

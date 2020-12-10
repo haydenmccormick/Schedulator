@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text, FlatList, Alert } from 'react-native';
+import { View, TouchableOpacity, Image, Text, FlatList, Alert, RefreshControl } from 'react-native';
 import { Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
@@ -12,6 +12,8 @@ export default function TaskList(props) {
 	const tasks = props.tasks;
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
+	const [refreshing, setRefreshing] = useState(false);
+
 	const addEventPressHandler = () => {
 		props.findTasks();
 		setAddingEvent(!addingEvent);
@@ -65,12 +67,19 @@ export default function TaskList(props) {
 			dueTime={new Date(parseInt(item.deadline)).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })} />
 	);
 
+	function handleRefresh() {
+		setRefreshing(true);
+		props.findTasks();
+		setRefreshing(false);
+	}
 
 	if (tasks != "") {
 		//horizontalScroll={true} columnWidth={50} height={150}
 		listview = <FlatList
 			data={tasks}
 			renderItem={renderItem}
+			keyExtractor={item => item.taskname + item.deadline}
+			refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
 		/>
 	}
 	else {

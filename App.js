@@ -116,6 +116,7 @@ export default function App() {
 		getTaskInfo(require('./server/all.json'));
 		getDynamicInfo(require('./server/dynamicTasks.json'));
 		schedule(taskList, dynamicTasks);
+
 	}
 
 	// function initializeTasks() {
