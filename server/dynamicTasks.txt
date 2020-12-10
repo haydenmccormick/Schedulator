@@ -1,3 +1,6 @@
 taskname,date,endTime,period,split,dateString,deadline
-Task,Sun Dec 13 2020 23:56:53 GMT-0600 (Central Standard Time),,12,1607925413000,2020-12-10,1607925413000
-Yuk yuk,Thu Dec 17 2020 23:57:48 GMT-0600 (Central Standard Time),,34,1608271068000,2020-12-10,1608271068000
+cvxcvxcvx,Thu Dec 10 2020 02:04:43 GMT-0600 (Central Standard Time),,123,1607587483450,2020-12-10,1607587483450,,
+sdfsdfdsf,Thu Dec 10 2020 02:05:40 GMT-0600 (Central Standard Time),,undefined,1607587540589,2020-12-10,1607587540589,,
+Nnnnnn,Thu Dec 10 2020 02:06:04 GMT-0600 (Central Standard Time),,12,1607587564313,2020-12-10,1607587564313,,
+Task 1,Sat Dec 12 2020 14:28:52 GMT-0600 (Central Standard Time),,5,1607804932000,2020-12-10,1607804932000,,
+Dfgdfgdfg,Tue Dec 15 2020 02:03:55 GMT-0600 (Central Standard Time),,12,1608019435000,2020-12-10,1608019435000,,

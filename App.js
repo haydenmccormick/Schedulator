@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import { DayView } from './Calendars.js';
 import DynamicTaskList from './Dynamic.js';
 import * as SQLite from 'expo-sqlite';
-import { Image } from 'react-native';
+import { Image,Text,View,ScrollView,TextInput,Button } from 'react-native';
 import styles from './assets/Styles.js';
 import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
@@ -14,7 +14,7 @@ import loadLocalResource from 'react-native-local-resource'
 import schedule from './Scheduler.js';
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const addr = "http://192.168.86.45:8000/";
+const addr = "http://192.168.86.27:8000/";
 
 const Tab = createBottomTabNavigator();
 
@@ -46,7 +46,10 @@ export default function App() {
 	// In [{event1}, {event2}] format for scheduler/task list
 	const [dynamicTasks, setDynamicTasks] = useState({});
 	const [taskList, setTaskList] = useState({});
-	const [loaded, setLoaded] = useState(false);
+    const [loaded, setLoaded] = useState(false);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [correct, setCorrect] = useState(0);
 
 	// Load tasks to agenda on app startup
 	if (!loaded) {
@@ -126,34 +129,37 @@ export default function App() {
 		return dynamicTasks;
 	}
 
-	return (
-		<NavigationContainer>
-			<Tab.Navigator
-				screenOptions={options}
-			>
-				<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()}
-					pushServer={pushServer} />}
-					options={{
-						tabBarIcon: ({ color }) => (
-							<Image
-								style={styles.icon}
-								source={require('./assets/Tab_Icons/agenda-on.png')
-								} />
-						),
-					}}
-				/>
-				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()}
-					pushServer={pushServer} />}
-					options={{
-						tabBarIcon: ({ color }) => (
-							<Image
-								style={styles.icon}
-								source={require('./assets/Tab_Icons/tasks-on.png')
-								} />
-						),
-					}}
-				/>
-			</Tab.Navigator>
-		</NavigationContainer>
+    const cred = ["mk","pass"];
+    let content;
+    function passw(passChar) {
+	setPassword(password + passChar);
+    }
+    //let correct = 0;
+    function checkCreds() {
+	let fixPassword = "";
+	for (var i = 0; i < password.length; i++) if(i != 0) fixPassword += password[i];
+	//alert(fixPassword);
+	if (username == cred[0] && fixPassword == cred[1]) {
+	    setCorrect(1);
+	    //alert(2);
+	}
+    }
+    if (correct == 0) {
+	content = <ScrollView style={{padding:30}}>
+	    <Text>Enter username:</Text>
+	    <TextInput style={styles.input} value={username} type="text" onChangeText={(text) => setUsername(text)}/>
+	    <Text>Password:</Text>
+	    <TextInput style={styles.input} value="" type="text" onChangeText={(text) => passw(text)}/>
+	    <Button title="Clear Password" onPress={()=>{setPassword(" ")}}/>
+	    <Button title="Submit" onPress={()=>{checkCreds()}}/>
+	    </ScrollView>;
+    }
+    else {
+	content = <View></View>;
+    }
+    return (
+	<View>
+	    {content}
+	</View>
 	);
 }
