@@ -43,7 +43,7 @@ def createJSON():
     os.system(command)
     sed = "sed "
     if platform.system() == 'Darwin':
-        #brew install gnu-sed
+        # brew install gnu-sed
         sed = "/usr/local/Cellar/gnu-sed/4.8/bin/gsed "
     command = sed + "-i 's/|/,/g'"
     os.system(command + " all.txt")

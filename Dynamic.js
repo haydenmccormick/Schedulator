@@ -30,7 +30,7 @@ export default function TaskList(props) {
 
 	function deleteItem(itemName) {
 		let deleteStatement = "delete from dynamicTasks where taskname = '" + itemName + "'";
-		pushServer(deleteStatement);
+		props.pushServer(deleteStatement);
 		// db.transaction(tx => {
 		// 	tx.executeSql(deleteStatement, []);
 		// 	props.pushServer(deleteStatement);

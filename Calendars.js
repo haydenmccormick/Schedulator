@@ -71,6 +71,7 @@ function DayView(props) {
 		let renderbar;
 		let message = "";
 		let timedisplay;
+		let endDisplay;
 		let start = (new Date(parseInt(item.startTime)).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' }));
 		let end = (new Date(parseInt(item.endTime)).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' }));
 		if (item.type == 'dynamic') {

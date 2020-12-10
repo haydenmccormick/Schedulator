@@ -69,16 +69,11 @@ export default function App() {
 	function getTaskInfo(tasks) {
 		const tempTasks = {};
 		const tempDates = {};
-		const tempDynamic = [];
 		const tempList = [];
 		var parsed = tasks;
 		//var parsed = JSON.parse(tasks);
 		for (var i in parsed) {
-			if (parsed[i].type == 'dynamic') {
-				tempDynamic.push(parsed[i]);
-			}
-			else
-				tempList.push(parsed[i]);
+			tempList.push(parsed[i]);
 			newTask = {
 				name: parsed[i].taskname,
 				date: parsed[i].dateString,
@@ -97,8 +92,15 @@ export default function App() {
 		}
 		setTaskEntries(tempTasks);
 		setDateEntries(tempDates);
-		setDynamicTasks(tempDynamic);
 		setTaskList(tempList);
+	}
+
+	function getDynamicInfo(tasks) {
+		const tempDynamic = [];
+		for (var i in tasks) {
+			tempDynamic.push(tasks[i]);
+		}
+		setDynamicTasks(tempDynamic);
 	}
 
 	async function pushServer(command) {
@@ -111,10 +113,9 @@ export default function App() {
 	}
 
 	async function findTasks() {
-		let response = await fetch(addr + "all.json", { cache: 'force-cache' });
-		response = await response.json()
-		getTaskInfo(response);
-		// schedule(taskList, dynamicTasks);
+		getTaskInfo(require('./server/all.json'));
+		getDynamicInfo(require('./server/dynamicTasks.json'));
+		schedule(taskList, dynamicTasks);
 	}
 
 	// function initializeTasks() {

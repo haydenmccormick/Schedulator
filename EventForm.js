@@ -31,7 +31,6 @@ function Form(props) {
 	function submit() {
 		let dateStart = new Date(start.getTime() - start.getTimezoneOffset() * 60000);
 		let datestring = dateStart.toISOString().split('T')[0];
-		console.log(datestring);
 		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";
 		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
 		// db.transaction(tx => {
@@ -145,7 +144,7 @@ function Dynamic(props) {
 	}
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
-		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period, dateString) values";
+		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString) values";
 		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + end.getTime() + "','" + period + "','" + datestring + "')";
 		props.pushServer(insert + values);
 		props.retFunc();
