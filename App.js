@@ -155,11 +155,36 @@ export default function App() {
 	    </ScrollView>;
     }
     else {
-	content = <View></View>;
+	content = <Tab.Navigator
+				screenOptions={options}
+			>
+				<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()}
+					pushServer={pushServer} />}
+					options={{
+						tabBarIcon: ({ color }) => (
+							<Image
+								style={styles.icon}
+								source={require('./assets/Tab_Icons/agenda-on.png')
+								} />
+						),
+					}}
+				/>
+				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()}
+					pushServer={pushServer} static={taskList} />}
+					options={{
+						tabBarIcon: ({ color }) => (
+							<Image
+								style={styles.icon}
+								source={require('./assets/Tab_Icons/tasks-on.png')
+								} />
+						),
+					}}
+				/>
+	    </Tab.Navigator>;
     }
     return (
-	<View>
+	<NavigationContainer>
 	    {content}
-	</View>
+	</NavigationContainer>
 	);
 }
