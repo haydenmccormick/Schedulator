@@ -55,6 +55,10 @@ function Form(props) {
 	}
 	const onChange = (event, selectedDate) => {
 		const newDate = selectedDate || start;
+		if (form == 'date') {
+			setStart(newDate);
+			setEnd(newDate);
+		}
 		SE == 'start' ? setStart(newDate) : setEnd(newDate);
 	};
 	const formItem = (
@@ -144,8 +148,8 @@ function Dynamic(props) {
 	}
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
-		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,deadline,dontShow,finished) values";
-		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + end.getTime() + "','" + period + "','" + datestring + "','false','false'" + ")";
+		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,dontShow,finished) values";
+		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + period * 60 * 60 * 1000 + "','" + datestring + "','false','false'" + ")";
 		props.pushServer(insert + values);
 		props.retFunc();
 	}

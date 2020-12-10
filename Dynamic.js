@@ -13,6 +13,8 @@ export default function TaskList(props) {
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
+	const [finishedTasks, setFinishedTasks] = useState([{}]);
+
 
 	const addEventPressHandler = () => {
 		props.findTasks();
@@ -48,13 +50,18 @@ export default function TaskList(props) {
 		]);
 	}
 
+	function finishTask(name) {
+		let pushString = "update dynamicTasks set finished = 'true' where taskName = " + name;
+		props.pushServer(pushString);
+	}
+
 	// list of tasks displayed to user
 	let listview;
 	const Item = ({ name, dueDate, dueTime }) => (
 		<View style={styles.eventlistcontainer}>
-			<View style={styles.checkarea}>
+			<TouchableOpacity style={styles.checkarea} onPress={() => { finishTask(name) }}>
 				<Text style={styles.check}>✓</Text>
-			</View>
+			</TouchableOpacity>
 			<View style={styles.deletearea}>
 				<Text style={styles.delete} onPress={() => { handleDelete(name) }}>x</Text>
 			</View>

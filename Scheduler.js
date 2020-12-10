@@ -2,7 +2,7 @@
 staticCalendar is a list of all static events in order
 events is a list of all dynamic events to be done in the future (note that you are removing the completed elemenst from events)*/
 
-const addr = "http://192.168.86.45:8000/";
+const addr = "http://192.168.1.199:8000/";
 
 
 async function pushServer(command) {
@@ -14,6 +14,9 @@ async function pushServer(command) {
 }
 
 function updateDynamicTaskTimes(title, start, end) {
+  console.log(title);
+  console.log(start);
+  console.log(end);
   console.log("Updating!");
   let command = "update dynamicTasks set startTime = '" + start + "', endTime = '" + end + "', dontShow = '" + "False" + "' where taskName = '" + title + "'";
   //updates task keyed by the title with a start and end time
@@ -27,17 +30,16 @@ function updateSplitPiece(title, newTitle, period) {
 }
 
 function addSplitPiece(piece) {
-  var dateString = new Date(Date.now());
-  dateString = dateString.setTime();
-  let values = "('" + piece.title + "','" + piece.start + "','" + piece.end + "','" + piece.period + "','" + piece.deadline + "','" + piece.splittable + "')";
-  pushServer("insert into scheduledDynamicTasks(taskname,startTime,endTime,period,deadline,split) value" + values);
+  let datestring = new Date(piece.start).toISOString().split('T')[0];
+  let values = "('" + piece.title + "','" + piece.start + "','" + piece.deadline + "','" + piece.splittable + "','" + piece.period + "','" + dateString + "','" + piece.start + "','" + piece.end + "','')";
+  pushServer("insert into dynamicTasks(taskname,date,deadline,split,period,dateString,startTime,endTime) values" + values);
 }
 
 
 export default function schedule(tasks, dynamic) {
   // note that the staticCalendar shows the blocks taken up by static events
   //events contains a random array of all events
-  var usrPref = { avgLength: 50, maxLength: 90, delaySize: 15 };
+  var usrPref = { avgLength: 50 * 60 * 1000, maxLength: 90 * 60 * 1000, delaySize: 15 * 60 * 1000 };
 
   var staticCalendarJSON;
   var dynamicTasksValueJSON;
@@ -86,20 +88,21 @@ export default function schedule(tasks, dynamic) {
   //console.log(events);
 
   for (var i = 0; i < events.length - 1; i++) {
-    if (events[i].splitable && events[i].period > usrPref.maxLength) {
-      console.log(events[i].eventName + " used to be:");
+    console.log(+events[i].period > +usrPref.maxLength);
+    if (events[i].split && +events[i].period > +usrPref.maxLength) {
+      console.log(events[i].taskname + " used to be:");
       console.log(events[i]);
-      // var initialPeriod =
-      //   events[i].period;
+      var initialPeriod =
+        events[i].period;
       var nPieces = Math.ceil(initialPeriod / usrPref.avgLength);
-      var title = events[i].eventName;
+      var title = events[i].taskname;
       var startTime = 0;
       var deadline = events[i].deadline;
       var split = events[i].splitable;
-      events[i].eventName = events[i].eventName + " (Part 1)";
+      events[i].taskname = events[i].taskname + " (Part 1)";
       events[i].period = usrPref.avgLength;
       initialPeriod -= usrPref.avgLength;
-      updateSplitPiece(title, events[i].eventName, usrPref.avgLength);
+      updateSplitPiece(title, events[i].taskname, usrPref.avgLength);
       console.log("There should be " + nPieces + " pieces");
       console.log("Piece 1");
       console.log(events[i]);
@@ -129,7 +132,7 @@ export default function schedule(tasks, dynamic) {
   console.log(events);
   //all events have now been split up into appropriate chunks
 
-  var delay = usrPref.delaySize; //convert delay to ms (note you begin scheduel after delay mintes)
+  var delay = usrPref.delaySize; //convert delay to ms (note you begin schedule after delay minutes)
   var currTime = Date.now();
   var statCounter = 0;
   var eventCounter = 0;
@@ -155,10 +158,18 @@ export default function schedule(tasks, dynamic) {
     console.log(staticCalendar[statCounter]);
     console.log("And:");
     console.log(staticCalendar[statCounter + 1]);
+
+    console.log("staticCalendar[statCounter + 1].startTime = " + staticCalendar[statCounter + 1].startTime);
+    console.log("events[eventCounter].period + 2 = " + (+events[eventCounter].period + +2));
+    console.log("timer = " + timer);
+    console.log(typeof (delay) + typeof (+events[eventCounter].period));
+    console.log("delay = " + delay);
+    console.log("events[eventCounter].period + 2 * delay = " + (+events[eventCounter].period + 2 * +delay));
+
     while (
       eventCounter < events.length - 1 &&
-      staticCalendar[statCounter + 1].startTime - timer >
-      events[eventCounter].period + 2 * delay
+      +staticCalendar[statCounter + 1].startTime - timer >
+      +events[eventCounter].period + 2 * delay
     ) {
       console.log("Fill between criteria satisfied");
       console.log("Putting in event:");
@@ -166,7 +177,7 @@ export default function schedule(tasks, dynamic) {
       events[eventCounter].endTime = timer + delay + events[eventCounter].period;
       console.log(events[eventCounter]);
       updateDynamicTaskTimes(
-        events[eventCounter].eventName,
+        events[eventCounter].taskName,
         timer + delay,
         timer + delay + events[eventCounter].period
       );

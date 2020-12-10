@@ -14,7 +14,7 @@ import loadLocalResource from 'react-native-local-resource'
 import schedule from './Scheduler.js';
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const addr = "http://192.168.86.45:8000/";
+const addr = "http://192.168.1.199:8000/";
 
 const Tab = createBottomTabNavigator();
 
@@ -115,7 +115,7 @@ export default function App() {
 	async function findTasks() {
 		getTaskInfo(require('./server/all.json'));
 		getDynamicInfo(require('./server/dynamicTasks.json'));
-		schedule(taskList, dynamicTasks);
+		//schedule(taskList, dynamicTasks);
 
 	}
 
