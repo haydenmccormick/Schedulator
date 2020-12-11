@@ -25,7 +25,8 @@ function Form(props) {
 		}
 		return 1;
 	}
-	function notFilled() {
+    function notFilled() {
+	alert(props.getUsername);
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
@@ -34,7 +35,7 @@ function Form(props) {
 		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";
 		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
 		// db.transaction(tx => {
-		// 	tx.executeSql(insert + values, []);
+		//	tx.executeSql(insert + values, []);
 		// });
 		props.pushServer(insert + values);
 		props.retFunc();

@@ -25,7 +25,7 @@ export default function TaskList(props) {
 			{/* So the user can click outside of form box to cancel*/}
 			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
 			<View style={styles.formcontainer}>
-				<Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} />
+			     <Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} getUsername={props.getUsername}/>
 			</View>
 		</View>
 		: null)
