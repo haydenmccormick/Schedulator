@@ -34,9 +34,9 @@ export default function TaskList(props) {
 		let deleteStatement = "delete from dynamicTasks where taskname = '" + itemName + "'";
 		props.pushServer(deleteStatement);
 		// db.transaction(tx => {
-		// 	tx.executeSql(deleteStatement, []);
-		// 	props.pushServer(deleteStatement);
-		// 	props.findTasks();
+		//	tx.executeSql(deleteStatement, []);
+		//	props.pushServer(deleteStatement);
+		//	props.findTasks();
 		// });
 	}
 
@@ -70,7 +70,8 @@ export default function TaskList(props) {
 			dueTime={new Date(parseInt(item.deadline)).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })} />
 	);
 
-	function handleRefresh() {
+    function handleRefresh() {
+	//alert(props.username);
 		setRefreshing(true);
 		props.findTasks();
 		setRefreshing(false);
