@@ -129,7 +129,7 @@ export default function App() {
 		return dynamicTasks;
 	}
 
-    const cred = ["mk","pass"];
+    //const cred = ["mk","pass"];
     let content;
     function passw(passChar) {
 	setPassword(password + passChar);
@@ -142,6 +142,9 @@ export default function App() {
 	for (var i in parsed) {
 	    if(parsed[i].username == username && parsed[i].password == fixPassword) setCorrect(2);
 	}
+    }
+    function getUsername() {
+	return username;
     }
     function createAccount() {
 	pushServer("insert into users(username,password) values('" + username + "','" + password + "')");
@@ -173,7 +176,7 @@ export default function App() {
 				screenOptions={options}
 			>
 				<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()}
-					pushServer={pushServer} />}
+								    pushServer={pushServer} getUsername={getUsername()} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image
@@ -183,7 +186,7 @@ export default function App() {
 						),
 					}}
 				/>
-				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()}
+	    <Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()} getUsername={getUsername()}
 					pushServer={pushServer} static={taskList} />}
 					options={{
 						tabBarIcon: ({ color }) => (

@@ -30,7 +30,8 @@ export default function TaskList(props) {
 		</View>
 		: null)
 
-	function deleteItem(itemName) {
+    function deleteItem(itemName) {
+	//alert(props.getUsername);
 		let deleteStatement = "delete from dynamicTasks where taskname = '" + itemName + "'";
 		props.pushServer(deleteStatement);
 		// db.transaction(tx => {
@@ -40,7 +41,8 @@ export default function TaskList(props) {
 		// });
 	}
 
-	function handleDelete(itemName) {
+    function handleDelete(itemName) {
+	//alert(props.username);
 		Alert.alert("Are you sure you want to delete " + itemName + "?",
 			"This can't be undone.", [
 			{ text: "Yes", onPress: () => { deleteItem(itemName) } },
