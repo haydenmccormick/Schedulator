@@ -26,14 +26,14 @@ function Form(props) {
 		return 1;
 	}
     function notFilled() {
-	alert(props.getUsername);
+	//alert(props.getUsername);
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
 		let dateStart = new Date(start.getTime() - start.getTimezoneOffset() * 60000);
 		let datestring = dateStart.toISOString().split('T')[0];
-		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";
-		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
+		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString,user) values ";
+		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "','" + props.getUsername + "')";
 		// db.transaction(tx => {
 		//	tx.executeSql(insert + values, []);
 		// });
@@ -145,8 +145,8 @@ function Dynamic(props) {
 	}
 	function submit() {
 		let datestring = start.toISOString().split('T')[0];
-		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,deadline,dontShow,finished) values";
-		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + end.getTime() + "','" + period + "','" + datestring + "','false','false'" + ")";
+		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,deadline,dontShow,finished,user) values";
+		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + end.getTime() + "','" + period + "','" + datestring + "','false','false','" + props.getUsername + "')";
 		props.pushServer(insert + values);
 		props.retFunc();
 	}
