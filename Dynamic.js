@@ -12,7 +12,6 @@ const db = SQLite.openDatabase("db.db");
 
 export default function TaskList(props) {
 	const tasks = props.tasks;
-	console.log(tasks);
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
@@ -89,7 +88,8 @@ export default function TaskList(props) {
 	}
 
 	function calculateSchedule() {
-		schedule(props.static, props.tasks);
+		//props.pushServer("delete from dynamicTasks");
+		props.setSchedule(schedule(props.static, props.tasks));
 	}
 
 	if (tasks != "") {
@@ -103,7 +103,7 @@ export default function TaskList(props) {
 	}
 	else {
 		listview =
-			<TouchableOpacity style={styles.emptyeventlistcontainer} onPress={() => { handleRefresh }} activeOpacity={1}>
+			<TouchableOpacity style={styles.emptyeventlistcontainer} onPress={handleRefresh} activeOpacity={1}>
 				<Text style={styles.emptyeventlisttext}>No tasks just yet. Tap the '+' button to add one, and tap here to refresh!</Text>
 			</TouchableOpacity>
 	}

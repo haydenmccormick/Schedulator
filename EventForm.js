@@ -32,10 +32,7 @@ function Form(props) {
 		let dateStart = new Date(start.getTime() - start.getTimezoneOffset() * 60000);
 		let datestring = dateStart.toISOString().split('T')[0];
 		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";
-		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "')";
-		// db.transaction(tx => {
-		// 	tx.executeSql(insert + values, []);
-		// });
+		let values = "('" + input + "','" + Date.parse(start) + "','" + Date.parse(start) + "','" + Date.parse(end) + "','" + datestring + "')";
 		props.pushServer(insert + values);
 		props.retFunc();
 	}
@@ -151,7 +148,6 @@ function Dynamic(props) {
 		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,dontShow,finished) values";
 		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + period * 60 * 60 * 1000 + "','" + datestring + "','false','false'" + ")";
 		props.pushServer(insert + values);
-		console.log(end.getTime());
 		props.retFunc();
 	}
 	let button;

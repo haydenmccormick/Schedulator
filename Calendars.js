@@ -22,9 +22,29 @@ function DayView(props) {
 
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
+	const [scheduled, setScheduled] = useState({});
+	const [tasks, setTasks] = useState(props.tasks);
+	const [loaded, setLoaded] = useState(false);
 	const addEventPressHandler = () => {
 		props.findTasks();
 		setAddingEvent(!addingEvent);
+		// console.log(props.scheduled);
+		// let tempScheduled = [];
+		// for (var i in props.scheduled) {
+		// 	if (tempScheduled[props.scheduled[i].dateString]) {
+		// 		tempScheduled[props.scheduled[i].dateString].push(props.scheduled[i]);
+		// 	}
+		// 	else {
+		// 		tempScheduled[props.scheduled[i].dateString] = props.scheduled[i];
+		// 	}
+		// 	if (tasks[props.scheduled[i].dateString]) {
+		// 		tempScheduled[props.scheduled[i].dateString].push(tasks[props.scheduled[i].dateString]);
+		// 	}
+		// 	else {
+		// 		tempScheduled[props.scheduled[i].dateString] = props.scheduled[i];
+		// 	}
+		// }
+		// setScheduled(tempScheduled);
 	};
 
 	// Only render a form if the user is adding an event
@@ -109,7 +129,7 @@ function DayView(props) {
 				markedDates={props.dates}
 				renderEmptyData={() => { return emptyday; }}
 				renderItem={(item) => { return event(item); }}
-				items={props.tasks}
+				items={scheduled}
 				onRefresh={() => { props.findTasks(); }}
 			/>
 			<View style={styles.buttonwrapper}>

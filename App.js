@@ -46,6 +46,7 @@ export default function App() {
 	const [dynamicTasks, setDynamicTasks] = useState({});
 	const [taskList, setTaskList] = useState({});
 	const [loaded, setLoaded] = useState(false);
+	const [scheduled, setScheduled] = useState([]);
 
 	// Load tasks to agenda on app startup
 	if (!loaded) {
@@ -99,7 +100,6 @@ export default function App() {
 		for (var i in tasks) {
 			tempDynamic.push(tasks[i]);
 		}
-		console.log(tempDynamic);
 		setDynamicTasks(tempDynamic);
 	}
 
@@ -121,8 +121,12 @@ export default function App() {
 		return taskEntries;
 	}
 	function getDynamicTaskEntries() {
-		console.log(dynamicTasks);
 		return dynamicTasks;
+	}
+
+	function setSchedule(events) {
+		setScheduled(events);
+		console.log(scheduled);
 	}
 
 	return (
@@ -131,7 +135,7 @@ export default function App() {
 				screenOptions={options}
 			>
 				<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()}
-					pushServer={pushServer} />}
+					pushServer={pushServer} scheduled={scheduled} setSchedule={setSchedule} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image
@@ -142,7 +146,7 @@ export default function App() {
 					}}
 				/>
 				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()}
-					pushServer={pushServer} static={taskList} />}
+					pushServer={pushServer} static={taskList} scheduled={scheduled} setSchedule={setSchedule} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image
