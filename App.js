@@ -11,7 +11,6 @@ import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular } from '@e
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
 import loadLocalResource from 'react-native-local-resource'
-import schedule from './Scheduler.js';
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
 const addr = "http://192.168.1.199:8000/";
@@ -100,6 +99,7 @@ export default function App() {
 		for (var i in tasks) {
 			tempDynamic.push(tasks[i]);
 		}
+		console.log(tempDynamic);
 		setDynamicTasks(tempDynamic);
 	}
 
@@ -121,6 +121,7 @@ export default function App() {
 		return taskEntries;
 	}
 	function getDynamicTaskEntries() {
+		console.log(dynamicTasks);
 		return dynamicTasks;
 	}
 

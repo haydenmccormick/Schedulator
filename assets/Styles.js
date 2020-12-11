@@ -167,6 +167,17 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 10,
   },
+  finishedcontainer: {
+    flex: 1,
+    backgroundColor: '#c9c9c9',
+    alignItems: 'center',
+    //justifyContent: 'center',
+    flexDirection: 'row',
+    minHeight: 100,
+    width: '95%',
+    marginVertical: 10,
+    marginHorizontal: 10,
+  },
   emptyeventlisttext: {
     fontFamily: 'Roboto_300Light',
     fontSize: 25,

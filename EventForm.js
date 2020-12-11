@@ -151,6 +151,7 @@ function Dynamic(props) {
 		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,dontShow,finished) values";
 		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + period * 60 * 60 * 1000 + "','" + datestring + "','false','false'" + ")";
 		props.pushServer(insert + values);
+		console.log(end.getTime());
 		props.retFunc();
 	}
 	let button;

@@ -37,7 +37,7 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
 
 
 def createJSON():
-    command = "sqlite3 db.db \" select * from dynamicTasks order by deadline;\">dynamicTasks.txt"
+    command = "sqlite3 db.db \" select * from dynamicTasks order by finished, deadline;\">dynamicTasks.txt"
     os.system(command)
     command = "sqlite3 db.db \" SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname"
     command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks ORDER BY endTime\""
@@ -50,7 +50,7 @@ def createJSON():
     command = sed + "-i 's/|/,/g'"
     os.system(command + " all.txt")
     os.system(command + " dynamicTasks.txt")
-    command = sed + "-i \'1 i\\taskname,date,endTime,period,split,dateString,deadline\' dynamicTasks.txt"
+    command = sed + "-i \'1 i\\taskname,date,endTime,period,split,dateString,deadline,dontShow,startTime,finished\' dynamicTasks.txt"
     os.system(command)
     command = sed + "-i \'1 i\\taskname,dateString,startTime,endTime,type\' all.txt"
     os.system(command)
