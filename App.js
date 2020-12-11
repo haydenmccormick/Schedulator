@@ -74,7 +74,8 @@ export default function App() {
 		const tempDates = {};
 		const tempList = [];
 		var parsed = tasks;
-		for (var i in parsed) {
+	    for (var i in parsed) {
+		//alert(JSON.stringify(parsed[i]));
 			if (parsed[i].type == 'static')
 				tempList.push(parsed[i]);
 			newTask = {
@@ -100,7 +101,7 @@ export default function App() {
 
 	function getDynamicInfo(tasks) {
 		const tempDynamic = [];
-		for (var i in tasks) {
+	    for (var i in tasks) {
 			tempDynamic.push(tasks[i]);
 		}
 		setDynamicTasks(tempDynamic);
