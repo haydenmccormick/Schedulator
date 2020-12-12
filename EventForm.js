@@ -144,7 +144,7 @@ function Dynamic(props) {
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
-		let datestring = start.toISOString().split('T')[0];
+		let datestring = end.toISOString().split('T')[0];
 		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,dontShow,finished) values";
 		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + period * 60 * 60 * 1000 + "','" + datestring + "','false','false'" + ")";
 		props.pushServer(insert + values);

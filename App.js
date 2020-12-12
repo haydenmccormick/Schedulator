@@ -13,7 +13,7 @@ import { AppLoading } from 'expo';
 import loadLocalResource from 'react-native-local-resource'
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const addr = "http://192.168.1.199:8000/";
+const addr = "http://192.168.86.31:8000/";
 
 const Tab = createBottomTabNavigator();
 
@@ -46,7 +46,6 @@ export default function App() {
 	const [dynamicTasks, setDynamicTasks] = useState({});
 	const [taskList, setTaskList] = useState({});
 	const [loaded, setLoaded] = useState(false);
-	const [scheduled, setScheduled] = useState([]);
 
 	// Load tasks to agenda on app startup
 	if (!loaded) {
@@ -112,7 +111,7 @@ export default function App() {
 		findTasks();
 	}
 
-	async function findTasks() {
+	function findTasks() {
 		getTaskInfo(require('./server/all.json'));
 		getDynamicInfo(require('./server/dynamicTasks.json'));
 	}
@@ -124,18 +123,13 @@ export default function App() {
 		return dynamicTasks;
 	}
 
-	function setSchedule(events) {
-		setScheduled(events);
-		console.log(scheduled);
-	}
-
 	return (
 		<NavigationContainer>
 			<Tab.Navigator
 				screenOptions={options}
 			>
 				<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()}
-					pushServer={pushServer} scheduled={scheduled} setSchedule={setSchedule} />}
+					pushServer={pushServer} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image
@@ -146,7 +140,7 @@ export default function App() {
 					}}
 				/>
 				<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()}
-					pushServer={pushServer} static={taskList} scheduled={scheduled} setSchedule={setSchedule} />}
+					pushServer={pushServer} static={taskList} />}
 					options={{
 						tabBarIcon: ({ color }) => (
 							<Image

@@ -40,7 +40,8 @@ def createJSON():
     command = "sqlite3 db.db \" select * from dynamicTasks order by finished, deadline;\">dynamicTasks.txt"
     os.system(command)
     command = "sqlite3 db.db \" SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname"
-    command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks ORDER BY endTime\""
+    command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks "
+    command += "UNION SELECT taskname, dateString, startTime, endTime, 'scheduled' AS type FROM scheduledTasks ORDER BY endTime\""
     command += ">all.txt"
     os.system(command)
     sed = "sed "

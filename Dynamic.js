@@ -26,7 +26,7 @@ export default function TaskList(props) {
 	const render_form = (addingEvent ?
 		<View style={styles.formwrapper}>
 			{/* So the user can click outside of form box to cancel*/}
-			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
+			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
 				<Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} />
 			</View>
@@ -88,8 +88,14 @@ export default function TaskList(props) {
 	}
 
 	function calculateSchedule() {
-		//props.pushServer("delete from dynamicTasks");
-		props.setSchedule(schedule(props.static, props.tasks));
+		props.pushServer("delete from scheduledTasks");
+		let sched = schedule(props.static, props.tasks);
+		for (let i in sched) {
+			console.log(sched[i]);
+			let insert = "insert into scheduledTasks(dateString,taskname,startTime,endTime) values ";
+			let values = "('" + sched[i].dateString + "','" + (sched[i].taskname) + "','" + sched[i].startTime + "','" + sched[i].endTime + "')";
+			props.pushServer(insert + values);
+		}
 	}
 
 	if (tasks != "") {
@@ -103,7 +109,7 @@ export default function TaskList(props) {
 	}
 	else {
 		listview =
-			<TouchableOpacity style={styles.emptyeventlistcontainer} onPress={handleRefresh} activeOpacity={1}>
+			<TouchableOpacity style={styles.emptyeventlistcontainer} onPress={handleRefresh}>
 				<Text style={styles.emptyeventlisttext}>No tasks just yet. Tap the '+' button to add one, and tap here to refresh!</Text>
 			</TouchableOpacity>
 	}

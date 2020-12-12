@@ -2,17 +2,6 @@
 staticCalendar is a list of all static events in order
 events is a list of all dynamic events to be done in the future (note that you are removing the completed elemenst from events)*/
 
-const addr = "http://192.168.1.199:8000/";
-
-
-async function pushServer(command) {
-  var body = new FormData();
-  body.append('text', command);
-  var xhr = new XMLHttpRequest();
-  xhr.open('PUT', addr);
-  xhr.send(body);
-}
-
 // function updateDynamicTaskTimes(title, start, end) {
 //   // console.log(title);
 //   // console.log(start);
@@ -42,8 +31,8 @@ async function pushServer(command) {
 export default function schedule(tasks, dynamic) {
   var usrPref = { avgLength: 50 * 60 * 1000, maxLength: 90 * 60 * 1000, delaySize: 15 * 60 * 1000 };
 
-  var staticCalendar = tasks;
-  var events = dynamic;
+  var staticCalendar = [...tasks];
+  var events = [...dynamic];
   // console.log(staticCalendar);
   for (var i = 0; i < staticCalendar.length; i++) {
     staticCalendar[i].startTime = parseInt(staticCalendar[i].startTime);
@@ -94,16 +83,13 @@ export default function schedule(tasks, dynamic) {
         /* console.log("Time left: " + initialPeriod);
         console.log("Time decremented: " + period); */
         initialPeriod -= period;
-        let dateStart = new Date(Date.parse(events[i].startTime).getTime() - Date.parse(events[i].startTime).getTimezoneOffset() * 60000);
-        let dateString = dateStart.toISOString().split('T')[0];
         var piece = {
-          taskName: title + " (Part " + String(j + 1) + ")",
+          taskname: title + " (Part " + String(j + 1) + ")",
           start: startTime,
           end: startTime + period,
           period: period,
           deadline: deadline,
           splitable: split,
-          //dateString: dateString,
         };
         events.splice(i + j, 0, piece);
         //addSplitPiece(piece);
@@ -155,8 +141,7 @@ export default function schedule(tasks, dynamic) {
       console.log("Putting in event:"); */
       events[eventCounter].startTime = timer + delay;
       events[eventCounter].endTime = timer + delay + events[eventCounter].period;
-      /* console.log(events[eventCounter]); */
-      //updateDynamicTaskTimes(events[eventCounter].taskName, events[eventCounter].start, events[eventCounter].end)
+      events[eventCounter].dateString = new Date(events[eventCounter].startTime).toISOString().split('T')[0];
       timer = events[eventCounter].endTime;
       eventCounter++;
     }
@@ -164,8 +149,8 @@ export default function schedule(tasks, dynamic) {
     timer = staticCalendar[statCounter].endTime;
   }
 
-
   // var unmetDeadlines = events.filter((ev) => ev.end > ev.deadline);
+  console.log(events);
   return events;
 }
 

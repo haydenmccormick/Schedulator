@@ -98,6 +98,17 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 10,
   },
+  scheduledeventcontainer: {
+    backgroundColor: 'white',
+    alignSelf: "center",
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    width: '85%',
+    minHeight: 100,
+    marginVertical: 10,
+    marginHorizontal: 10,
+    alignSelf: 'flex-end',
+  },
   emptycontainer: {
     backgroundColor: 'white',
     alignSelf: "center",
@@ -133,6 +144,13 @@ const styles = StyleSheet.create({
     color: '#4a4a4a',
     marginBottom: 10,
   },
+  scheduledeventname: {
+    marginLeft: 30,
+    fontFamily: 'Roboto_300Light',
+    fontSize: 23,
+    color: '#4a4a4a',
+    marginBottom: 10,
+  },
   icon: {
     width: 25,
     height: 25,
@@ -144,6 +162,10 @@ const styles = StyleSheet.create({
   dynamicevent: {
     backgroundColor: '#f49a70',
     width: 7,
+  },
+  scheduledevent: {
+    backgroundColor: '#ff9585',
+    width: 7
   },
   emptyeventlistcontainer: {
     backgroundColor: 'white',
