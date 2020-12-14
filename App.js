@@ -132,24 +132,23 @@ export default function App() {
 
     //const cred = ["mk","pass"];
     let content;
-    function passw(passChar) {
-	setPassword(password + passChar);
-    }
     //let correct = 0;
     function checkCreds() {
 	let parsed = require('./server/users.json');
-	let fixPassword = "";
-	for (var i = 0; i < password.length; i++) if(i != 0) fixPassword += password[i];
+	alert(password);
 	for (var i in parsed) {
-	    if(parsed[i].username == username && parsed[i].password == fixPassword) setCorrect(2);
+	    if(parsed[i].username == username && parsed[i].password == password) setCorrect(2);
 	}
     }
     function getUsername() {
 	return username;
     }
     function createAccount() {
-	pushServer("insert into users(username,password) values('" + username + "','" + password + "')");
-	setCorrect(2);
+	if (username == "" || password == "") alert("Username and password cannot be empty.");
+	else {
+	    pushServer("insert into users(username,password) values('" + username + "','" + password + "')");
+	    setCorrect(2);
+	}
     }
     if (correct == 0) {
 	content = <ScrollView style={{padding:30}}>
@@ -157,8 +156,7 @@ export default function App() {
 	    <Text>Enter username:</Text>
 	    <TextInput style={styles.input} value={username} type="text" onChangeText={(text) => setUsername(text)}/>
 	    <Text>Password:</Text>
-	    <TextInput style={styles.input} value="" type="text" onChangeText={(text) => passw(text)}/>
-	    <Button title="Clear Password" onPress={()=>{setPassword(" ")}}/>
+	    <TextInput secureTextEntry={true} style={styles.input} value={password} onChangeText={(text) => setPassword(text)} />
 	    <Button title="Submit" onPress={()=>{checkCreds()}}/>
 	    </ScrollView>;
     }
@@ -167,8 +165,7 @@ export default function App() {
 	    <Text>Enter username:</Text>
 	    <TextInput style={styles.input} value={username} type="text" onChangeText={(text) => setUsername(text)}/>
 	    <Text>Password:</Text>
-	    <TextInput style={styles.input} value="" type="text" onChangeText={(text) => passw(text)}/>
-	    <Button title="Clear Password" onPress={()=>{setPassword(" ")}}/>
+	    <TextInput secureTextEntry={true} style={styles.input} value={password} onChangeText={(text) => setPassword(text)} />
 	    <Button title="Create account" onPress={()=>{createAccount()}}/>
 	    </ScrollView>;
     }
