@@ -49,6 +49,7 @@ export default function App() {
     const [loaded, setLoaded] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [password2, setPassword2] = useState("");
     const [correct, setCorrect] = useState(0);
 
     // Load tasks to agenda on app startup
@@ -135,7 +136,7 @@ export default function App() {
     //let correct = 0;
     function checkCreds() {
 	let parsed = require('./server/users.json');
-	alert(password);
+	//alert(password);
 	for (var i in parsed) {
 	    if(parsed[i].username == username && parsed[i].password == password) setCorrect(2);
 	}
@@ -144,7 +145,8 @@ export default function App() {
 	return username;
     }
     function createAccount() {
-	if (username == "" || password == "") alert("Username and password cannot be empty.");
+	if (username == "" || password == "") alert("Username and password cannot be empty");
+	else if(password != password2) alert("Passwords must be the same");
 	else {
 	    pushServer("insert into users(username,password) values('" + username + "','" + password + "')");
 	    setCorrect(2);
@@ -162,10 +164,13 @@ export default function App() {
     }
     else if(correct == 1) {
 	content = <ScrollView style={{padding:30}}>
+	    <Button title="Click here to log in" onPress={()=>{setCorrect(0)}}/>
 	    <Text>Enter username:</Text>
 	    <TextInput style={styles.input} value={username} type="text" onChangeText={(text) => setUsername(text)}/>
 	    <Text>Password:</Text>
 	    <TextInput secureTextEntry={true} style={styles.input} value={password} onChangeText={(text) => setPassword(text)} />
+	    <Text>Enter password again:</Text>
+	    <TextInput secureTextEntry={true} style={styles.input} value={password2} onChangeText={(text) => setPassword2(text)} />
 	    <Button title="Create account" onPress={()=>{createAccount()}}/>
 	    </ScrollView>;
     }
