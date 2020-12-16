@@ -36,11 +36,6 @@ export default function TaskList(props) {
 	function deleteItem(itemName) {
 		let deleteStatement = "delete from dynamicTasks where taskname = '" + itemName + "'";
 		props.pushServer(deleteStatement);
-		// db.transaction(tx => {
-		// 	tx.executeSql(deleteStatement, []);
-		// 	props.pushServer(deleteStatement);
-		// 	props.findTasks();
-		// });
 	}
 
 	function handleDelete(itemName) {
@@ -68,7 +63,7 @@ export default function TaskList(props) {
 					<Text style={styles.delete} onPress={() => { handleDelete(name) }}>x</Text>
 				</View>
 			}
-			<View>
+			<View style={styles.eventlistelement}>
 				<Text style={styles.eventlisttext}>{name}</Text>
 				<Text style={styles.eventlisttext2}>Due {dueDate} at {dueTime}</Text>
 			</View>
@@ -90,12 +85,13 @@ export default function TaskList(props) {
 	function calculateSchedule() {
 		props.pushServer("delete from scheduledTasks");
 		let sched = schedule(props.static, props.tasks);
+		var valueList = [];
 		for (let i in sched) {
-			console.log(sched[i]);
-			let insert = "insert into scheduledTasks(dateString,taskname,startTime,endTime) values ";
-			let values = "('" + sched[i].dateString + "','" + (sched[i].taskname) + "','" + sched[i].startTime + "','" + sched[i].endTime + "')";
-			props.pushServer(insert + values);
+			let values = "('" + sched[i].dateString + "','" + sched[i].taskname + "','" + sched[i].startTime + "','" + sched[i].endTime + "')";
+			valueList.push(values);
 		}
+		let insert = "insert into scheduledTasks(dateString,taskname,startTime,endTime) values ";
+		props.pushServer(insert + valueList);
 	}
 
 	if (tasks != "") {

@@ -223,7 +223,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: '#4a4a4a',
     margin: 15,
-    marginRight: 39,
   },
   eventlisttext2: {
     fontFamily: 'Roboto_300Light',
@@ -231,7 +230,9 @@ const styles = StyleSheet.create({
     color: '#4a4a4a',
     marginLeft: 15,
     marginBottom: 15,
-
+  },
+  eventlistelement: {
+    marginRight: 80,
   },
   taskname: {
     marginTop: 10,

@@ -51,17 +51,21 @@ def createJSON():
     command = sed + "-i 's/|/,/g'"
     os.system(command + " all.txt")
     os.system(command + " dynamicTasks.txt")
-    command = sed + "-i \'1 i\\taskname,date,endTime,period,split,dateString,deadline,dontShow,startTime,finished\' dynamicTasks.txt"
-    os.system(command)
-    command = sed + "-i \'1 i\\taskname,dateString,startTime,endTime,type\' all.txt"
-    os.system(command)
+    # command = sed + "-i \'1 i\\" + keys + "\' dynamicTasks.txt"
+    # os.system(command)
+    # command = sed + "-i \'1 i\\" + keys + "\' all.txt"
+    # os.system(command)
     with open('all.txt') as f:
-        reader = csv.DictReader(f)
+        keys = "taskname,dateString,startTime,endTime,type"
+        keys = keys.split(',')
+        reader = csv.DictReader(f, fieldnames=keys)
         rows = list(reader)
     with open('all.json', 'w') as f:
         json.dump(rows, f)
     with open('dynamicTasks.txt') as f:
-        reader = csv.DictReader(f)
+        keys = "taskname,date,endTime,period,split,dateString,deadline,dontShow,startTime,finished"
+        keys = keys.split(',')
+        reader = csv.DictReader(f, fieldnames=keys)
         rows = list(reader)
     with open('dynamicTasks.json', 'w') as f:
         json.dump(rows, f)
