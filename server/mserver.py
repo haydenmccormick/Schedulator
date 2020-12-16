@@ -47,6 +47,7 @@ def createJSON():
     cur = connection.cursor()
     command = "select * from dynamicTasks order by finished, deadline";
     df = pd.read_sql(command, connection)
+    df = df.T
     df.to_json("dynamicTasks.json")
     command = "SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname"
     command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks "
@@ -58,7 +59,7 @@ def createJSON():
 
 
 if __name__ == '__main__':
-    #createJSON()
+    createJSON()
     if platform.system() == 'Darwin':
         os.system("ipconfig getifaddr en0")
     else:
