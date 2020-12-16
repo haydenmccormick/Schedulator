@@ -3,6 +3,8 @@ import platform
 import http.server as server
 import csv
 import json
+import time
+import sqlite3
 
 
 class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
@@ -31,8 +33,13 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
             print("No command")
             exit(1)
         print(str)
-        command = "sqlite3 db.db " + "\"" + str + ";\""
-        os.system(command)
+        connection = sqlite3.connect('db.db')
+        cur = connection.cursor()
+        cur.execute(str)
+        connection.commit()
+        cur.close()
+        #command = "sqlite3 db.db " + "\"" + str + ";\""
+        #os.system(command)
         createJSON()
 
 
@@ -68,7 +75,7 @@ def createJSON():
 
 
 if __name__ == '__main__':
-    createJSON()
+    #createJSON()
     if platform.system() == 'Darwin':
         os.system("ipconfig getifaddr en0")
     else:
