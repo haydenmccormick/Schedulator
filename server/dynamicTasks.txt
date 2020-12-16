@@ -1,5 +1,0 @@
-taskname,date,endTime,period,split,dateString,deadline,dontShow,startTime,finished
-B,Tue Dec 15 2020 18:52:57 GMT-0800 (PST),,32400000,false,2020-12-16,1608087177167,false,,false
-Dynamic task 1,Thu Dec 17 2020 16:06:59 GMT-0600 (Central Standard Time),,18000000,true,2020-12-17,1608242819000,false,,false
-Dynamic Task 2,Fri Dec 18 2020 16:07:14 GMT-0600 (Central Standard Time),,21600000,true,2020-12-18,1608329234000,false,,false
-ASDasdasd,Fri Dec 18 2020 17:15:41 GMT-0600 (Central Standard Time),,28800000,true,2020-12-18,1608333341000,false,,false
