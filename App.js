@@ -13,7 +13,7 @@ import { AppLoading } from 'expo';
 import loadLocalResource from 'react-native-local-resource'
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const addr = "http://192.168.86.31:8000/";
+const addr = "http://192.168.86.27:8000/";
 
 const Tab = createBottomTabNavigator();
 
@@ -70,7 +70,7 @@ export default function App() {
 		const tempDates = {};
 		const tempList = [];
 		var parsed = tasks;
-		for (var i in parsed) {
+	    for (var i in parsed) {
 			if (parsed[i].type == 'static')
 				tempList.push(parsed[i]);
 			newTask = {

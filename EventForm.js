@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "./assets/Styles.js"
 import * as SQLite from 'expo-sqlite';
 
-const addr = "http://192.168.0.4:8000/";
+const addr = "http://192.168.86.27:8000/";
 
 // Database integration
 const db = SQLite.openDatabase("db.db");
