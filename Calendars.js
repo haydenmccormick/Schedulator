@@ -88,11 +88,12 @@ function DayView(props) {
 				{start} - {end}
 			</Text>
 		}
-		else
+		else {
 			renderbar = styles.scheduledevent;
-		timedisplay = <Text style={styles.eventdatetext}>
-			{start} - {end}
-		</Text>
+			timedisplay = <Text style={styles.eventdatetext}>
+				{start} - {end}
+			</Text>
+		}
 		let ret = (item.type == 'scheduled' ?
 			<View style={styles.scheduledeventcontainer}>
 				<View style={renderbar} />

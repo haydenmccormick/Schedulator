@@ -29,6 +29,10 @@ function Form(props) {
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
+		if (start > end) {
+			alert("End time must be after start time!");
+			return;
+		}
 		let dateStart = new Date(start.getTime() - start.getTimezoneOffset() * 60000);
 		let datestring = dateStart.toISOString().split('T')[0];
 		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";

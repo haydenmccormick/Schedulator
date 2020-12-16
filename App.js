@@ -10,10 +10,17 @@ import styles from './assets/Styles.js';
 import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
-import loadLocalResource from 'react-native-local-resource'
+import { NetworkInfo } from "react-native-network-info";
+import ipify from 'react-native-ipify';
+
+//import loadLocalResource from 'react-native-local-resource'
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const addr = "http://192.168.86.31:8000/";
+// NetworkInfo.getIPV4Address().then(ipv4Address => {
+// 	console.log(ipv4Address);
+// });
+
+const addr = "http://localhost:8000/";
 
 const Tab = createBottomTabNavigator();
 
