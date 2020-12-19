@@ -1,106 +1,77 @@
 /*Note you did not add an earliest start date for dynamics
 staticCalendar is a list of all static events in order
 events is a list of all dynamic events to be done in the future (note that you are removing the completed elemenst from events)*/
-import * as SQLite from "expo-sqlite";
-const db = SQLite.openDatabase("db.db");
 
-function updateDynamicTaskTimes(title, start, end) {
-  //updates task keyed by the title with a start and end time
-  db.transaction((tx) => {
-    tx.executeSql("update dynamicTasks set start = ? end = ? where title = ?", [
-      start,
-      end,
-      title,
-    ]);
-  });
-}
+// function updateDynamicTaskTimes(title, start, end) {
+//   // console.log(title);
+//   // console.log(start);
+//   // console.log(end);
+//   // console.log("Updating!");
+//   //console.log(start);
+//   let command = "update dynamicTasks set startTime = '" + start + "', endTime = '" + end + "', dontShow = '" + "False" + "' where taskName = '" + title + "'";
+//   //updates task keyed by the title with a start and end time
+//   pushServer(command);
+// }
 
-//fix bug
-function updateSplitPiece(title, newTitle, period) {
-  db.transaction((tx) => {
-    tx.executeSql(
-      "update dynamicTasks set title = ? period = ? where title=?",
-      [newTitle, period, title]
-    );
-  });
-}
+// //fix bug
+// function updateSplitPiece(title, newTitle, period) {
+//   let command = "update dynamicTasks set taskName = '" + newTitle + "', period = '" + period + "' where taskName = '" + title + "'";
+//   pushServer(command);
+// }
 
-function addSplitPiece(piece) {
-  var dateString = new Date();
-  dateString = dateString.setTime();
-  db.transaction((tx) => {
-    tx.executeSql(
-      "insert into dynamicTasks(taskname,date,endTime,period,split) value(?,?,?,?,?,?)",
-      [
-        piece.title,
-        piece.start,
-        piece.end,
-        piece.period,
-        piece.deadline,
-        piece.splitable,
-      ]
-    );
-  });
-}
-// var Event = {
-//   title: "title",
-//   start: "start",
-//   end: "end",
-//   period: "period",
-//   deadline: "deadline", //this is set to int max for statics and can act as a key for static and dynamic values
-//   splitable: "splitable",
-// };
+// function addSplitPiece(piece) {
+//   console.log(piece.start);
+//   let dateString = new Date(piece.start).toISOString().split('T')[0];
+//   let values = "('" + piece.taskName + "','" + piece.startTime + "','" + piece.deadline + "','" + piece.splittable + "','" + piece.period + "','" + dateString + "','" + 'True' + "','" + piece.startTime + "','" + piece.end + "')";
+//   // console.log(values);
+//   pushServer("insert into dynamicTasks(taskname,date,deadline,split,period,dateString,finished,startTime,endTime) values" + values);
+// }
 
-// var usrPref = {
-//   avgLength: avgLength,
-//   maxlength: maxlength,
-//   delaySize: delaySize,
-// };
 
-// staticCalendar, events, scheduledCalendar are all arrays of Event
+export default function schedule(tasks, dynamic) {
+  var usrPref = { avgLength: 50 * 60 * 1000, maxLength: 90 * 60 * 1000, delaySize: 15 * 60 * 1000 };
 
-function schedule(usrPref, scheduledCalendar) {
-  // note that the staticCalendar shows the blocks taken up by static events
-  //events contains a random array of all events
-  const [staticCalendar, setStaticTasksValue] = useState("");
-  const [events, setDynamicTasksValue] = useState("");
+  var staticCalendar = [...tasks];
+  var events = JSON.parse(JSON.stringify(dynamic)); // Deep copy so dynamic task list is unchanged
 
-  db.transaction((tx) => {
-    //tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []);
-    tx.executeSql("select * from tasks", [], (_, { rows: { _array } }) =>
-      setStaticTasksValue(_array)
-    );
-    tx.executeSql("select * from dynamicTasks", [], (_, { rows: { _array } }) =>
-      setDynamicTasksValue(_array)
-    );
-  });
 
-  events = events.sort((a, b) => {
-    a.deadline - b.deadline;
-  }); //sorts events in ascending order of date
-  //note for later, events here sorted so that in the future the cost of the sort is lowered
-  var tail = { start: Number.MAX_SAFE_INT, end: Number.MAX_SAFE_INT };
-  staticCalendar.splice(events.length(), 0, tail);
-  events.splice(events.length(), 0, tail);
-  for (var i = 0; i < events.length() - 1; i++) {
-    if (events[i].splitable && events[i].period > usrPref.maxlength) {
+  for (var i = 0; i < staticCalendar.length; i++) {
+    staticCalendar[i].startTime = parseInt(staticCalendar[i].startTime);
+    staticCalendar[i].endTime = parseInt(staticCalendar[i].endTime);
+    staticCalendar[i].period = parseInt(staticCalendar[i].period);
+  }
+
+  for (var i = 0; i < events.length; i++) {
+    events[i].startTime = parseInt(events[i].startTime);
+    events[i].endTime = parseInt(events[i].endTime);
+    events[i].period = parseInt(events[i].period);
+  }
+
+  let tail = { start: Number.MAX_SAFE_INTEGER, end: Number.MAX_SAFE_INTEGER };
+  events.splice(events.length, 0, tail);
+  staticCalendar.splice(staticCalendar.length, 0, tail);
+
+  for (var i = 0; i < events.length - 1; i++) {
+    if (events[i].split && events[i].period > usrPref.maxLength) {
+
       var initialPeriod = events[i].period;
-      var nPieces = floor(initialLength / usrPref.avgLength);
-      var title = events[i].title;
-      var startTime = events[i].start;
+      var nPieces = Math.ceil(initialPeriod / usrPref.avgLength);
+      var title = events[i].taskname;
+      var startTime = 0;
       var deadline = events[i].deadline;
-      var split = events[i].splitable;
-      events[i].period = usrPref.avglength;
-      initialPeriod -= usrPref.avglength; //make an initial piece of avg size
-      updateSplitPiece(title, title + " (1)", usrPref.avgLength);
-      for (var j = 1; j < nPieces; j++, i++) {
+      var split = events[i].split;
+      events[i].taskname = events[i].taskname + " (Part 1)";
+      events[i].period = usrPref.avgLength;
+      initialPeriod -= usrPref.avgLength;
+      for (var j = 1; j < nPieces; j++) {
+
         var period =
-          floor(initialPeriod / usrPref.avgLength) === 1 //set period to avg size until you get to the last chunk and take the whole thing
-            ? initialPeriod
-            : usrPref.avgLength;
+          (initialPeriod > usrPref.avgLength) ?
+            usrPref.avgLength :
+            initialPeriod;
         initialPeriod -= period;
         var piece = {
-          title: title + " (" + String(j + 1) + ")", //change title so you can index
+          taskname: title + " (Part " + String(j + 1) + ")",
           start: startTime,
           end: startTime + period,
           period: period,
@@ -108,130 +79,46 @@ function schedule(usrPref, scheduledCalendar) {
           splitable: split,
         };
         events.splice(i + j, 0, piece);
-        addSplitPiece(piece);
       }
+      i += nPieces - 1;
     }
   }
-  //all events have now been split up into appropriate chunks
 
-  var delay = usrPref.delaySize * 1000 * 60; //convert delay to ms (note you begin scheduel after delay mintes)
-  var init = new Date();
-  var currTime = init.getTime();
+  var delay = usrPref.delaySize;
+  var currTime = Date.now();
   var statCounter = 0;
   var eventCounter = 0;
   var timer;
-  while (staticCalendar[statCounter].start < currTime) {
+  while (staticCalendar[statCounter].startTime < currTime) {
     statCounter++;
   }
   statCounter--; //point back at last thing that started before current time
   //be careful to access statCounter=-1
-  staticCalendar.length() === 1
-    ? (timer = currTime)
-    : (timer = max(staticCalendar[statCounter].end, currTime));
+
+  statCounter === -1 ?
+    (timer = currTime) :
+    (timer = Math.max(staticCalendar[statCounter].endTime, currTime));
   //timer is valid start time for anything so we see if curr
   //time is inside of a static event, we update timer to end
   //of that event.
 
   while (
-    statCounter < staticCalendar.length() - 1 &&
-    eventCounter < events.length() - 1
+    statCounter < staticCalendar.length - 1 &&
+    eventCounter < events.length - 1
   ) {
     while (
-      eventCounter < events.length() - 1 &&
-      staticCalendar[statCounter + 1].start - timer > //index statCounter+1 must exist because of prve condition so dont worry
-        events[eventCounter].period + 2 * delay
+      eventCounter < events.length - 1 &&
+      staticCalendar[statCounter + 1].startTime - timer >
+      events[eventCounter].period + 2 * delay
     ) {
-      var event = {
-        title: event[eventCounter].title,
-        start: timer + delay,
-        end: timer + delay + event[eventCounter].period,
-        period: event[eventCounter].period,
-        deadline: event[eventCounter].deadline,
-        splitable: event[eventCounter].splitable,
-      };
-      scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
-      updateDynamicTaskTimes(
-        events[eventCounter].title,
-        timer + delay,
-        timer + delay + events[eventCounter].period
-      );
+      events[eventCounter].startTime = timer + delay;
+      events[eventCounter].endTime = timer + delay + events[eventCounter].period;
+      events[eventCounter].dateString = new Date(events[eventCounter].startTime).toISOString().split('T')[0];
+      timer = events[eventCounter].endTime;
       eventCounter++;
-      timer = event.end;
     }
-
-    var event = {
-      title: staticCalendar[statCounter].title,
-      start: taticCalendar[statCounter].start,
-      end: staticCalendar[statCounter].end,
-      period: staticCalendar[statCounter].period,
-      deadline: staticCalendar[statCounter].deadline,
-      splitable: staticCalendar[statCounter].splitable,
-    };
-    scheduledCalendar.splice(scheduledCalendar.length(), 0, event);
-    //above can be removed as you only want to set database start and end time and returning scheduledCale is useless
     statCounter++;
+    timer = staticCalendar[statCounter].endTime;
   }
-
-  var unmetDeadlines = events.filter((ev) => ev.end > ev.deadline);
-  return unmetDeadlines;
-  //return a list of all deadlines not met
+  return events;
 }
-
-//returns the staticArray for of the database
-// function getStaticArrayFromDB() {
-//   var staticCalendar = [];
-//   db.transaction((tx) => {
-//     tx.executSql("select * from tasks", {}, (results) => {
-//       for (var i = 0; i < results.rows.length; i++) {
-//         var startConcat =
-//           results.rows.item(i).date +
-//           " " +
-//           results.rows.item(i).startTime +
-//           ":00";
-//         var endConcat =
-//           results.rows.item(i).date +
-//           " " +
-//           results.rows.item(i).endTime +
-//           ":00";
-//         var start = Date.parse(startConcat);
-//         var end = Date.parse(endConcat);
-//         var event = new Event(
-//           results.rows.item(i).taskname,
-//           start,
-//           end,
-//           start - end,
-//           end,
-//           false
-//         );
-//         staticCalendar.splice(staticCalendar.length(), 0, event);
-//       }
-//     });
-//   });
-//   return staticCalendar;
-// }
-
-// function getDynamicArrayFromDB() {
-//   var dynamicCalendar = [];
-//   db.transaction((tx) => {
-//     tx.executSql("select * from dynamictasks", {}, (results) => {
-//       for (var i = 0; i < results.rows.length; i++) {
-//         var deadlineConcat =
-//           results.rows.item(i).date +
-//           " " +
-//           results.rows.item(i).endTime +
-//           ":00";
-//         var deadline = Date.parse(deadlineConcat);
-//         var event = new Event(
-//           results.rows.item(i).taskname,
-//           0,
-//           0,
-//           results.rows.item(i).period,
-//           deadline,
-//           results.rows.item(i).split
-//         );
-//         dynamicCalendar.splice(dynamicCalendar.length(), 0, event);
-//       }
-//     });
-//   });
-//   return dynamicCalendar;
-// }

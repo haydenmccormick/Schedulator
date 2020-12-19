@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Text, View, TextInput, Button, ScrollView, CheckBox } from 'react-native';
-import DatePicker from 'react-native-datepicker';
-import TimePicker from 'react-native-simple-time-picker';
+import { Text, View, TextInput, Button, ScrollView, Image, Switch, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "./assets/Styles.js"
 import * as SQLite from 'expo-sqlite';
 
-
+const addr = "http://192.168.0.4:8000/";
 
 // Database integration
 const db = SQLite.openDatabase("db.db");
@@ -13,21 +12,15 @@ const db = SQLite.openDatabase("db.db");
 // Static Form Component
 
 function Form(props) {
-	//Remember to clear form
+	let tempDate = new Date(Date.now());
 	const [input, setInput] = useState("");
-	const [count, setCount] = useState("");
-	const [Hours, setHours] = useState("");
-	const [Minutes, setMinutes] = useState("");
-	const [Hours2, setHours2] = useState("");
-	const [Minutes2, setMinutes2] = useState("");
-	function fixMinutes(minutes) {
-		if (String(minutes).length == 1) {
-			return '0' + minutes;
-		}
-		else return minutes;
-	}
+	const [start, setStart] = useState(tempDate);
+	const [end, setEnd] = useState(tempDate);
+	const [form, setForm] = useState('');
+	const [SE, setSE] = useState();
+
 	function check() {
-		if (input == "" || count == "" || Hours == "" || Minutes == "" || Hours2 == "" || Minutes2 == "") {
+		if (input == "") {
 			return 0;
 		}
 		return 1;
@@ -36,55 +29,99 @@ function Form(props) {
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
-		let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' + Minutes2 + "')";
-		//Add stuff to database
-		//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
-		db.transaction(tx => {
-			tx.executeSql("insert into tasks(taskname,date,startTime,endTime) values" + values, []); /*
-			tx.executeSql(
-				"select * from tasks",
-				[],
-				(_, { rows: { _array } }) => alert(JSON.stringify(_array))
-			);*/
-		});
+		if (start > end) {
+			alert("End time must be after start time!");
+			return;
+		}
+		let dateStart = new Date(start.getTime() - start.getTimezoneOffset() * 60000);
+		let datestring = dateStart.toISOString().split('T')[0];
+		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";
+		let values = "('" + input + "','" + Date.parse(start) + "','" + Date.parse(start) + "','" + Date.parse(end) + "','" + datestring + "')";
+		props.pushServer(insert + values);
 		props.retFunc();
+	}
+	const datePressHandler = () => {
+		if (form == '')
+			setForm("date");
+		else
+			setForm("");
+		setSE('start');
+	}
+	const timePressHandler = (val) => {
+		if (form == '')
+			setForm("time");
+		else
+			setForm("");
+		setSE(val == 1 ? 'start' : 'end');
+	}
+	const onChange = (event, selectedDate) => {
+		const newDate = selectedDate || start;
+		if (form == 'date') {
+			setStart(newDate);
+			setEnd(newDate);
+		}
+		SE == 'start' ? setStart(newDate) : setEnd(newDate);
+	};
+	const formItem = (
+		<DateTimePicker mode={form} style={styles.datepicker} value={SE == 'start' ? start : end} onChange={onChange} />
+	);
+	let render_form = null;
+	if (Platform.OS == 'ios') {
+		render_form = (form != '' ?
+			<View>
+				<Image source={require('./assets/FormTop.png')} style={styles.formtop} />
+				<View style={styles.form2}>
+					{formItem}
+				</View>
+			</View>
+			: null);
+	}
+	else {
+		render_form = (form != '' ?
+			<View>
+				{formItem}
+			</View>
+			: null);
 	}
 	let button;
 	if (check()) {
 		button = <Button onPress={() => {
 			submit();
-			setInput(""); setCount("");
-			setHours(""); setMinutes("");
-			setHours2(""); setMinutes2("");
+			setInput("");
 		}} title="Submit" />;
 	}
 	else {
 		button = <Button onPress={() => { notFilled() }} title="Submit" />;
 	}
 	return (
-		<ScrollView style={styles.form}>
-			<Text>Enter task name</Text>
-			<View>
-				<TextInput style={styles.input} name="taskname" type="text" value={input} onChangeText={(text) => setInput(text)} />
-			</View>
-			<Text>Enter date</Text>
-			<View>
-				<DatePicker placeholder={count} onDateChange={(date) => setCount(date)} />
-			</View>
-			<Text>Enter start time</Text>
-			<Text>{Hours}:{Minutes}</Text>
-			<View>
-				<TimePicker selectedHours={Hours} selectedMinutes={Minutes}
-					onChange={(hours, minutes) => { setHours(hours); setMinutes(fixMinutes(minutes)) }} />
-			</View>
-			<Text>Enter end time</Text>
-			<Text>{Hours2}:{Minutes2}</Text>
-			<View>
-				<TimePicker selectedHours={Hours2} selectedMinutes={Minutes2}
-					onChange={(hours, minutes) => { setHours2(hours); setMinutes2(fixMinutes(minutes)) }} />
-			</View>
-			{button}
-		</ScrollView>
+		<View>
+			<ScrollView style={styles.form}>
+				<TextInput style={styles.input} multiline placeholder="Title" name="taskname"
+					type="text" value={input} onChangeText={(text) => setInput(text)}
+					selectionColor={'#70d3f4'}
+				/>
+				<View style={styles.enterdate}>
+					<Text style={styles.formtext}>Date</Text>
+					<Text style={styles.formtext} onPress={(form) => datePressHandler()} >
+						{start.toDateString()}
+					</Text>
+				</View>
+				<View style={styles.enterdate}>
+					<Text style={styles.formtext}>Start Time</Text>
+					<Text style={styles.formtext} onPress={(form) => timePressHandler(1)} >
+						{start.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
+					</Text>
+				</View>
+				<View style={[styles.enterdate, { marginBottom: 20 }]}>
+					<Text style={styles.formtext}>End Time</Text>
+					<Text style={styles.formtext} onPress={(form) => timePressHandler(2)} >
+						{end.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
+					</Text>
+				</View>
+				{button}
+			</ScrollView >
+			{render_form}
+		</View>
 	);
 }
 
@@ -93,21 +130,16 @@ function Form(props) {
 function Dynamic(props) {
 	//Remember to clear form
 	//insert into dynamicTasks(taskname,date,endTime,period,split) values ('a','b','c','d','e');
+	let tempDate = new Date(Date.now());
 	const [input, setInput] = useState("");
-	const [count, setCount] = useState("");
-	const [Hours, setHours] = useState("");
-	const [Minutes, setMinutes] = useState("");
-	const [Hours2, setHours2] = useState("");
-	const [Minutes2, setMinutes2] = useState("");
+	const [start, setStart] = useState(tempDate);
+	const [end, setEnd] = useState(tempDate);
+	const [form, setForm] = useState('');
 	const [toggleCheckBox, setToggleCheckBox] = useState(true);
-	function fixMinutes(minutes) {
-		if (String(minutes).length == 1) {
-			return '0' + minutes;
-		}
-		else return minutes;
-	}
+	const [period, setPeriod] = useState();
+
 	function check() {
-		if (input == "" || count == "" || Hours == "" || Minutes == "" || Hours2 == "" || Minutes2 == "") {
+		if (input == "") {
 			return 0;
 		}
 		return 1;
@@ -116,32 +148,95 @@ function Dynamic(props) {
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
-		let values = "('" + input + "'" + ",'" + count + "','" + Hours + ":" + Minutes + "','" + Hours2 + ':' +
-			Minutes2 + "','" + toggleCheckBox + "')";
-		//Add stuff to database
-		//insert into tasks(taskname,date,startTime,endTime) values ('e','f','g','h'')
-		db.transaction(tx => {
-			tx.executeSql("insert into dynamicTasks(taskname,date,endTime,period,split) values" + values, []); /*
-			tx.executeSql(
-				"select * from dynamicTasks",
-				[],
-				(_, { rows: { _array } }) => alert(JSON.stringify(_array))
-			);*/
-		});
+		let datestring = end.toISOString().split('T')[0];
+		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,dontShow,finished) values";
+		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + period * 60 * 60 * 1000 + "','" + datestring + "','false','false'" + ")";
+		props.pushServer(insert + values);
 		props.retFunc();
 	}
 	let button;
+	const datePressHandler = () => {
+		if (form == '')
+			setForm("date");
+		else
+			setForm("");
+	}
+	const timePressHandler = (val) => {
+		if (form == '')
+			setForm("time");
+		else
+			setForm("");
+	}
+	const onChange = (event, selectedDate) => {
+		const newDate = selectedDate || start;
+		setEnd(newDate);
+	};
+	let render_form = null;
+	if (Platform.OS == 'ios') {
+		render_form = (form != '' ?
+			<View>
+				<Image source={require('./assets/FormTop.png')} style={styles.formtop} />
+				<View style={styles.form2}>
+					<DateTimePicker mode={form} style={styles.datepicker} value={end} onChange={onChange} />
+				</View>
+			</View>
+			: null);
+	}
+	else {
+		render_form = (form != '' ?
+			<View>
+				<DateTimePicker mode={form} style={styles.datepicker} value={end} onChange={onChange} />
+			</View>
+			: null);
+	}
 	if (check()) {
 		button = <Button onPress={() => {
 			submit();
-			setInput(""); setCount("");
-			setHours(""); setMinutes("");
-			setHours2(""); setMinutes2("");
+			setInput("");
 		}} title="Submit" />;
 	}
 	else {
 		button = <Button onPress={() => { notFilled() }} title="Submit" />;
 	}
+	return (
+		<View>
+			<ScrollView style={styles.form}>
+				<TextInput style={styles.input} multiline placeholder="Title" name="taskname"
+					type="text" value={input} onChangeText={(text) => setInput(text)}
+					selectionColor={'#70d3f4'}
+				/>
+				<View style={styles.enterdate}>
+					<Text style={styles.formtext}>Date Due</Text>
+					<Text style={styles.formtext} onPress={(form) => datePressHandler()} >
+						{end.toDateString()}
+					</Text>
+				</View>
+				<View style={styles.enterdate}>
+					<Text style={styles.formtext}>Deadline</Text>
+					<Text style={styles.formtext} onPress={(form) => timePressHandler(1)} >
+						{end.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
+					</Text>
+				</View>
+				<View style={[styles.enterdate, { marginBottom: 20 }]}>
+					<Text style={styles.formtext}>Splitable?</Text>
+					<Switch value={toggleCheckBox} onValueChange={() => { setToggleCheckBox(!toggleCheckBox) }} />
+				</View>
+				<View style={styles.period}>
+					<Text style={styles.formtext}>About how long will it take?</Text>
+					<View style={styles.forminput}>
+						<TextInput style={styles.input2} multiline placeholder="Enter Number" name="period"
+							type="text" value={period} onChangeText={(text) => setPeriod(text)}
+							selectionColor={'#70d3f4'} keyboardType='number-pad'
+						/>
+						<Text style={styles.input}> hours</Text>
+					</View>
+				</View>
+				{button}
+			</ScrollView >
+			{render_form}
+		</View>
+	);
+} {/*
 	return (
 		<ScrollView style={styles.form}>
 			<Text>Enter task name</Text>
@@ -170,7 +265,7 @@ function Dynamic(props) {
 			{button}
 		</ScrollView>
 	);
-}
+}*/}
 
 module.exports = {
 	Form: Form,
