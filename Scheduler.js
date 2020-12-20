@@ -31,9 +31,7 @@ export default function schedule(tasks, dynamic) {
   var usrPref = {
     avgLength: 50 * 60 * 1000,
     maxLength: 90 * 60 * 1000,
-    delaySize: 15 * 60 * 1000,
-    sleepStart: TimeRanges,
-    sleepEnd: TimeRanges,
+    delaySize: 15 * 60 * 1000
   };
 
   var staticCalendar = [...tasks];
