@@ -353,6 +353,7 @@ const styles = StyleSheet.create({
     height: '13%',
     backgroundColor: '#f58f73',
     justifyContent: 'center',
+    flexDirection: 'row',
   },
   listheadertext: {
     textAlign: 'center',
@@ -360,6 +361,15 @@ const styles = StyleSheet.create({
     fontFamily: 'AbrilFatface_400Regular',
     fontSize: 45,
     color: '#f4f4f4',
+    position: 'absolute',
+  },
+  settings: {
+    resizeMode: 'stretch',
+    position: 'absolute',
+    alignSelf: 'center',
+    width: 35,
+    height: 35,
+    right: "5%",
   },
 });
 

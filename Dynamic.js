@@ -4,9 +4,8 @@ import { View, TouchableOpacity, Image, Text, FlatList, Alert, RefreshControl } 
 import { Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
-//import deleteDynamicTasks from './DeleteForm.js';
 import schedule from './Scheduler.js';
-
+import AsyncStorage from '@react-native-community/async-storage';
 
 const db = SQLite.openDatabase("db.db");
 
@@ -95,6 +94,11 @@ export default function TaskList(props) {
 		props.pushServer(insert + valueList);
 	}
 
+	function logOut() {
+		AsyncStorage.clear();
+		props.setCorrect(0);
+	}
+
 	if (tasks != "") {
 		//horizontalScroll={true} columnWidth={50} height={150}
 		listview = <FlatList
@@ -114,6 +118,9 @@ export default function TaskList(props) {
 		<View style={styles.container} >
 			<View style={styles.listheader}>
 				<Text style={styles.listheadertext}>Tasks</Text>
+				<TouchableOpacity style={styles.settings} onPress={() => logOut()}>
+					<Image style={styles.settings} source={require('./assets/logout.png')} />
+				</TouchableOpacity>
 			</View>
 			{listview}
 			<View style={styles.buttonwrapper}>

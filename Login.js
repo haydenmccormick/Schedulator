@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Text, TextInput, Button, View, TouchableOpacity } from 'react-native';
 import styles from './assets/Styles.js';
-import bcrypt from 'react-native-bcrypt'
+import bcrypt from 'react-native-bcrypt';
+import AsyncStorage from '@react-native-community/async-storage';
 
 // LOGIN SCREEN //
 
@@ -12,22 +13,38 @@ export default function Login(props) {
     //const [passwordChecked, setPasswordChecked] = useState("");
     const [correct, setCorrectStatus] = useState("");
 
+    function setLoggedIn() {
+        try {
+            AsyncStorage.setItem('loggedIn', username);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    bcrypt.setRandomFallback((len) => {
+        var Chance = require('chance');
+        var chance = new Chance();
+        const buf = new Uint8Array(len);
+        return buf.map(() => Math.floor(chance.random() * 256));
+    });
+
     function setCorrect(val) {
+
         setUsername("");
         setPassword("");
         setPassword2("");
-        props.setCorrect(val);
         setCorrectStatus(val);
+        props.setCorrect(val);
     }
 
     function setPasswordChecked(res) {
         if (res == true) {
             props.setUsername(username);
+            setLoggedIn();
             setCorrect(2);
         }
     }
 
-    let content;
     function checkCreds() {
         if (username == "" || password == "") alert("Please fill out username and password");
         let parsed = require('./server/users.json');
@@ -36,10 +53,10 @@ export default function Login(props) {
                 bcrypt.compare(password, parsed[i].password, function (err, res) { setPasswordChecked(res) });
             }
         }
-        if (correct != 2)
-            alert("The username or password is incorrect")
+        // if (correct == 0)
+        //     alert("The username or password is incorrect")
     }
-    var salt = bcrypt.genSaltSync(10);
+    var salt = bcrypt.genSaltSync();
     function createAccount() {
         let exists = 0;
         if (username == "" || password == "") alert("Username and password cannot be empty");
@@ -56,10 +73,13 @@ export default function Login(props) {
                 let hash = bcrypt.hashSync(password, salt);
                 props.pushServer("insert into users(username,password) values('" + username + "','" + hash + "')");
                 props.setUsername(username);
+                setLoggedIn();
                 setCorrect(2);
             }
         }
     }
+
+    let content = null;
     if (correct == 0) {
         content = <View style={{ padding: 30 }}>
             <View style={styles.loginheader}>

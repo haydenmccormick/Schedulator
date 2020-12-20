@@ -11,6 +11,7 @@ import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular, Roboto_90
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
 import Login from './Login.js';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const addr = "http://localhost:8000/";
 
@@ -47,9 +48,20 @@ export default function App() {
 	const [loaded, setLoaded] = useState(false);
 	const [username, setUsername] = useState("");
 	const [correct, setCorrect] = useState(0);
+	const [loggedIn, setLoggedIn] = useState(0);
 
 	// Load tasks to agenda on app startup
 	if (!loaded) {
+		if (loggedIn == 0) {
+			AsyncStorage.getItem('loggedIn').then((value) => {
+				if (value) {
+					setUsername(value);
+					setCorrect(2);
+				}
+			}
+			);
+			setLoggedIn(-1);
+		}
 		// initializeTasks();
 		if (correct == 2) {
 			findTasks();
@@ -130,8 +142,14 @@ export default function App() {
 	function getDynamicTaskEntries() {
 		return dynamicTasks;
 	}
+	function setCorrectState(val) {
+		setCorrect(val);
+	}
+	function setUsernameState(val) {
+		setUsername(val);
+	}
 	if (correct != 2) {
-		return <Login correct={correct} setCorrect={setCorrect} pushServer={pushServer} setUsername={setUsername} findTasks={findTasks} />
+		return <Login correct={correct} setCorrect={setCorrectState} pushServer={pushServer} setUsername={setUsernameState} findTasks={findTasks} />
 	}
 	else {
 		return (
@@ -151,7 +169,7 @@ export default function App() {
 						}}
 					/>
 					<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()} username={username}
-						pushServer={pushServer} static={taskList} />}
+						pushServer={pushServer} static={taskList} setCorrect={setCorrectState} />}
 						options={{
 							tabBarIcon: ({ color }) => (
 								<Image
