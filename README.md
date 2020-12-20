@@ -2,13 +2,26 @@
 
 ## Installation:
 
-After cloning, simply run the command
+After cloning, simply run the command:
 ```bash
 npm install
 ```
 to install the required modules.
 
-To run the program, use
+To install server modules, navigate to directory "server" and run:
+```bash
+pip install wheel
+pip install pandas
+```
+
+To start up the server on your device, run (from the "server" directory):
+```bash
+python3 mserver.py
+```
+
+If you would like to run the program and the server on different devices, replace "localhost" in the "addr" constant of App.js to your IPv4 address.
+
+To run the app, run (from the top-level project directory):
 ```bash
 npm start
 ```

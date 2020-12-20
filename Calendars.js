@@ -22,10 +22,13 @@ function DayView(props) {
 
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
+	const [scheduled, setScheduled] = useState({});
 	const addEventPressHandler = () => {
 		props.findTasks();
 		setAddingEvent(!addingEvent);
 	};
+
+	const tasks = props.tasks;
 
 	// Only render a form if the user is adding an event
 	const render_form = (addingEvent ?
@@ -66,7 +69,7 @@ function DayView(props) {
 		]);
 	}
 
-	// Render event on agenda (different if Dynamic or Static)
+	// Render event on agenda (different depending on type)
 	function event(item) {
 		let renderbar;
 		let message = "";
@@ -79,13 +82,29 @@ function DayView(props) {
 			renderbar = styles.dynamicevent;
 			timedisplay = <Text style={styles.eventdatetext}>{end}</Text>
 		}
-		else {
+		else if (item.type == 'static') {
 			renderbar = styles.staticevent;
 			timedisplay = <Text style={styles.eventdatetext}>
 				{start} - {end}
 			</Text>
 		}
-		return (
+		else {
+			renderbar = styles.scheduledevent;
+			timedisplay = <Text style={styles.eventdatetext}>
+				{start} - {end}
+			</Text>
+		}
+		let ret = (item.type == 'scheduled' ?
+			<View style={styles.scheduledeventcontainer}>
+				<View style={renderbar} />
+				<View style={styles.eventdate}>
+					<Text style={styles.scheduledeventname}>
+						{item.name}{message}
+					</Text>
+					{timedisplay}
+				</View>
+			</View>
+			:
 			<View style={styles.eventcontainer}>
 				<View style={renderbar} />
 				<View style={styles.deletearea}>
@@ -100,6 +119,7 @@ function DayView(props) {
 				</View>
 			</View>
 		)
+		return ret;
 	}
 
 	return (
@@ -109,7 +129,7 @@ function DayView(props) {
 				markedDates={props.dates}
 				renderEmptyData={() => { return emptyday; }}
 				renderItem={(item) => { return event(item); }}
-				items={props.tasks}
+				items={tasks}
 				onRefresh={() => { props.findTasks(); }}
 			/>
 			<View style={styles.buttonwrapper}>

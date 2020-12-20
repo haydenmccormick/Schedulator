@@ -40,11 +40,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: '5%',
     right: '8%',
+    flexDirection: 'row',
   },
   button: {
     width: 85,
     height: 85,
     resizeMode: 'contain',
+    marginLeft: 10,
   },
   formwrapper: {
     position: 'absolute',
@@ -96,6 +98,17 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 10,
   },
+  scheduledeventcontainer: {
+    backgroundColor: 'white',
+    alignSelf: "center",
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    width: '85%',
+    minHeight: 100,
+    marginVertical: 10,
+    marginHorizontal: 10,
+    alignSelf: 'flex-end',
+  },
   emptycontainer: {
     backgroundColor: 'white',
     alignSelf: "center",
@@ -131,6 +144,13 @@ const styles = StyleSheet.create({
     color: '#4a4a4a',
     marginBottom: 10,
   },
+  scheduledeventname: {
+    marginLeft: 30,
+    fontFamily: 'Roboto_300Light',
+    fontSize: 23,
+    color: '#4a4a4a',
+    marginBottom: 10,
+  },
   icon: {
     width: 25,
     height: 25,
@@ -142,6 +162,10 @@ const styles = StyleSheet.create({
   dynamicevent: {
     backgroundColor: '#f49a70',
     width: 7,
+  },
+  scheduledevent: {
+    backgroundColor: '#ff9585',
+    width: 7
   },
   emptyeventlistcontainer: {
     backgroundColor: 'white',
@@ -157,6 +181,17 @@ const styles = StyleSheet.create({
   eventlistcontainer: {
     flex: 1,
     backgroundColor: 'white',
+    alignItems: 'center',
+    //justifyContent: 'center',
+    flexDirection: 'row',
+    minHeight: 100,
+    width: '95%',
+    marginVertical: 10,
+    marginHorizontal: 10,
+  },
+  finishedcontainer: {
+    flex: 1,
+    backgroundColor: '#c9c9c9',
     alignItems: 'center',
     //justifyContent: 'center',
     flexDirection: 'row',
@@ -188,7 +223,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: '#4a4a4a',
     margin: 15,
-    marginRight: 39,
   },
   eventlisttext2: {
     fontFamily: 'Roboto_300Light',
@@ -196,7 +230,9 @@ const styles = StyleSheet.create({
     color: '#4a4a4a',
     marginLeft: 15,
     marginBottom: 15,
-
+  },
+  eventlistelement: {
+    marginRight: 80,
   },
   taskname: {
     marginTop: 10,

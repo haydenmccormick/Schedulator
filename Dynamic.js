@@ -5,6 +5,8 @@ import { Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
 import deleteDynamicTasks from './DeleteForm.js';
+import schedule from './Scheduler.js';
+
 
 const db = SQLite.openDatabase("db.db");
 
@@ -13,6 +15,7 @@ export default function TaskList(props) {
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
+	const [finishedTasks, setFinishedTasks] = useState([{}]);
 
 	const addEventPressHandler = () => {
 		props.findTasks();
@@ -23,7 +26,7 @@ export default function TaskList(props) {
 	const render_form = (addingEvent ?
 		<View style={styles.formwrapper}>
 			{/* So the user can click outside of form box to cancel*/}
-			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} />
+			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
 			     <Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} getUsername={props.getUsername}/>
 			</View>
@@ -34,11 +37,14 @@ export default function TaskList(props) {
 	//alert(props.getUsername);
 		let deleteStatement = "delete from dynamicTasks where taskname = '" + itemName + "'";
 		props.pushServer(deleteStatement);
+<<<<<<< HEAD
 		// db.transaction(tx => {
 		//	tx.executeSql(deleteStatement, []);
 		//	props.pushServer(deleteStatement);
 		//	props.findTasks();
 		// });
+=======
+>>>>>>> main
 	}
 
     function handleDelete(itemName) {
@@ -50,17 +56,24 @@ export default function TaskList(props) {
 		]);
 	}
 
+	function finishTask(name) {
+		let pushString = "update dynamicTasks set finished = 'true' where taskName = '" + name + "'";
+		props.pushServer(pushString);
+	}
+
 	// list of tasks displayed to user
 	let listview;
-	const Item = ({ name, dueDate, dueTime }) => (
-		<View style={styles.eventlistcontainer}>
-			<View style={styles.checkarea}>
+	const Item = ({ name, dueDate, dueTime, finished }) => (
+		<View style={finished == 'false' ? styles.eventlistcontainer : styles.finishedcontainer}>
+			<TouchableOpacity style={styles.checkarea} onPress={() => { finishTask(name) }}>
 				<Text style={styles.check}>✓</Text>
-			</View>
-			<View style={styles.deletearea}>
-				<Text style={styles.delete} onPress={() => { handleDelete(name) }}>x</Text>
-			</View>
-			<View>
+			</TouchableOpacity>
+			{finished == 'false' &&
+				<View style={styles.deletearea}>
+					<Text style={styles.delete} onPress={() => { handleDelete(name) }}>x</Text>
+				</View>
+			}
+			<View style={styles.eventlistelement}>
 				<Text style={styles.eventlisttext}>{name}</Text>
 				<Text style={styles.eventlisttext2}>Due {dueDate} at {dueTime}</Text>
 			</View>
@@ -69,7 +82,8 @@ export default function TaskList(props) {
 
 	const renderItem = ({ item }) => (
 		<Item name={item.taskname} dueDate={new Date(parseInt(item.deadline)).toDateString()}
-			dueTime={new Date(parseInt(item.deadline)).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })} />
+			dueTime={new Date(parseInt(item.deadline)).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
+			finished={item.finished} />
 	);
 
     function handleRefresh() {
@@ -77,6 +91,18 @@ export default function TaskList(props) {
 		setRefreshing(true);
 		props.findTasks();
 		setRefreshing(false);
+	}
+
+	function calculateSchedule() {
+		props.pushServer("delete from scheduledTasks");
+		let sched = schedule(props.static, props.tasks);
+		var valueList = [];
+		for (let i in sched) {
+			let values = "('" + sched[i].dateString + "','" + sched[i].taskname + "','" + sched[i].startTime + "','" + sched[i].endTime + "')";
+			valueList.push(values);
+		}
+		let insert = "insert into scheduledTasks(dateString,taskname,startTime,endTime) values ";
+		props.pushServer(insert + valueList);
 	}
 
 	if (tasks != "") {
@@ -90,7 +116,7 @@ export default function TaskList(props) {
 	}
 	else {
 		listview =
-			<TouchableOpacity style={styles.emptyeventlistcontainer} onPress={handleRefresh} activeOpacity={1}>
+			<TouchableOpacity style={styles.emptyeventlistcontainer} onPress={handleRefresh}>
 				<Text style={styles.emptyeventlisttext}>No tasks just yet. Tap the '+' button to add one, and tap here to refresh!</Text>
 			</TouchableOpacity>
 	}
@@ -101,6 +127,12 @@ export default function TaskList(props) {
 			</View>
 			{listview}
 			<View style={styles.buttonwrapper}>
+				<TouchableOpacity onPress={() => { calculateSchedule() }}>
+					<Image
+						source={require('./assets/calculate-button.png')}
+						style={styles.button}
+					/>
+				</TouchableOpacity>
 				<TouchableOpacity onPress={addEventPressHandler}>
 					<Image
 						source={require('./assets/task-button.png')}

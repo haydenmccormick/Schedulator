@@ -30,13 +30,22 @@ function Form(props) {
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
+		if (start > end) {
+			alert("End time must be after start time!");
+			return;
+		}
 		let dateStart = new Date(start.getTime() - start.getTimezoneOffset() * 60000);
 		let datestring = dateStart.toISOString().split('T')[0];
+<<<<<<< HEAD
 		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString,user) values ";
 		let values = "('" + input + "','" + start.getTime() + "','" + start.getTime() + "','" + end.getTime() + "','" + datestring + "','" + props.getUsername + "')";
 		// db.transaction(tx => {
 		//	tx.executeSql(insert + values, []);
 		// });
+=======
+		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString) values ";
+		let values = "('" + input + "','" + Date.parse(start) + "','" + Date.parse(start) + "','" + Date.parse(end) + "','" + datestring + "')";
+>>>>>>> main
 		props.pushServer(insert + values);
 		props.retFunc();
 	}
@@ -56,6 +65,10 @@ function Form(props) {
 	}
 	const onChange = (event, selectedDate) => {
 		const newDate = selectedDate || start;
+		if (form == 'date') {
+			setStart(newDate);
+			setEnd(newDate);
+		}
 		SE == 'start' ? setStart(newDate) : setEnd(newDate);
 	};
 	const formItem = (
@@ -144,9 +157,15 @@ function Dynamic(props) {
 		alert("Fill in all the fields to add the task");
 	}
 	function submit() {
+<<<<<<< HEAD
 		let datestring = start.toISOString().split('T')[0];
 		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,deadline,dontShow,finished,user) values";
 		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + end.getTime() + "','" + period + "','" + datestring + "','false','false','" + props.getUsername + "')";
+=======
+		let datestring = end.toISOString().split('T')[0];
+		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,dontShow,finished) values";
+		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + period * 60 * 60 * 1000 + "','" + datestring + "','false','false'" + ")";
+>>>>>>> main
 		props.pushServer(insert + values);
 		props.retFunc();
 	}
