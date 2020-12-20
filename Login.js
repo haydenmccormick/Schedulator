@@ -41,13 +41,23 @@ export default function Login(props) {
     }
     var salt = bcrypt.genSaltSync(10);
     function createAccount() {
+        let exists = 0;
         if (username == "" || password == "") alert("Username and password cannot be empty");
         else if (password != password2) alert("Passwords must match!");
         else {
-            let hash = bcrypt.hashSync(password, salt);
-            props.pushServer("insert into users(username,password) values('" + username + "','" + hash + "')");
-            props.setUsername(username);
-            setCorrect(2);
+            let parsed = require('./server/users.json');
+            for (var i in parsed) {
+                if (parsed[i].username == username) {
+                    exists = 1;
+                    alert("An account with that username already exists! Please try again or login.");
+                }
+            }
+            if (exists == 0) {
+                let hash = bcrypt.hashSync(password, salt);
+                props.pushServer("insert into users(username,password) values('" + username + "','" + hash + "')");
+                props.setUsername(username);
+                setCorrect(2);
+            }
         }
     }
     if (correct == 0) {
