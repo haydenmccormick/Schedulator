@@ -5,21 +5,12 @@ import * as FileSystem from 'expo-file-system';
 import { DayView } from './Calendars.js';
 import DynamicTaskList from './Dynamic.js';
 import * as SQLite from 'expo-sqlite';
-import { Image, Text, View, ScrollView, TextInput, Button } from 'react-native';
+import { Image } from 'react-native';
 import styles from './assets/Styles.js';
 import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
-// import { NetworkInfo } from "react-native-network-info";
-// import ipify from 'react-native-ipify';
-import bcrypt from 'react-native-bcrypt'
-
-//import loadLocalResource from 'react-native-local-resource'
-//import RNBackgroundDownloader from 'react-native-background-downloader';
-
-// NetworkInfo.getIPV4Address().then(ipv4Address => {
-// 	console.log(ipv4Address);
-// });
+import Login from './Login.js';
 
 const addr = "http://localhost:8000/";
 
@@ -129,7 +120,6 @@ export default function App() {
 		getTaskInfo(require('./server/all.json'));
 		getDynamicInfo(require('./server/dynamicTasks.json'));
 		schedule(taskList, dynamicTasks);
-
 	}
 
 	function gettaskEntries() {
@@ -138,91 +128,39 @@ export default function App() {
 	function getDynamicTaskEntries() {
 		return dynamicTasks;
 	}
-
-	//const cred = ["mk","pass"];
-	let content;
-	//let correct = 0;
-	function checkCreds() {
-		let parsed = require('./server/users.json');
-		//alert(password);
-		for (var i in parsed) {
-			//alert(passwordChecked);
-			if (parsed[i].username == username) {
-				bcrypt.compare(password, parsed[i].password, function (err, res) { setPasswordChecked(res) });
-				//alert(passwordChecked);
-				if (passwordChecked) setCorrect(2);
-			}
-		}
-	}
-	function getUsername() {
-		return username;
-	}
-	var salt = bcrypt.genSaltSync(10);
-	function createAccount() {
-		if (username == "" || password == "") alert("Username and password cannot be empty");
-		else if (password != password2) alert("Passwords must be the same");
-		else {
-			let hash = bcrypt.hashSync(password, salt);
-			pushServer("insert into users(username,password) values('" + username + "','" + hash + "')");
-			//alert(hash);
-			//bcrypt.compare(password, hash, function(err, res) {alert(res) });
-			//alert(typeof hash);
-			setCorrect(2);
-		}
-	}
-	if (correct == 0) {
-		content = <ScrollView style={{ padding: 30 }}>
-			<Button title="Click here to sign up" onPress={() => { setCorrect(1) }} />
-			<Text>Enter username:</Text>
-			<TextInput style={styles.input} value={username} type="text" onChangeText={(text) => setUsername(text)} />
-			<Text>Password:</Text>
-			<TextInput secureTextEntry={true} style={styles.input} value={password} onChangeText={(text) => setPassword(text)} />
-			<Button title="Submit" onPress={() => { checkCreds() }} />
-		</ScrollView>;
-	}
-	else if (correct == 1) {
-		content = <ScrollView style={{ padding: 30 }}>
-			<Button title="Click here to log in" onPress={() => { setCorrect(0) }} />
-			<Text>Enter username:</Text>
-			<TextInput style={styles.input} value={username} type="text" onChangeText={(text) => setUsername(text)} />
-			<Text>Password:</Text>
-			<TextInput secureTextEntry={true} style={styles.input} value={password} onChangeText={(text) => setPassword(text)} />
-			<Text>Enter password again:</Text>
-			<TextInput secureTextEntry={true} style={styles.input} value={password2} onChangeText={(text) => setPassword2(text)} />
-			<Button title="Create account" onPress={() => { createAccount() }} />
-		</ScrollView>;
+	if (correct != 2) {
+		return <Login correct={correct} setCorrect={setCorrect} pushServer={pushServer} />
 	}
 	else {
-		content = <Tab.Navigator
-			screenOptions={options}
-		>
-			<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()}
-				pushServer={pushServer} getUsername={getUsername()} />}
-				options={{
-					tabBarIcon: ({ color }) => (
-						<Image
-							style={styles.icon}
-							source={require('./assets/Tab_Icons/agenda-on.png')
-							} />
-					),
-				}}
-			/>
-			<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()} getUsername={getUsername()}
-				pushServer={pushServer} static={taskList} />}
-				options={{
-					tabBarIcon: ({ color }) => (
-						<Image
-							style={styles.icon}
-							source={require('./assets/Tab_Icons/tasks-on.png')
-							} />
-					),
-				}}
-			/>
-		</Tab.Navigator>;
+		return (
+			<NavigationContainer>
+				<Tab.Navigator
+					screenOptions={options}
+				>
+					<Tab.Screen name="Agenda" children={() => <DayView findTasks={findTasks} tasks={gettaskEntries()}
+						pushServer={pushServer} username={username} />}
+						options={{
+							tabBarIcon: ({ color }) => (
+								<Image
+									style={styles.icon}
+									source={require('./assets/Tab_Icons/agenda-on.png')
+									} />
+							),
+						}}
+					/>
+					<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()} username={username}
+						pushServer={pushServer} static={taskList} />}
+						options={{
+							tabBarIcon: ({ color }) => (
+								<Image
+									style={styles.icon}
+									source={require('./assets/Tab_Icons/tasks-on.png')
+									} />
+							),
+						}}
+					/>
+				</Tab.Navigator>
+			</NavigationContainer>
+		);
 	}
-	return (
-		<NavigationContainer>
-			{content}
-		</NavigationContainer>
-	);
 }

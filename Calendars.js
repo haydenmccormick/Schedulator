@@ -36,7 +36,7 @@ function DayView(props) {
 			{/* So the user can click outside of form box to cancel*/}
 			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
-			     <Form retFunc={addEventPressHandler} pushServer={props.pushServer} getUsername={props.getUsername} />
+				<Form retFunc={addEventPressHandler} pushServer={props.pushServer} username={props.username} />
 			</View>
 		</View>
 		: null)

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 node_modules
 ./server/*.txt
 ./server/*.json
 ./server/*.html
-=======
-node_modules
->>>>>>> main

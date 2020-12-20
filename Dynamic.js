@@ -4,7 +4,7 @@ import { View, TouchableOpacity, Image, Text, FlatList, Alert, RefreshControl } 
 import { Dynamic } from './EventForm.js'
 import styles from './assets/Styles.js'
 import * as SQLite from 'expo-sqlite';
-import deleteDynamicTasks from './DeleteForm.js';
+//import deleteDynamicTasks from './DeleteForm.js';
 import schedule from './Scheduler.js';
 
 
@@ -28,27 +28,24 @@ export default function TaskList(props) {
 			{/* So the user can click outside of form box to cancel*/}
 			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
-			     <Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} getUsername={props.getUsername}/>
+				<Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} getUsername={props.getUsername} />
 			</View>
 		</View>
 		: null)
 
-    function deleteItem(itemName) {
-	//alert(props.getUsername);
+	function deleteItem(itemName) {
+		//alert(props.getUsername);
 		let deleteStatement = "delete from dynamicTasks where taskname = '" + itemName + "'";
 		props.pushServer(deleteStatement);
-<<<<<<< HEAD
 		// db.transaction(tx => {
 		//	tx.executeSql(deleteStatement, []);
 		//	props.pushServer(deleteStatement);
 		//	props.findTasks();
 		// });
-=======
->>>>>>> main
 	}
 
-    function handleDelete(itemName) {
-	//alert(props.username);
+	function handleDelete(itemName) {
+		//alert(props.username);
 		Alert.alert("Are you sure you want to delete " + itemName + "?",
 			"This can't be undone.", [
 			{ text: "Yes", onPress: () => { deleteItem(itemName) } },
@@ -86,8 +83,8 @@ export default function TaskList(props) {
 			finished={item.finished} />
 	);
 
-    function handleRefresh() {
-	//alert(props.username);
+	function handleRefresh() {
+		//alert(props.username);
 		setRefreshing(true);
 		props.findTasks();
 		setRefreshing(false);
