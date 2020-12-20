@@ -53,9 +53,9 @@ def createJSON():
     df = pd.read_sql(command, connection)
     df = df.T
     df.to_json("dynamicTasks.json")
-    command = "SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname"
-    command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks "
-    command += "UNION SELECT taskname, dateString, startTime, endTime, 'scheduled' AS type FROM scheduledTasks ORDER BY endTime"
+    command = "SELECT taskname, dateString, startTime, endTime, 'static' AS type, username FROM tasks UNION SELECT taskname"
+    command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type, username FROM dynamicTasks "
+    command += "UNION SELECT taskname, dateString, startTime, endTime, 'scheduled' AS type, username FROM scheduledTasks ORDER BY endTime"
     df = pd.read_sql(command, connection)
     df = df.T
     df.to_json("all.json")

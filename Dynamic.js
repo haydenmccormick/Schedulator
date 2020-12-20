@@ -28,24 +28,17 @@ export default function TaskList(props) {
 			{/* So the user can click outside of form box to cancel*/}
 			<TouchableOpacity style={styles.formwrapper} onPress={addEventPressHandler} activeOpacity={1} />
 			<View style={styles.formcontainer}>
-				<Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} getUsername={props.getUsername} />
+				<Dynamic retFunc={addEventPressHandler} pushServer={props.pushServer} username={props.username} />
 			</View>
 		</View>
 		: null)
 
 	function deleteItem(itemName) {
-		//alert(props.getUsername);
 		let deleteStatement = "delete from dynamicTasks where taskname = '" + itemName + "'";
 		props.pushServer(deleteStatement);
-		// db.transaction(tx => {
-		//	tx.executeSql(deleteStatement, []);
-		//	props.pushServer(deleteStatement);
-		//	props.findTasks();
-		// });
 	}
 
 	function handleDelete(itemName) {
-		//alert(props.username);
 		Alert.alert("Are you sure you want to delete " + itemName + "?",
 			"This can't be undone.", [
 			{ text: "Yes", onPress: () => { deleteItem(itemName) } },
@@ -95,10 +88,10 @@ export default function TaskList(props) {
 		let sched = schedule(props.static, props.tasks);
 		var valueList = [];
 		for (let i in sched) {
-			let values = "('" + sched[i].dateString + "','" + sched[i].taskname + "','" + sched[i].startTime + "','" + sched[i].endTime + "')";
+			let values = "('" + sched[i].dateString + "','" + sched[i].taskname + "','" + sched[i].startTime + "','" + sched[i].endTime + "','" + props.username + "')";
 			valueList.push(values);
 		}
-		let insert = "insert into scheduledTasks(dateString,taskname,startTime,endTime) values ";
+		let insert = "insert into scheduledTasks(dateString,taskname,startTime,endTime,username) values ";
 		props.pushServer(insert + valueList);
 	}
 

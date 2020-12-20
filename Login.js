@@ -9,12 +9,19 @@ export default function Login(props) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
-    const [passwordChecked, setPasswordChecked] = useState("");
+    //const [passwordChecked, setPasswordChecked] = useState("");
     const [correct, setCorrectStatus] = useState("");
 
     function setCorrect(val) {
         props.setCorrect(val);
         setCorrectStatus(val);
+    }
+
+    function setPasswordChecked(res) {
+        if (res == true) {
+            props.setUsername(username);
+            setCorrect(2);
+        };
     }
 
     let content;
@@ -23,10 +30,6 @@ export default function Login(props) {
         for (var i in parsed) {
             if (parsed[i].username == username) {
                 bcrypt.compare(password, parsed[i].password, function (err, res) { setPasswordChecked(res) });
-                if (passwordChecked) {
-                    props.setCorrect(2);
-                    props.setUsername(username);
-                };
             }
         }
     }
@@ -37,6 +40,7 @@ export default function Login(props) {
         else {
             let hash = bcrypt.hashSync(password, salt);
             props.pushServer("insert into users(username,password) values('" + username + "','" + hash + "')");
+            props.setUsername(username);
             setCorrect(2);
         }
     }

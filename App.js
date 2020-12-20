@@ -46,16 +46,15 @@ export default function App() {
 	const [taskList, setTaskList] = useState({});
 	const [loaded, setLoaded] = useState(false);
 	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [password2, setPassword2] = useState("");
 	const [correct, setCorrect] = useState(0);
-	const [passwordChecked, setPasswordChecked] = useState("");
 
 	// Load tasks to agenda on app startup
 	if (!loaded) {
 		// initializeTasks();
-		findTasks();
-		setLoaded(true);
+		if (correct == 2) {
+			findTasks();
+			setLoaded(true);
+		}
 	}
 	// Load in expo google fonts
 	let [fontsLoaded] = useFonts({
@@ -76,22 +75,24 @@ export default function App() {
 		var parsed = tasks;
 		for (var i in parsed) {
 			//alert(JSON.stringify(parsed[i]));
-			if (parsed[i].type == 'static')
-				tempList.push(parsed[i]);
-			newTask = {
-				name: parsed[i].taskname,
-				date: parsed[i].dateString,
-				startTime: parsed[i].startTime,
-				endTime: parsed[i].endTime,
-				type: parsed[i].type
-			};
-			newDate = { marked: true };
-			if (tempTasks[parsed[i].dateString]) {
-				tempTasks[parsed[i].dateString].push(newTask);
-			}
-			else {
-				tempTasks[parsed[i].dateString] = [newTask];
-				tempDates[parsed[i].dateString] = newDate;
+			if (parsed[i].username == username) {
+				if (parsed[i].type == 'static')
+					tempList.push(parsed[i]);
+				newTask = {
+					name: parsed[i].taskname,
+					date: parsed[i].dateString,
+					startTime: parsed[i].startTime,
+					endTime: parsed[i].endTime,
+					type: parsed[i].type
+				};
+				newDate = { marked: true };
+				if (tempTasks[parsed[i].dateString]) {
+					tempTasks[parsed[i].dateString].push(newTask);
+				}
+				else {
+					tempTasks[parsed[i].dateString] = [newTask];
+					tempDates[parsed[i].dateString] = newDate;
+				}
 			}
 		}
 		setTaskEntries(tempTasks);
@@ -102,7 +103,8 @@ export default function App() {
 	function getDynamicInfo(tasks) {
 		const tempDynamic = [];
 		for (var i in tasks) {
-			tempDynamic.push(tasks[i]);
+			if (tasks[i].username == username)
+				tempDynamic.push(tasks[i]);
 		}
 		setDynamicTasks(tempDynamic);
 	}
@@ -119,7 +121,6 @@ export default function App() {
 	async function findTasks() {
 		getTaskInfo(require('./server/all.json'));
 		getDynamicInfo(require('./server/dynamicTasks.json'));
-		schedule(taskList, dynamicTasks);
 	}
 
 	function gettaskEntries() {
@@ -129,7 +130,7 @@ export default function App() {
 		return dynamicTasks;
 	}
 	if (correct != 2) {
-		return <Login correct={correct} setCorrect={setCorrect} pushServer={pushServer} setUsername={setUsername} />
+		return <Login correct={correct} setCorrect={setCorrect} pushServer={pushServer} setUsername={setUsername} findTasks={findTasks} />
 	}
 	else {
 		return (
