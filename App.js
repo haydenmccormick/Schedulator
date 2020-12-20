@@ -7,7 +7,7 @@ import DynamicTaskList from './Dynamic.js';
 import * as SQLite from 'expo-sqlite';
 import { Image } from 'react-native';
 import styles from './assets/Styles.js';
-import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
+import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular, Roboto_900Black } from '@expo-google-fonts/roboto';
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
 import Login from './Login.js';
@@ -61,6 +61,7 @@ export default function App() {
 		Roboto_100Thin,
 		Roboto_300Light,
 		Roboto_400Regular,
+		Roboto_900Black,
 		AbrilFatface_400Regular
 	});
 	// If it's not loaded in time, make the user wait
