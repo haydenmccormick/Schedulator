@@ -27,13 +27,17 @@ events is a list of all dynamic events to be done in the future (note that you a
 //   pushServer("insert into dynamicTasks(taskname,date,deadline,split,period,dateString,finished,startTime,endTime) values" + values);
 // }
 
-
 export default function schedule(tasks, dynamic) {
-  var usrPref = { avgLength: 50 * 60 * 1000, maxLength: 90 * 60 * 1000, delaySize: 15 * 60 * 1000 };
+  var usrPref = {
+    avgLength: 50 * 60 * 1000,
+    maxLength: 90 * 60 * 1000,
+    delaySize: 15 * 60 * 1000,
+    sleepStart: TimeRanges,
+    sleepEnd: TimeRanges,
+  };
 
   var staticCalendar = [...tasks];
   var events = JSON.parse(JSON.stringify(dynamic)); // Deep copy so dynamic task list is unchanged
-
 
   for (var i = 0; i < staticCalendar.length; i++) {
     staticCalendar[i].startTime = parseInt(staticCalendar[i].startTime);
@@ -47,13 +51,15 @@ export default function schedule(tasks, dynamic) {
     events[i].period = parseInt(events[i].period);
   }
 
-  let tail = { start: Number.MAX_SAFE_INTEGER, end: Number.MAX_SAFE_INTEGER };
+  let tail = {
+    startTime: Number.MAX_SAFE_INTEGER,
+    endTime: Number.MAX_SAFE_INTEGER,
+  };
   events.splice(events.length, 0, tail);
   staticCalendar.splice(staticCalendar.length, 0, tail);
 
   for (var i = 0; i < events.length - 1; i++) {
     if (events[i].split && events[i].period > usrPref.maxLength) {
-
       var initialPeriod = events[i].period;
       var nPieces = Math.ceil(initialPeriod / usrPref.avgLength);
       var title = events[i].taskname;
@@ -63,23 +69,24 @@ export default function schedule(tasks, dynamic) {
       events[i].taskname = events[i].taskname + " (Part 1)";
       events[i].period = usrPref.avgLength;
       initialPeriod -= usrPref.avgLength;
+      // console.log("Event split pieces:");
+      // console.log(events[i]);
       for (var j = 1; j < nPieces; j++) {
-
         var period =
-          (initialPeriod > usrPref.avgLength) ?
-            usrPref.avgLength :
-            initialPeriod;
+          initialPeriod > usrPref.avgLength ? usrPref.avgLength : initialPeriod;
         initialPeriod -= period;
         var piece = {
           taskname: title + " (Part " + String(j + 1) + ")",
-          start: startTime,
-          end: startTime + period,
+          startTime: startTime,
+          endTime: startTime + period,
           period: period,
           deadline: deadline,
           splitable: split,
         };
         events.splice(i + j, 0, piece);
+        // console.log(piece);
       }
+
       i += nPieces - 1;
     }
   }
@@ -92,16 +99,17 @@ export default function schedule(tasks, dynamic) {
   while (staticCalendar[statCounter].startTime < currTime) {
     statCounter++;
   }
+
   statCounter--; //point back at last thing that started before current time
   //be careful to access statCounter=-1
 
-  statCounter === -1 ?
-    (timer = currTime) :
-    (timer = Math.max(staticCalendar[statCounter].endTime, currTime));
+  statCounter === -1
+    ? (timer = currTime)
+    : (timer = Math.max(staticCalendar[statCounter].endTime, currTime));
   //timer is valid start time for anything so we see if curr
   //time is inside of a static event, we update timer to end
   //of that event.
-
+  // console.log(events);
   while (
     statCounter < staticCalendar.length - 1 &&
     eventCounter < events.length - 1
@@ -109,12 +117,19 @@ export default function schedule(tasks, dynamic) {
     while (
       eventCounter < events.length - 1 &&
       staticCalendar[statCounter + 1].startTime - timer >
-      events[eventCounter].period + 2 * delay
+        events[eventCounter].period + 2 * delay
     ) {
+      // console.log("Events before editing:");
+      // console.log(events[eventCounter]);
       events[eventCounter].startTime = timer + delay;
-      events[eventCounter].endTime = timer + delay + events[eventCounter].period;
-      events[eventCounter].dateString = new Date(events[eventCounter].startTime).toISOString().split('T')[0];
+      events[eventCounter].endTime =
+        timer + delay + events[eventCounter].period;
+      events[eventCounter].dateString = new Date(events[eventCounter].startTime)
+        .toISOString()
+        .split("T")[0];
       timer = events[eventCounter].endTime;
+      // console.log("Scheduled Event");
+      // console.log(events[eventCounter]);
       eventCounter++;
     }
     statCounter++;
