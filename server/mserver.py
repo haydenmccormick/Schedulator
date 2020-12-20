@@ -11,9 +11,7 @@ import pandas as pd
 class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
     def do_PUT(self):
         file_length = int(self.headers['Content-Length'])
-        # print(self.headers)
         file = self.rfile.read(file_length)
-        # print(file)
         file = file.decode()
         file2 = []
         str = ""
@@ -26,9 +24,9 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
         for n in file2:
             if "insert into" in n:
                 str = n
-            if "delete from" in n:
+            elif "delete from" in n:
                 str = n
-            if "update" in n:
+            elif "update" in n:
                 str = n
         if str == "":
             print("No command")
