@@ -12,6 +12,7 @@ import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
 import { AppLoading } from 'expo';
 import loadLocalResource from 'react-native-local-resource'
 import schedule from './Scheduler.js';
+import bcrypt from 'react-native-bcrypt'
 //import RNBackgroundDownloader from 'react-native-background-downloader';
 
 const addr = "http://192.168.86.27:8000/";
@@ -51,6 +52,7 @@ export default function App() {
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
     const [correct, setCorrect] = useState(0);
+    const [passwordChecked, setPasswordChecked] = useState("");
 
     // Load tasks to agenda on app startup
     if (!loaded) {
@@ -138,17 +140,27 @@ export default function App() {
 	let parsed = require('./server/users.json');
 	//alert(password);
 	for (var i in parsed) {
-	    if(parsed[i].username == username && parsed[i].password == password) setCorrect(2);
+	    //alert(passwordChecked);
+	    if(parsed[i].username == username) {
+		bcrypt.compare(password, parsed[i].password, function(err, res) {setPasswordChecked(res) });
+		//alert(passwordChecked);
+		if(passwordChecked) setCorrect(2);
+	    }
 	}
     }
     function getUsername() {
 	return username;
     }
+    var salt = bcrypt.genSaltSync(10);
     function createAccount() {
 	if (username == "" || password == "") alert("Username and password cannot be empty");
 	else if(password != password2) alert("Passwords must be the same");
 	else {
-	    pushServer("insert into users(username,password) values('" + username + "','" + password + "')");
+	    let hash = bcrypt.hashSync(password, salt);
+	    pushServer("insert into users(username,password) values('" + username + "','" + hash + "')");
+	    //alert(hash);
+	    //bcrypt.compare(password, hash, function(err, res) {alert(res) });
+	    //alert(typeof hash);
 	    setCorrect(2);
 	}
     }

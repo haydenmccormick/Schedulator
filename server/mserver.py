@@ -3,6 +3,9 @@ import platform
 import http.server as server
 import csv
 import json
+import time
+import sqlite3
+import pandas as pd
 
 
 class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
@@ -31,50 +34,32 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
             print("No command")
             exit(1)
         print(str)
-        command = "sqlite3 db.db " + "\"" + str + ";\""
-        os.system(command)
+        connection = sqlite3.connect('db.db')
+        cur = connection.cursor()
+        cur.execute(str)
+        connection.commit()
+        cur.close()
         createJSON()
 
 
 def createJSON():
-    command = "sqlite3 db.db \" select * from dynamicTasks order by deadline;\">dynamicTasks.txt"
-    os.system(command)
-    command = "sqlite3 db.db \" select * from users;\">users.txt"
-    os.system(command)
-    command = "sqlite3 db.db \" SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname"
-    command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks ORDER BY endTime\""
-    command += ">all.txt"
-    os.system(command)
-    sed = "sed "
-    if platform.system() == 'Darwin':
-        # brew install gnu-sed
-        sed = "/usr/local/Cellar/gnu-sed/4.8/bin/gsed "
-    command = sed + "-i 's/|/,/g'"
-    os.system(command + " all.txt")
-    os.system(command + " users.txt")
-    os.system(command + " dynamicTasks.txt")
-    command = sed + "-i \'1 i\\taskname,date,endTime,period,split,dateString,deadline\' dynamicTasks.txt"
-    os.system(command)
-    command = sed + "-i \'1 i\\username,password\' users.txt"
-    os.system(command)
-    command = sed + "-i \'1 i\\taskname,dateString,startTime,endTime,type\' all.txt"
-    os.system(command)
-    with open('all.txt') as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-    with open('all.json', 'w') as f:
-        json.dump(rows, f)
-    with open('users.txt') as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-    with open('users.json', 'w') as f:
-        json.dump(rows, f)
-    with open('dynamicTasks.txt') as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-    with open('dynamicTasks.json', 'w') as f:
-        json.dump(rows, f)
-
+    connection = sqlite3.connect('db.db')
+    cur = connection.cursor()
+    command = "select * from users"
+    df = pd.read_sql(command, connection)
+    df = df.T
+    df.to_json("users.json")
+    command = "select * from dynamicTasks order by finished, deadline"
+    df = pd.read_sql(command, connection)
+    df = df.T
+    df.to_json("dynamicTasks.json")
+    command = "SELECT taskname, dateString, startTime, endTime, 'static' AS type FROM tasks UNION SELECT taskname"
+    command += ", dateString, '' AS startTime, deadline AS endTime, 'dynamic' AS type FROM dynamicTasks "
+    command += "UNION SELECT taskname, dateString, startTime, endTime, 'scheduled' AS type FROM scheduledTasks ORDER BY endTime"
+    df = pd.read_sql(command, connection)
+    df = df.T
+    df.to_json("all.json")
+    cur.close()
 
 
 if __name__ == '__main__':
