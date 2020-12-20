@@ -129,7 +129,7 @@ export default function App() {
 		return dynamicTasks;
 	}
 	if (correct != 2) {
-		return <Login correct={correct} setCorrect={setCorrect} pushServer={pushServer} />
+		return <Login correct={correct} setCorrect={setCorrect} pushServer={pushServer} setUsername={setUsername} />
 	}
 	else {
 		return (
