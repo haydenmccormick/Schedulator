@@ -38,7 +38,7 @@ function Form(props) {
 		let datestring = dateStart.toISOString().split('T')[0];
 		let insert = "insert into tasks(taskname,date,startTime,endTime,dateString,username) values ";
 		let values = "('" + input + "','" + Date.parse(start) + "','" + Date.parse(start) + "','" + Date.parse(end) + "','" + datestring + "','" + props.username + "')";
-		props.pushServer(insert + values);
+		props.pushServer("insert + values");
 		props.retFunc();
 	}
 	const datePressHandler = () => {
@@ -152,7 +152,7 @@ function Dynamic(props) {
 		let datestring = end.toISOString().split('T')[0];
 		let insert = "insert into dynamicTasks(taskname,date,deadline,split,period,dateString,dontShow,finished,username) values";
 		let values = "('" + input + "','" + end + "','" + end.getTime() + "','" + toggleCheckBox + "','" + period * 60 * 60 * 1000 + "','" + datestring + "','false','false', '" + props.username + "')";
-		props.pushServer(insert + values);
+		props.pushServer("insert + values");
 		props.retFunc();
 	}
 	let button;
