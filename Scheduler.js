@@ -47,7 +47,7 @@ export default function schedule(tasks, dynamic) {
     events[i].period = parseInt(events[i].period);
   }
 
-  let tail = { start: Number.MAX_SAFE_INTEGER, end: Number.MAX_SAFE_INTEGER };
+  let tail = { startTime: Number.MAX_SAFE_INTEGER, endTime: Number.MAX_SAFE_INTEGER };
   events.splice(events.length, 0, tail);
   staticCalendar.splice(staticCalendar.length, 0, tail);
 
@@ -64,7 +64,6 @@ export default function schedule(tasks, dynamic) {
       events[i].period = usrPref.avgLength;
       initialPeriod -= usrPref.avgLength;
       for (var j = 1; j < nPieces; j++) {
-
         var period =
           (initialPeriod > usrPref.avgLength) ?
             usrPref.avgLength :
@@ -72,8 +71,8 @@ export default function schedule(tasks, dynamic) {
         initialPeriod -= period;
         var piece = {
           taskname: title + " (Part " + String(j + 1) + ")",
-          start: startTime,
-          end: startTime + period,
+          startTime: startTime,
+          endTime: startTime + period,
           period: period,
           deadline: deadline,
           splitable: split,
@@ -111,6 +110,8 @@ export default function schedule(tasks, dynamic) {
       staticCalendar[statCounter + 1].startTime - timer >
       events[eventCounter].period + 2 * delay
     ) {
+      console.log("It is");
+      console.log(events[eventCounter]);
       events[eventCounter].startTime = timer + delay;
       events[eventCounter].endTime = timer + delay + events[eventCounter].period;
       events[eventCounter].dateString = new Date(events[eventCounter].startTime).toISOString().split('T')[0];

@@ -71,7 +71,9 @@ export default function Login(props) {
             }
             if (exists == 0) {
                 let hash = bcrypt.hashSync(password, salt);
-                props.pushServer("insert into users(username,password) values('" + username + "','" + hash + "')");
+                let insertstring = "insert into users(username,password, sleep, wakeUp, avgLength, maxLength, delaySize) values(";
+                let vals = "'" + username + "','" + hash + "', '79200000', '21600000', '3000000', '5400000', '900000')"
+                props.pushServer(insertstring + vals);
                 props.setUsername(username);
                 setLoggedIn();
                 setCorrect(2);

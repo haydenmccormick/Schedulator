@@ -371,6 +371,67 @@ const styles = StyleSheet.create({
     height: 35,
     right: "5%",
   },
+  settingsheader: {
+    width: '100%',
+    // alignItems: 'center',
+    marginBottom: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  logout: {
+    resizeMode: 'stretch',
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    width: 25,
+    height: 25,
+    right: 0,
+    top: '10%',
+  },
+  settingsheadertext: {
+    textAlign: 'center',
+    marginTop: 10,
+    fontFamily: 'AbrilFatface_400Regular',
+    fontSize: 45,
+    color: 'black',
+    position: 'absolute',
+    top: '20%',
+    alignSelf: 'center',
+  },
+  settingsarea: {
+    width: '85%',
+    alignSelf: 'center',
+    marginTop: "15%",
+  },
+  settingsentry: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginBottom: 25,
+  },
+  settingstext: {
+    width: '50%',
+    fontFamily: 'Roboto_400Regular',
+    fontSize: 15,
+    alignSelf: 'center',
+  },
+  settingsinputtext: {
+    width: '40%',
+    fontFamily: 'Roboto_400Regular',
+    fontSize: 15,
+    alignSelf: 'center',
+  },
+  sleepingentry: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 25,
+    alignSelf: 'center',
+  },
+  settingsdates: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default styles;

@@ -136,6 +136,8 @@ export default function App() {
 		getDynamicInfo(require('./server/dynamicTasks.json'));
 	}
 
+	// State functions passed down to children
+
 	function gettaskEntries() {
 		return taskEntries;
 	}
@@ -147,6 +149,9 @@ export default function App() {
 	}
 	function setUsernameState(val) {
 		setUsername(val);
+	}
+	function setLoggedInState(val) {
+		setLoggedIn(val);
 	}
 	if (correct != 2) {
 		return <Login correct={correct} setCorrect={setCorrectState} pushServer={pushServer} setUsername={setUsernameState} findTasks={findTasks} />
@@ -169,7 +174,7 @@ export default function App() {
 						}}
 					/>
 					<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()} username={username}
-						pushServer={pushServer} static={taskList} setCorrect={setCorrectState} />}
+						pushServer={pushServer} static={taskList} setCorrect={setCorrectState} setLoggedIn={setLoggedInState} />}
 						options={{
 							tabBarIcon: ({ color }) => (
 								<Image
