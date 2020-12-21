@@ -1,39 +1,15 @@
-/*Note you did not add an earliest start date for dynamics
-staticCalendar is a list of all static events in order
-events is a list of all dynamic events to be done in the future (note that you are removing the completed elemenst from events)*/
-
-// function updateDynamicTaskTimes(title, start, end) {
-//   // console.log(title);
-//   // console.log(start);
-//   // console.log(end);
-//   // console.log("Updating!");
-//   //console.log(start);
-//   let command = "update dynamicTasks set startTime = '" + start + "', endTime = '" + end + "', dontShow = '" + "False" + "' where taskName = '" + title + "'";
-//   //updates task keyed by the title with a start and end time
-//   pushServer(command);
-// }
-
-// //fix bug
-// function updateSplitPiece(title, newTitle, period) {
-//   let command = "update dynamicTasks set taskName = '" + newTitle + "', period = '" + period + "' where taskName = '" + title + "'";
-//   pushServer(command);
-// }
-
-// function addSplitPiece(piece) {
-//   console.log(piece.start);
-//   let dateString = new Date(piece.start).toISOString().split('T')[0];
-//   let values = "('" + piece.taskName + "','" + piece.startTime + "','" + piece.deadline + "','" + piece.splittable + "','" + piece.period + "','" + dateString + "','" + 'True' + "','" + piece.startTime + "','" + piece.end + "')";
-//   // console.log(values);
-//   pushServer("insert into dynamicTasks(taskname,date,deadline,split,period,dateString,finished,startTime,endTime) values" + values);
-// }
-
-
-export default function schedule(tasks, dynamic) {
-  var usrPref = { avgLength: 50 * 60 * 1000, maxLength: 90 * 60 * 1000, delaySize: 15 * 60 * 1000 };
-
+export default function schedule(tasks, dynamic, usrPrefUnformated) {
+  var usrPref = {
+    avgLength: 50 * 60 * 1000,
+    maxLength: 90 * 60 * 1000,
+    delaySize: 15 * 60 * 1000,
+    sleep: 1000 * 60 * 60 * 23, //11 pm UTC 1970
+    wakeUp: 1000 * 60 * 60 * 10, //7 am UTC 1970
+  };
+  //sample usrPref
   var staticCalendar = [...tasks];
-  var events = JSON.parse(JSON.stringify(dynamic)); // Deep copy so dynamic task list is unchanged
 
+  var events = JSON.parse(JSON.stringify(dynamic)); // Deep copy so dynamic task list is unchanged
 
   for (var i = 0; i < staticCalendar.length; i++) {
     staticCalendar[i].startTime = parseInt(staticCalendar[i].startTime);
@@ -47,13 +23,54 @@ export default function schedule(tasks, dynamic) {
     events[i].period = parseInt(events[i].period);
   }
 
-  let tail = { startTime: Number.MAX_SAFE_INTEGER, endTime: Number.MAX_SAFE_INTEGER };
+  let tail = {
+    startTime: Number.MAX_SAFE_INTEGER,
+    endTime: Number.MAX_SAFE_INTEGER,
+  };
   events.splice(events.length, 0, tail);
   staticCalendar.splice(staticCalendar.length, 0, tail);
 
+  var oneDay = 24 * 60 * 60 * 1000;
+
+  var startOfToday = new Date(Date.now());
+  startOfToday.setMilliseconds(0);
+  startOfToday.setSeconds(0);
+  startOfToday.setMinutes(0);
+  startOfToday.setHours(0);
+
+  var sleepOffset =
+    usrPref.sleep > usrPref.wakeUp ? usrPref.sleep - oneDay : usrPref.sleep;
+  //making sure sleep offset is less than wakeUp (11 pm is before 7 am)
+  var sleepBlock = {
+    taskname: "Sleep Block",
+    startTime: startOfToday.getTime() + sleepOffset,
+    endTime: startOfToday.getTime() + usrPref.wakeUp,
+  };
+
+  for (var i = 0; i < 5; i++) {
+    var sleepBlockCpy = {
+      taskname: "Sleep Block",
+      startTime: sleepBlock.startTime,
+      endTime: sleepBlock.endTime,
+    };
+    var sTime = new Date(sleepBlockCpy.startTime);
+    // console.log(sTime.toLocaleTimeString());
+    staticCalendar.push(sleepBlockCpy);
+    sleepBlock.startTime += oneDay;
+    sleepBlock.endTime += oneDay;
+  }
+
+  staticCalendar.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+
+  // console.log("First 5 Events");
+  // for (var i = 0; i < 5; i++) {
+  //   console.log(staticCalendar[i]);
+  // }
+  // console.log(staticCalendar);
+  //resorting staticEvents due to sleep Schedule
+
   for (var i = 0; i < events.length - 1; i++) {
     if (events[i].split && events[i].period > usrPref.maxLength) {
-
       var initialPeriod = events[i].period;
       var nPieces = Math.ceil(initialPeriod / usrPref.avgLength);
       var title = events[i].taskname;
@@ -63,11 +80,11 @@ export default function schedule(tasks, dynamic) {
       events[i].taskname = events[i].taskname + " (Part 1)";
       events[i].period = usrPref.avgLength;
       initialPeriod -= usrPref.avgLength;
+      // console.log("Event split pieces:");
+      // console.log(events[i]);
       for (var j = 1; j < nPieces; j++) {
         var period =
-          (initialPeriod > usrPref.avgLength) ?
-            usrPref.avgLength :
-            initialPeriod;
+          initialPeriod > usrPref.avgLength ? usrPref.avgLength : initialPeriod;
         initialPeriod -= period;
         var piece = {
           taskname: title + " (Part " + String(j + 1) + ")",
@@ -78,7 +95,9 @@ export default function schedule(tasks, dynamic) {
           splitable: split,
         };
         events.splice(i + j, 0, piece);
+        // console.log(piece);
       }
+
       i += nPieces - 1;
     }
   }
@@ -88,38 +107,63 @@ export default function schedule(tasks, dynamic) {
   var statCounter = 0;
   var eventCounter = 0;
   var timer;
-  while (staticCalendar[statCounter].startTime < currTime) {
+  // console.log(staticCalendar);
+  while (staticCalendar[statCounter].endTime < currTime) {
+    //changed end to start
+    // console.log(statCounter);
+    // console.log(staticCalendar[statCounter]);
     statCounter++;
   }
-  statCounter--; //point back at last thing that started before current time
-  //be careful to access statCounter=-1
 
-  statCounter === -1 ?
-    (timer = currTime) :
-    (timer = Math.max(staticCalendar[statCounter].endTime, currTime));
+  currTime >= staticCalendar[statCounter].startTime
+    ? (timer = staticCalendar[statCounter].endTime)
+    : (timer = currTime);
+
+  // statCounter--; //point back at last thing that started before current time
+  // statCounter === -1
+  //   ? (timer = currTime)
+  //   : (timer = Math.max(staticCalendar[statCounter].endTime, currTime));
   //timer is valid start time for anything so we see if curr
   //time is inside of a static event, we update timer to end
   //of that event.
-
+  // console.log(events);
+  // console.log(staticCalendar);
   while (
     statCounter < staticCalendar.length - 1 &&
     eventCounter < events.length - 1
   ) {
+    console.log(staticCalendar[statCounter]);
+    console.log("Timer before");
+    var tempTime = new Date(timer);
+    var tempTime2 = new Date(staticCalendar[statCounter + 1].startTime);
+    console.log(tempTime.toLocaleTimeString());
+    console.log("static event after this time");
+    console.log(staticCalendar[statCounter + 1]);
+    console.log(tempTime2.toLocaleTimeString());
+
     while (
       eventCounter < events.length - 1 &&
       staticCalendar[statCounter + 1].startTime - timer >
-      events[eventCounter].period + 2 * delay
+        events[eventCounter].period + 2 * delay
     ) {
-      console.log("It is");
-      console.log(events[eventCounter]);
+      console.log("\nAdding event\n");
+      // console.log("Events before editing:");
+      // console.log(events[eventCounter]);
       events[eventCounter].startTime = timer + delay;
-      events[eventCounter].endTime = timer + delay + events[eventCounter].period;
-      events[eventCounter].dateString = new Date(events[eventCounter].startTime).toISOString().split('T')[0];
+      events[eventCounter].endTime =
+        timer + delay + events[eventCounter].period;
+      events[eventCounter].dateString = new Date(events[eventCounter].startTime)
+        .toISOString()
+        .split("T")[0];
       timer = events[eventCounter].endTime;
+      // console.log("Scheduled Event");
+      // console.log(events[eventCounter]);
       eventCounter++;
     }
     statCounter++;
-    timer = staticCalendar[statCounter].endTime;
+    if (staticCalendar[statCounter].startTime > timer) {
+      timer = staticCalendar[statCounter].endTime;
+    }
   }
   return events;
 }
