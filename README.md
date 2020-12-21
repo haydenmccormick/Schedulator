@@ -21,9 +21,9 @@ python3 mserver.py
 
 If you would like to run the program and the server on different devices, replace "localhost" in the "addr" constant of App.js to your IPv4 address.
 
-To run the app, run (from the top-level project directory):
+To start the app, run (from the top-level project directory):
 ```bash
-npm start
+expo start --no-dev --minifyt
 ```
 
 ## Description of the project:
