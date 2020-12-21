@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import { DayView } from './Calendars.js';
 import DynamicTaskList from './Dynamic.js';
 import * as SQLite from 'expo-sqlite';
-import { Image } from 'react-native';
+import { Image, LogBox } from 'react-native';
 import styles from './assets/Styles.js';
 import { useFonts, Roboto_100Thin, Roboto_300Light, Roboto_400Regular, Roboto_900Black } from '@expo-google-fonts/roboto';
 import { AbrilFatface_400Regular } from '@expo-google-fonts/abril-fatface'
@@ -51,6 +51,10 @@ export default function App() {
 	const [loggedIn, setLoggedIn] = useState(0);
 	const [userInfo, setUserInfo] = useState({});
 
+	LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+	LogBox.ignoreAllLogs();//Ignore all log notifications
+
+
 	// Load tasks to agenda on app startup
 	if (!loaded) {
 		if (loggedIn == 0) {
@@ -84,7 +88,6 @@ export default function App() {
 	}
 
 	function getTaskInfo(tasks) {
-		console.log(username);
 		const tempTasks = {};
 		const tempDates = {};
 		const tempList = [];
@@ -92,6 +95,7 @@ export default function App() {
 		for (var i in parsed) {
 			//alert(JSON.stringify(parsed[i]));
 			if (parsed[i].username == username) {
+				console.log(parsed[i]);
 				if (parsed[i].type == 'static')
 					tempList.push(parsed[i]);
 				newTask = {

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Untitled-Scheduling-Project",
-    "slug": "Untitled-Scheduling-Project",
+    "name": "Schedulator",
+    "slug": "Schedulator",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
