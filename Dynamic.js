@@ -85,7 +85,7 @@ export default function TaskList(props) {
 
 	function calculateSchedule() {
 		props.pushServer("delete from scheduledTasks");
-		let sched = schedule(props.static, props.tasks);
+		let sched = schedule(props.static, props.tasks, props.userInfo);
 		var valueList = [];
 		for (let i in sched) {
 			let values = "('" + sched[i].dateString + "','" + sched[i].taskname + "','" + sched[i].startTime + "','" + sched[i].endTime + "','" + props.username + "')";
@@ -118,7 +118,7 @@ export default function TaskList(props) {
 	// Render settings or task list, depending on state
 	const taskReturn = (settings ?
 		<Settings setLoggedIn={props.setLoggedIn} setCorrect={props.setCorrect} pushServer={props.pushServer}
-			setSettings={setSettings} />
+			setSettings={setSettings} userInfo={props.userInfo} />
 		:
 		<View style={styles.container} >
 			<View style={styles.listheader}>
@@ -152,11 +152,11 @@ export default function TaskList(props) {
 
 function Settings(props) {
 	const tempDate = new Date(0);
-	const [between, setBetween] = useState();
-	const [maxLength, setMaxLength] = useState();
-	const [avgLength, setAvgLength] = useState();
-	const [sleepStart, setSleepStart] = useState(tempDate);
-	const [sleepEnd, setSleepEnd] = useState(tempDate);
+	const [between, setBetween] = useState(props.userInfo.delaySize / 1000 / 60);
+	const [maxLength, setMaxLength] = useState(props.userInfo.maxLength / 1000 / 60);
+	const [avgLength, setAvgLength] = useState(props.userInfo.avgLength / 1000 / 60);
+	const [sleepStart, setSleepStart] = useState(new Date(props.userInfo.sleep));
+	const [sleepEnd, setSleepEnd] = useState(new Date(props.userInfo.wakeUp));
 	const [settingTime, setSettingTime] = useState(false);
 	const [SE, setSE] = useState(0);
 
@@ -169,12 +169,13 @@ function Settings(props) {
 
 	function submit() {
 		let update = "update users set sleep = '" + sleepStart.getTime() + "', wakeUp = '" + sleepEnd.getTime();
-		update = update + "', avgLength = '" + avgLength + "', maxLength = '" + maxLength + "', delaySize = '" + between + "' where username = '" + props.username + "'";
+		update = update + "', avgLength = '" + avgLength * 60 * 1000 + "', maxLength = '" + maxLength * 60 * 1000 + "', delaySize = '" + between * 60 * 1000 + "' where username = '" + props.username + "'";
 		props.pushServer(update);
 		props.setSettings(false);
 	}
 
 	function timePressHandler(val) {
+		alert(props.userInfo.maxLength);
 		if (val == 1)
 			setSE("sleepStart");
 		else if (val == 2)
@@ -211,18 +212,27 @@ function Settings(props) {
 				<View style={styles.settingsarea}>
 					<View style={styles.settingsentry}>
 						<Text style={styles.settingstext} >Time to schedule between events</Text>
-						<TextInput placeholder="Enter Minutes" style={styles.settingsinputtext} value={between}
-							onChangeText={(text) => setBetween(text)} />
+						<View style={styles.minutes}>
+							<TextInput placeholder="Enter Minutes" style={styles.settingsinputtext} value={JSON.stringify(between)}
+								onChangeText={(text) => setBetween(text)} />
+							<Text style={styles.settingsinputtext2}> min.</Text>
+						</View>
 					</View>
 					<View style={styles.settingsentry}>
 						<Text style={styles.settingstext} >Average scheduled event length</Text>
-						<TextInput placeholder="Enter Hours" style={styles.settingsinputtext} value={avgLength}
-							onChangeText={(text) => setAvgLength(text)} />
+						<View style={styles.minutes}>
+							<TextInput placeholder="Enter Hours" style={styles.settingsinputtext} value={JSON.stringify(avgLength)}
+								onChangeText={(text) => setAvgLength(text)} />
+							<Text style={styles.settingsinputtext2}> min.</Text>
+						</View>
 					</View>
 					<View style={styles.settingsentry}>
 						<Text style={styles.settingstext} >Maximum scheduled event length</Text>
-						<TextInput placeholder="Enter Hours" style={styles.settingsinputtext} value={maxLength}
-							onChangeText={(text) => setMaxLength(text)} />
+						<View style={styles.minutes}>
+							<TextInput placeholder="Enter Hours" style={styles.settingsinputtext} value={JSON.stringify(maxLength)}
+								onChangeText={(text) => setMaxLength(text)} />
+							<Text style={styles.settingsinputtext2}> min.</Text>
+						</View>
 					</View>
 					<View style={styles.sleepingentry}>
 						<Text style={styles.settingstext} >Sleeping hours</Text>

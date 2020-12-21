@@ -49,12 +49,14 @@ export default function App() {
 	const [username, setUsername] = useState("");
 	const [correct, setCorrect] = useState(0);
 	const [loggedIn, setLoggedIn] = useState(0);
+	const [userInfo, setUserInfo] = useState({});
 
 	// Load tasks to agenda on app startup
 	if (!loaded) {
 		if (loggedIn == 0) {
 			AsyncStorage.getItem('loggedIn').then((value) => {
 				if (value) {
+					console.log(value);
 					setUsername(value);
 					setCorrect(2);
 				}
@@ -82,6 +84,7 @@ export default function App() {
 	}
 
 	function getTaskInfo(tasks) {
+		console.log(username);
 		const tempTasks = {};
 		const tempDates = {};
 		const tempList = [];
@@ -134,6 +137,17 @@ export default function App() {
 	async function findTasks() {
 		getTaskInfo(require('./server/all.json'));
 		getDynamicInfo(require('./server/dynamicTasks.json'));
+		getUserInfo(require('./server/users.json'));
+	}
+
+	function getUserInfo(info) {
+		var tempUser = {};
+		for (var i in info) {
+			if (info[i].username == username) {
+				tempUser = info[i];
+			}
+		}
+		setUserInfo(tempUser);
 	}
 
 	// State functions passed down to children
@@ -168,19 +182,18 @@ export default function App() {
 							tabBarIcon: ({ color }) => (
 								<Image
 									style={styles.icon}
-									source={require('./assets/Tab_Icons/agenda-on.png')
-									} />
+									source={require('./assets/Tab_Icons/agenda-on.png')} />
 							),
 						}}
 					/>
-					<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()} username={username}
-						pushServer={pushServer} static={taskList} setCorrect={setCorrectState} setLoggedIn={setLoggedInState} />}
+					<Tab.Screen name="Tasks" children={() => <DynamicTaskList findTasks={findTasks} tasks={getDynamicTaskEntries()}
+						username={username} pushServer={pushServer} static={taskList} setCorrect={setCorrectState} setLoggedIn={setLoggedInState}
+						userInfo={userInfo} />}
 						options={{
 							tabBarIcon: ({ color }) => (
 								<Image
 									style={styles.icon}
-									source={require('./assets/Tab_Icons/tasks-on.png')
-									} />
+									source={require('./assets/Tab_Icons/tasks-on.png')} />
 							),
 						}}
 					/>

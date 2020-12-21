@@ -354,6 +354,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f58f73',
     justifyContent: 'center',
     flexDirection: 'row',
+    alignItems: 'flex-end',
   },
   listheadertext: {
     textAlign: 'center',
@@ -366,10 +367,11 @@ const styles = StyleSheet.create({
   settings: {
     resizeMode: 'stretch',
     position: 'absolute',
-    alignSelf: 'center',
+    alignSelf: 'flex-end',
     width: 35,
     height: 35,
     right: "5%",
+    bottom: '10%'
   },
   settingsheader: {
     width: '100%',
@@ -417,11 +419,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   settingsinputtext: {
-    width: '40%',
+    width: '45%',
     fontFamily: 'Roboto_400Regular',
     fontSize: 15,
     alignSelf: 'center',
     textAlign: 'right',
+    paddingHorizontal: 0,
+  },
+  settingsinputtext2: {
+    width: '45%',
+    fontFamily: 'Roboto_400Regular',
+    fontSize: 15,
+    alignSelf: 'center',
+    textAlign: 'left',
+    paddingHorizontal: 0,
   },
   sleepingentry: {
     flexDirection: 'column',
@@ -434,6 +445,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  minutes: {
+    width: 100,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    justifyContent: 'flex-end',
   },
 });
 

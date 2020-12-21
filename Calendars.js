@@ -124,7 +124,7 @@ function DayView(props) {
 
 	return (
 		<View style={styles.agendacontainer}>
-			<Agenda style={{ marginTop: 10 }}
+			<Agenda style={{ marginTop: '10%' }}
 				onDayPress={onDayPress}
 				markedDates={props.dates}
 				renderEmptyData={() => { return emptyday; }}
