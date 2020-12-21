@@ -1,12 +1,4 @@
-export default function schedule(tasks, dynamic, usrPrefUnformated) {
-  var usrPref = {
-    avgLength: 50 * 60 * 1000,
-    maxLength: 90 * 60 * 1000,
-    delaySize: 15 * 60 * 1000,
-    sleep: 1000 * 60 * 60 * 23, //11 pm UTC 1970
-    wakeUp: 1000 * 60 * 60 * 10, //7 am UTC 1970
-  };
-  //sample usrPref
+export default function schedule(tasks, dynamic, usrPref) {
   var staticCalendar = [...tasks];
 
   var events = JSON.parse(JSON.stringify(dynamic)); // Deep copy so dynamic task list is unchanged
@@ -144,7 +136,7 @@ export default function schedule(tasks, dynamic, usrPrefUnformated) {
     while (
       eventCounter < events.length - 1 &&
       staticCalendar[statCounter + 1].startTime - timer >
-        events[eventCounter].period + 2 * delay
+      events[eventCounter].period + 2 * delay
     ) {
       console.log("\nAdding event\n");
       // console.log("Events before editing:");
