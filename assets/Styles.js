@@ -377,6 +377,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 20,
   },
   logout: {
     resizeMode: 'stretch',
@@ -384,8 +385,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     width: 25,
     height: 25,
-    right: 0,
-    top: '10%',
+    right: '5%',
+    top: '85%',
   },
   settingsheadertext: {
     textAlign: 'center',
@@ -398,9 +399,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   settingsarea: {
-    width: '85%',
+    width: '70%',
     alignSelf: 'center',
     marginTop: "15%",
+    marginBottom: 20,
   },
   settingsentry: {
     flexDirection: 'row',
@@ -419,6 +421,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto_400Regular',
     fontSize: 15,
     alignSelf: 'center',
+    textAlign: 'right',
   },
   sleepingentry: {
     flexDirection: 'column',

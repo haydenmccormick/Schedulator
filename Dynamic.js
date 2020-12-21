@@ -11,19 +11,11 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 const db = SQLite.openDatabase("db.db");
 
 export default function TaskList(props) {
-	const tempDate = new Date(0);
 	const tasks = props.tasks;
 	/***** Executed on "Add" button press, renders an EventForm *****/
 	const [addingEvent, setAddingEvent] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
 	const [settings, setSettings] = useState(false);
-	const [between, setBetween] = useState();
-	const [maxLength, setMaxLength] = useState();
-	const [avgLength, setAvgLength] = useState();
-	const [sleepStart, setSleepStart] = useState(tempDate);
-	const [sleepEnd, setSleepEnd] = useState(tempDate);
-	const [settingTime, setSettingTime] = useState(false);
-	const [SE, setSE] = useState(0);
 
 	const addEventPressHandler = () => {
 		props.findTasks();
@@ -103,13 +95,6 @@ export default function TaskList(props) {
 		props.pushServer(insert + valueList);
 	}
 
-	function logOut() {
-		AsyncStorage.clear();
-		setSettings(false);
-		props.setLoggedIn(0);
-		props.setCorrect(0);
-	}
-
 	function activateSettings() {
 		setSettings(true);
 	}
@@ -130,87 +115,11 @@ export default function TaskList(props) {
 			</TouchableOpacity>
 	}
 
-	function submit() {
-		let update = "update users set sleep = '" + sleepStart.getTime() + "', wakeUp = '" + sleepEnd.getTime();
-		update = update + "', avgLength = '" + avgLength + "', maxLength = '" + maxLength + "', delaySize = '" + between + "' where username = '" + props.username + "'";
-		props.pushServer(update);
-		setSettings(false);
-	}
-
-	function timePressHandler(val) {
-		setSettingTime(!settingTime);
-		if (val == 1)
-			setSE("sleepStart");
-		else if (val == 2)
-			setSE("sleepEnd");
-	}
-
-	const onChange = (event, selectedDate) => {
-		if (SE == "sleepStart")
-			setSleepStart(selectedDate);
-		else
-			setSleepEnd(selectedDate);
-	};
-
-	var render_time = (settingTime ?
-		<View>
-			<DateTimePicker mode='time' style={styles.datepicker} value={SE == "sleepStart" ? sleepStart : sleepEnd}
-				onChange={onChange}
-				timeZoneOffsetInMinutes={0} display="inline" />
-		</View>
-		:
-		null
-	)
-
 	// Render settings or task list, depending on state
 	const taskReturn = (settings ?
-		<View style={styles.container}>
-			<View style={{ padding: 30 }}>
-				<View style={styles.settingsheader}>
-					<Text style={styles.settingsheadertext}>Settings</Text>
-					<TouchableOpacity onPress={logOut} style={styles.logout}>
-						<Image source={require('./assets/logout.png')} style={styles.logout} />
-					</TouchableOpacity>
-				</View>
-				<ScrollView style={styles.settingsarea}>
-					<View style={styles.settingsentry}>
-						<Text style={styles.settingstext} >Time to schedule between events</Text>
-						<TextInput placeholder="Enter Minutes" style={styles.settingsinputtext} value={between}
-							onChangeText={(text) => setBetween(text)} />
-					</View>
-					<View style={styles.settingsentry}>
-						<Text style={styles.settingstext} >Average scheduled event length</Text>
-						<TextInput placeholder="Enter Hours" style={styles.settingsinputtext} value={avgLength}
-							onChangeText={(text) => setAvgLength(text)} />
-					</View>
-					<View style={styles.settingsentry}>
-						<Text style={styles.settingstext} >Maximum scheduled event length</Text>
-						<TextInput placeholder="Enter Hours" style={styles.settingsinputtext} value={maxLength}
-							onChangeText={(text) => setMaxLength(text)} />
-					</View>
-					<View style={styles.sleepingentry}>
-						<Text style={styles.settingstext} >Sleeping hours</Text>
-						<View style={styles.settingsdates}>
-							<Text style={styles.formtext} onPress={() => timePressHandler(1)} >
-								{sleepStart.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', timeZone: 'UTC' })}
-							</Text>
-							<Text style={styles.formtext}>      -      </Text>
-							<Text style={styles.formtext} onPress={() => timePressHandler(2)} >
-								{sleepEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', timeZone: 'UTC' })}
-							</Text>
-						</View>
-					</View>
-					{render_time}
-					<TouchableOpacity style={styles.loginsubmit} title="Submit" onPress={() => { submit() }}>
-						<Text style={styles.loginsubmittext}>Update Settings</Text>
-					</TouchableOpacity>
-					<Button color='gray' title="Cancel" onPress={() => { setSettings(false) }} />
-				</ScrollView>
-			</View>
-		</View>
-
+		<Settings setLoggedIn={props.setLoggedIn} setCorrect={props.setCorrect} pushServer={props.pushServer}
+			setSettings={setSettings} />
 		:
-
 		<View style={styles.container} >
 			<View style={styles.listheader}>
 				<Text style={styles.listheadertext}>Tasks</Text>
@@ -239,4 +148,104 @@ export default function TaskList(props) {
 	);
 
 	return taskReturn;
+}
+
+function Settings(props) {
+	const tempDate = new Date(0);
+	const [between, setBetween] = useState();
+	const [maxLength, setMaxLength] = useState();
+	const [avgLength, setAvgLength] = useState();
+	const [sleepStart, setSleepStart] = useState(tempDate);
+	const [sleepEnd, setSleepEnd] = useState(tempDate);
+	const [settingTime, setSettingTime] = useState(false);
+	const [SE, setSE] = useState(0);
+
+	function logOut() {
+		AsyncStorage.clear();
+		props.setSettings(false);
+		props.setLoggedIn(0);
+		props.setCorrect(0);
+	}
+
+	function submit() {
+		let update = "update users set sleep = '" + sleepStart.getTime() + "', wakeUp = '" + sleepEnd.getTime();
+		update = update + "', avgLength = '" + avgLength + "', maxLength = '" + maxLength + "', delaySize = '" + between + "' where username = '" + props.username + "'";
+		props.pushServer(update);
+		props.setSettings(false);
+	}
+
+	function timePressHandler(val) {
+		if (val == 1)
+			setSE("sleepStart");
+		else if (val == 2)
+			setSE("sleepEnd");
+		setSettingTime(!settingTime);
+	}
+
+	const onChange = (event, selectedDate) => {
+		if (SE == "sleepStart")
+			setSleepStart(selectedDate);
+		else
+			setSleepEnd(selectedDate);
+	};
+
+	var render_time = (settingTime ?
+		<View>
+			<DateTimePicker mode='time' style={styles.datepicker} value={SE == "sleepStart" ? sleepStart : sleepEnd}
+				onChange={onChange}
+				timeZoneOffsetInMinutes={0} display="inline" />
+		</View>
+		:
+		null
+	)
+
+	return (
+		<View style={styles.container}>
+			<View >
+				<View style={styles.settingsheader}>
+					<Text style={styles.settingsheadertext}>Settings</Text>
+					<TouchableOpacity onPress={logOut} style={styles.logout}>
+						<Image source={require('./assets/logout.png')} style={styles.logout} />
+					</TouchableOpacity>
+				</View>
+				<View style={styles.settingsarea}>
+					<View style={styles.settingsentry}>
+						<Text style={styles.settingstext} >Time to schedule between events</Text>
+						<TextInput placeholder="Enter Minutes" style={styles.settingsinputtext} value={between}
+							onChangeText={(text) => setBetween(text)} />
+					</View>
+					<View style={styles.settingsentry}>
+						<Text style={styles.settingstext} >Average scheduled event length</Text>
+						<TextInput placeholder="Enter Hours" style={styles.settingsinputtext} value={avgLength}
+							onChangeText={(text) => setAvgLength(text)} />
+					</View>
+					<View style={styles.settingsentry}>
+						<Text style={styles.settingstext} >Maximum scheduled event length</Text>
+						<TextInput placeholder="Enter Hours" style={styles.settingsinputtext} value={maxLength}
+							onChangeText={(text) => setMaxLength(text)} />
+					</View>
+					<View style={styles.sleepingentry}>
+						<Text style={styles.settingstext} >Sleeping hours</Text>
+						<View style={styles.settingsdates}>
+							<TouchableOpacity onPress={() => timePressHandler(1)}>
+								<Text style={styles.formtext} >
+									{sleepStart.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', timeZone: 'UTC' })}
+								</Text>
+							</TouchableOpacity>
+							<Text style={styles.formtext}>     -     </Text>
+							<TouchableOpacity onPress={() => timePressHandler(2)}>
+								<Text style={styles.formtext} onPress={() => timePressHandler(2)} >
+									{sleepEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', timeZone: 'UTC' })}
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+					{render_time}
+					<TouchableOpacity style={styles.loginsubmit} title="Submit" onPress={() => { submit() }}>
+						<Text style={styles.loginsubmittext}>Update Settings</Text>
+					</TouchableOpacity>
+					<Button color='gray' title="Cancel" onPress={() => { props.setSettings(false) }} />
+				</View>
+			</View>
+		</View>);
 }
